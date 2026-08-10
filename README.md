@@ -434,6 +434,7 @@ stopped rather than one that is merely wrong.
 | [docs/keyboard-report.md](docs/keyboard-report.md) | the fault trace behind it, instrument failures included |
 | [docs/music.md](docs/music.md) | two voices, one volume, and what can be done with them |
 | [docs/project-review.md](docs/project-review.md) | what the migration delivered, what it cost, and what is still wrong |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | forking, the signed-commit rule, the gate, and the two constraints that bite |
 
 The reports cite `backlog.md`, the epic-by-epic plan. That is a working
 document and is not published here; it stays in the development tree.
