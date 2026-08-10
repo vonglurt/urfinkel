@@ -28,7 +28,16 @@ from the repository.">
     background: #241c0c; padding: .7rem 1rem; margin: 0 0 1.25rem; font-size: .85rem;
   }
   .note strong { color: #e8dcc0; }
-  #box { width: 100%; aspect-ratio: 4 / 3; background: #000; margin-bottom: 1.25rem; }
+  #box { width: 100%; aspect-ratio: 4 / 3; background: #000; margin-bottom: .5rem; scroll-margin-top: 0; }
+  .bar { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin: 0 0 1.25rem; }
+  .bar button {
+    font: inherit; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase;
+    background: #241c0c; color: #d8a657; border: 1px solid #4a3c1e;
+    padding: .5rem .6rem; cursor: pointer; width: 100%;
+  }
+  .bar button:hover { background: #33270f; color: #f0c274; border-color: #6b5726; }
+  .bar button:active { background: #3d2f13; }
+  @media (max-width: 34rem) { .bar { grid-template-columns: 1fr; } }
   table { border-collapse: collapse; width: 100%; font-size: .85rem; }
   th, td { text-align: left; padding: .3rem .6rem .3rem 0; border-bottom: 1px solid #2e2512; }
   th { color: #b3a179; font-weight: normal; }
@@ -38,6 +47,8 @@ from the repository.">
   .shots img { width: 100%; image-rendering: pixelated; border: 1px solid #3a2f16; }
   .shots figcaption { font-size: .75rem; color: #b3a179; margin-top: .35rem; }
   ul { padding-left: 1.2rem; }
+  p.dl { margin-bottom: .3rem; font-size: .85rem; }
+  ul.dl { margin: 0 0 1.25rem; font-size: .85rem; }
   li { margin-bottom: .4rem; }
   pre.licence {
     white-space: pre-wrap; font-size: .72rem; color: #9c8c66;
@@ -54,6 +65,19 @@ from the repository.">
 <p class="sub">The Royal Game of Ur — a ~4,600-year-old board game — written in
 C and 6502 assembly for the Commodore Plus/4.</p>
 
+<div id="box"><div id="game"></div></div>
+
+<div class="bar">
+  <button id="fit" type="button">▲ Fit the game to the top</button>
+  <button id="past" type="button">▼ Skip past — instructions</button>
+</div>
+
+<p class="dl"><strong>Downloads</strong> — right-click, Save Link As:</p>
+<ul class="dl">
+  <li><a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64">urfinkel.d64</a> — a disk image (174 848 B)</li>
+  <li><a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg">urfinkel.prg</a> — the program alone (56 511 B)</li>
+</ul>
+
 <div class="note">
   <strong>This page launches a Commodore Plus/4 emulator in your browser.</strong>
   It boots VICE (<code>xplus4</code>) through EmulatorJS and loads the real
@@ -66,9 +90,7 @@ C and 6502 assembly for the Commodore Plus/4.</p>
   with animation and the music starts.
 </div>
 
-<div id="box"><div id="game"></div></div>
-
-<h2>CONTROLS</h2>
+<h2 id="controls">CONTROLS</h2>
 <table>
   <tr><th>Key</th><th>Where</th><th>What</th></tr>
   <tr><td><code>1</code>–<code>5</code></td><td>menu</td><td>choose a mode</td></tr>
@@ -126,12 +148,6 @@ of the game on a Commodore Plus/4.</p>
   <li><a href="https://github.com/vonglurt/urfinkel/tree/main/docs">docs/</a> — the migration report, the architecture, the keyboard, the music</li>
 </ul>
 
-<p><strong>Downloads</strong> — right-click, Save Link As:</p>
-<ul>
-  <li><a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64">urfinkel.d64</a> — a disk image (174 848 B)</li>
-  <li><a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg">urfinkel.prg</a> — the program alone (56 511 B)</li>
-</ul>
-
 <h2>LICENCE</h2>
 <pre class="licence">MIT License
 
@@ -178,8 +194,45 @@ Contact: paulr@sdf.org
   EJS_startOnLoaded = true;              // no click-to-start
   EJS_color         = "#d8a657";
   EJS_volume        = 0.5;
+
+  // Direct Keyboard Input hands raw key presses to the emulated machine
+  // instead of routing them through the virtual gamepad. It ships DISABLED
+  // for this core, and a Plus/4 is a computer you type at, so it is turned
+  // on here rather than left for the player to find under Input Options.
+  //
+  // Note this is a DEFAULT: a browser that already has a saved setting for
+  // this page keeps its own. Set EJS_disableLocalStorage = true to force it
+  // every time, at the cost of remembering anything else.
+  EJS_defaultOptions = { keyboardInput: "enabled" };
+
+  // EmulatorJS maps the keyboard onto a virtual gamepad by default, and
+  // binds buttons 24, 25 and 26 to "1", "2" and "3" - the save-state slot
+  // functions. UR FINKEL is played entirely on the keyboard, and 1-7 are
+  // how you choose a piece, so those presses were being eaten before the
+  // Plus/4 ever saw them. This game reads no joystick, so every binding is
+  // cleared rather than only the three that collided.
+  EJS_defaultControls = (function () {
+    var none = {};
+    for (var i = 0; i < 30; i++) none[i] = {};
+    return { 0: none, 1: {}, 2: {}, 3: {} };
+  })();
 </script>
 <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
+
+<script>
+  // "Fit the game to the top" puts the emulator's top-left corner in the
+  // viewport's top-left corner, which is as close to fullscreen as this can
+  // get without taking the browser over. The emulator's own fullscreen
+  // button is still there in its toolbar for the real thing.
+  function snapTo(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var y = el.getBoundingClientRect().top + window.pageYOffset;
+    window.scrollTo({ top: y, behavior: "smooth" });
+  }
+  document.getElementById("fit").addEventListener("click", function () { snapTo("box"); });
+  document.getElementById("past").addEventListener("click", function () { snapTo("controls"); });
+</script>
 
 </body>
 </html>
