@@ -633,8 +633,8 @@ can be typed into the machine itself.
 
 What remains is the game — the controller loop, the move executor, the
 chronicle, URBOT, the theatre front and the music — ported onto a machine
-that now has time to spare. The ordered plan is in
-[`../backlog.md`](../backlog.md); the target design is in
+that now has time to spare. The ordered plan is in `backlog.md`, held in the
+development tree; the target design is in
 [`architecture.md`](architecture.md).
 
 ## References

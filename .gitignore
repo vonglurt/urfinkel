@@ -1,0 +1,11 @@
+# macOS noise
+.DS_Store
+
+# cc65 leaves object files beside the sources
+src/*.o
+
+# Build output is generated - except the two binaries the README offers as
+# downloads, which are tracked on purpose so those links resolve.
+build/*
+!build/urfinkel.d64
+!build/urfinkel.prg

@@ -114,8 +114,7 @@ diffing two frames — the changed pixels fall in exactly character rows 0,
 so it can never disturb a glyph.
 
 Still to come: the on-target self-test that would reproduce the frozen
-edition's golden race, and joystick selection. See
-[`backlog.md`](backlog.md).
+edition's golden race, and joystick selection.
 
 **One defect still open, and its status has changed.** The URBOT demo
 used to wedge: the machine stopping dead with the screen byte-identical
@@ -429,15 +428,15 @@ stopped rather than one that is merely wrong.
 
 | File | Purpose |
 |---|---|
-| [index.md](index.md) | map of every file, its intent, and what derives from what |
 | [docs/lab-report.md](docs/lab-report.md) | the migration report: baseline, why BASIC costs it, the chain, results, conformance |
 | [docs/architecture.md](docs/architecture.md) | target design: modules, memory, blitter, animation, controller, status |
 | [docs/keyboard-lab-report.md](docs/keyboard-lab-report.md) | reading a matrix with no operating system under it: the toolchain, the two faults, the hardware run |
 | [docs/keyboard-report.md](docs/keyboard-report.md) | the fault trace behind it, instrument failures included |
 | [docs/music.md](docs/music.md) | two voices, one volume, and what can be done with them |
 | [docs/project-review.md](docs/project-review.md) | what the migration delivered, what it cost, and what is still wrong |
-| [backlog.md](backlog.md) | the ordered plan, epic by epic |
-| [../urroyal-basic/](../urroyal-basic/) | the frozen predecessor and its own docs |
+
+The reports cite `backlog.md`, the epic-by-epic plan. That is a working
+document and is not published here; it stays in the development tree.
 
 ## License
 

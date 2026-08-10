@@ -395,7 +395,8 @@ Not a toolchain trap, but the same class of thing and it cost as much:
 | keyboard | `GET`/`GETKEY` (KERNAL buffer) | `kbd.c` (TED matrix) | **done** |
 | on-target self-test | `2500`, `9300` | — | planned |
 
-The ordered plan is in [`../backlog.md`](../backlog.md).
+The ordered plan is in `backlog.md`, a working document held in the
+development tree rather than published here.
 
 ## 10. Build chain
 
