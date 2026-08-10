@@ -47,9 +47,9 @@ interrupt vectors, memory banking, embedded testing, SD2IEC.
 ## I. Introduction
 
 The `urfinkel` project migrates a complete implementation of the Royal
-Game of Ur from Commodore BASIC 3.5 to compiled 6502. The predecessor,
-`urroyal-basic`, is 758 lines of line-numbered BASIC and is frozen as both
-the specification and the conformance oracle. The migration's headline
+Game of Ur from Commodore BASIC 3.5 to compiled 6502. The predecessor is
+758 lines of line-numbered BASIC and is frozen as both the specification
+and the conformance oracle. The migration's headline
 result is reported elsewhere; the summary is in §IV‑A here because it sets
 the context in which the keyboard failed.
 
@@ -468,7 +468,7 @@ Commodore Plus/4 and answers when a key is pressed.
     `TED_KBD := $FF08`, `TIME := $A3`.
 [9] `../../docs/05-sd2iec-primer.md` — SD2IEC operation, card preparation
     and the power-path analysis for the 264 series.
-[10] `../urroyal-basic/urroyal.bas` — the prototype; thirteen `GET`/
+[10] `urroyal.bas`, the BASIC edition — the prototype; thirteen `GET`/
     `GETKEY` sites.
 
 ---

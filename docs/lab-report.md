@@ -4,7 +4,7 @@
 **Date:** August 2026
 **License:** MIT (see `LICENSE`)
 **Project:** `urfinkel` — the compiled edition of the Royal Game of Ur (Finkel ruleset)
-**Predecessor:** [`../../urroyal-basic/`](../../urroyal-basic/) — frozen, maintenance only
+**Predecessor:** the BASIC edition — frozen, maintenance only, not published here
 
 ---
 
@@ -56,7 +56,7 @@ documentation, slow:
 > Drawing the board costs **1279 jiffies (~21 s)**, measured with `TI`
 > around `GOSUB 1000` — roughly 1.1 jiffies per `POKE` statement, which
 > is simply what interpreted BASIC 3.5 costs.
-> — `urroyal-basic/docs/architecture.md` §11
+> — the BASIC edition's architecture notes, §11
 
 That sentence is the origin of this project. "Simply what interpreted
 BASIC 3.5 costs" is true, and it is also a choice: the Plus/4 is a 6502
@@ -254,7 +254,7 @@ alternatives, and §VII shows what it is worth.
       │
    src/blit.s ── ca65 ──► the per-cell inner loop
 
-   ../urroyal-basic/urroyal.bas ── petcat -w3 ──► the conformance oracle
+   urroyal.bas (the BASIC edition) ── petcat -w3 ──► the conformance oracle
 ```
 
 Tool versions used for every number in this report: cc65 2.19 (the binary
@@ -439,7 +439,7 @@ scope:
 > Truly steady music under all load needs a machine-language IRQ player
 > (`SYS`), which is out of scope for the pure-BASIC constraint — the
 > cooperative design is the icebox item.
-> — `urroyal-basic/docs/architecture.md` §9
+> — the BASIC edition's architecture notes, §9
 
 Both halves of that sentence are now available, and the engine uses both.
 A **raster interrupt at 200 Hz** (four slots a frame) writes the sound
@@ -627,7 +627,7 @@ development chain is cc65 with `ca65` for the per-cell inner loop, chosen
 after `llvm-mos` was found to have no Plus/4 platform and a BASIC compiler
 was found to preserve exactly the cost that dominates the profile.
 
-The BASIC edition is frozen at `src/urroyal-basic/`, not deleted: it is
+The BASIC edition is frozen, not deleted: it is
 the rules specification, the conformance oracle, and the only edition that
 can be typed into the machine itself.
 
@@ -650,11 +650,11 @@ development tree; the target design is in
 [3] cc65, *Commodore Plus/4 specific information for cc65*.
     https://www.cc65.org/doc/plus4.html
 
-[4] P. R., *From Viking Festival to Video Terminal*, the predecessor's lab
-    report, `src/urroyal-basic/docs/lab-report.md`.
+[4] P. Richeson, *From Viking Festival to Video Terminal*, the
+    predecessor's lab report (unpublished).
 
-[5] P. R., *UR ROYAL — Architecture* §11, Performance notes,
-    `src/urroyal-basic/docs/architecture.md`.
+[5] P. Richeson, *UR ROYAL — Architecture* §11, Performance notes
+    (unpublished).
 
 ---
 

@@ -13,7 +13,7 @@ music has its own document, [`music.md`](music.md).
 
 ## 1. The inheritance
 
-Three things carry over from `urroyal-basic` **unchanged**, because they
+Three things carry over from the BASIC edition **unchanged**, because they
 were right and because changing them would forfeit the conformance tests:
 
 - **The path model.** `piece[player][1..7]`, where 0 is the pool, 1–14 is

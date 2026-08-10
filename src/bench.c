@@ -83,7 +83,7 @@ void main (void)
     report ("moves  x2000", jm, REPS_MOVES);
 
     cprintf ("\r\nlegal moves found: %u (expect 7)\r\n", legal_count);
-    cprintf ("compare src/urroyal-basic via make bench\r\n");
+    cprintf ("compare the basic edition: make bench\r\n");
 
     for (;;) ;                          /* park for -exitscreenshot */
 }

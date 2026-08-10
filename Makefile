@@ -44,8 +44,10 @@ DBGGAME = $(BUILD)/urfinkel-dbg.prg
 DISK  = $(BUILD)/urfinkel.d64
 
 # The frozen BASIC edition, which is both the conformance oracle and the
-# other half of every benchmark comparison.
-BASIC = ../urroyal-basic/urroyal.bas
+# other half of every benchmark comparison.  It is not published in this
+# repository: set BASIC=/path/to/urroyal.bas to build the BASIC half of
+# `make bench`.
+BASIC ?= urroyal.bas
 
 VICEENV = XDG_DATA_DIRS=$(BREW_PREFIX)/share:$$XDG_DATA_DIRS
 

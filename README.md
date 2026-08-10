@@ -26,16 +26,16 @@ and run it. Either file works; the `.prg` starts faster.
 **VICE** (`xplus4 urfinkel.d64`), **YAPE**, or **plus4emu** — all three take
 either file. Build-from-source instructions are further down.
 
-The compiled edition of [UR ROYAL](../urroyal-basic/): the same ~4,600-year-old
+The compiled edition of **UR ROYAL**: the same ~4,600-year-old
 Royal Game of Ur, the same Finkel ruleset, the same screen — written in C
 and 6502 assembly instead of interpreted BASIC 3.5, because the BASIC
 edition takes **24 seconds to draw the board** and **2.8 seconds to work
 out which moves are legal**.
 
-The predecessor is complete, correct, and frozen at
-[`../urroyal-basic/`](../urroyal-basic/). It stays as the rules
-specification, the conformance oracle, and the only edition that can be
-typed into the machine itself. This one is where development happens.
+The predecessor is complete, correct, and frozen. It is not published here;
+it stays as the rules specification, the conformance oracle, and the only
+edition that can be typed into the machine itself. This one is where
+development happens.
 
 ## Where it stands
 

@@ -3,9 +3,9 @@
 What the migration from interpreted BASIC 3.5 to compiled 6502 actually
 delivered, what it cost, and what is still wrong with it.
 
-The predecessor is frozen at [`../../urroyal-basic/`](../../urroyal-basic/)
-and is not a draft — it is a complete, correct, playable game and the
-oracle this edition is judged against. Nothing below is a criticism of it.
+The predecessor is frozen and unpublished here, but it is not a draft — it
+is a complete, correct, playable game and the oracle this edition is judged
+against. Nothing below is a criticism of it.
 Every number in the "BASIC" column is the price of an interpreter, not of
 a design.
 
