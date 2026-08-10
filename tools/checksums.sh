@@ -84,7 +84,7 @@ what() {
     case "$1" in
         *.prg)    echo "the program alone, for the $2" ;;
         *.d64)    echo "a disk image, for the $2" ;;
-        *.zip)    echo "the whole collection, zipped — the program, the disk image, the C and 6502 source it was built from, this page with a script that serves it, the licence and notes" ;;
+        *.zip)    echo "the whole collection, zipped" ;;
         *.tar.gz) echo "the same collection as a gzipped tar, for Linux and macOS" ;;
     esac
 }
@@ -100,6 +100,17 @@ tag() {
             echo 'plays offline on a PC'
             echo 'full source included' ;;
         *) ;;
+    esac
+}
+
+# HOW TO USE EACH ONE, said beside the button it belongs to rather than in a
+# paragraph above the list.  A visitor reading about the .d64 is looking at
+# the .d64, not counting bullets back to the third one.
+use() {
+    case "$1" in
+        *.prg) echo 'Drag it onto VICE, YAPE or plus4emu. It starts faster than the disk image — there is no directory to read first.' ;;
+        *.d64) echo 'Put it on an SD2IEC or a Pi1541, mount it as a disk, then <code>dload"urfinkel"</code>. Desktop emulators open it directly.' ;;
+        *.zip|*.tar.gz) echo 'Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. Everything on this page except the emulator itself, which is why the browser copy still wants a connection and VICE with the <code>.prg</code> does not.' ;;
     esac
 }
 
@@ -360,6 +371,7 @@ machine=$(field target | sed -e 's/^[^(]*(//' -e 's/)$//')
         # The address the button goes to, spelled out.  A button hides where it
         # leads, and this is a file someone may want to fetch with curl or wget,
         # or simply satisfy themselves about before clicking.
+        printf '    <span class="use">%s</span>\n' "$(use "$b")"
         printf '    <a class="path" href="%s/raw/main/%s">%s/raw/main/%s</a>\n' \
             "$REPO" "$f" "$REPO" "$f"
         echo '    <dl class="sums">'

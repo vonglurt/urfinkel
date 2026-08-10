@@ -24,8 +24,8 @@ Right-click → Save Link As. Either file works; the `.prg` starts faster.
 |---|---:|---|---|
 | [urfinkel.prg](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg) | 56 511 | `991db4f541b3ecd1e92ef86aae59ced0` | `075545a1cf34f7e6c615c3670e1d28158b51a78d3a090e41d5261c72a9f546b0` |
 | [urfinkel.d64](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64) | 174 848 | `35694f66c5dfd2578be5f81e1335c75f` | `513048d68076f25403553b874c4dd4a1fc9502636b00a14253e08d93310030cd` |
-| [urfinkel.zip](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip) | 228 933 | `d948e128fb762b5ca796af6a05f131ff` | `b0c42e6f7b105177d0ba58d0fd847fb24ef7c22b66f9e039559f1b0df8adf9c0` |
-| [urfinkel.tar.gz](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz) | 209 194 | `03606d1e1191f2fe8e636985e4e04411` | `eb9c27b52c48bb98444c9e1a3fb4d342b2cdb84356699d876b6b1cafee1b3fa2` |
+| [urfinkel.zip](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip) | 228 598 | `318869a572cfe4e29d0271fe02ce963a` | `c97f02ef42b63463a253dadc7079cfc48766b7a28dde7d1c9d2c9a869055bfe3` |
+| [urfinkel.tar.gz](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz) | 208 961 | `5f1f127c74edbb7db73e7732347b8bfa` | `65804251926d3812d4de4504e6e2034f20f0ab1b037b341e1b0653fc1c702644` |
 
 Built **2026-08-10** — the date the program stamps on its own menu, so a
 download can be identified from the machine without unpacking it.
@@ -64,8 +64,8 @@ point `shasum` and `md5sum` at.
 |---|---|---|
 | urfinkel.prg | `12994dcb599b35f6a428200c21909787bd4da25d` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.prg) |
 | urfinkel.d64 | `7c83ffc43e1349b94dfa5199c669e849c94719ce` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.d64) |
-| urfinkel.zip | `2d9f75cd0616713d1471360efbfea65fa13234b3` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.zip) |
-| urfinkel.tar.gz | `95c14a8971154c1ac1ce022265c8ea3c1b696206` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.tar.gz) |
+| urfinkel.zip | `39ace62e52af0ab4bc585462d9350bc0cb9f1d9a` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.zip) |
+| urfinkel.tar.gz | `c664be9c6f6d390c7a2ca246c0d8ff5303866a38` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.tar.gz) |
 
 The blob SHA is git's own address for that content — reproduce it with
 `git hash-object build/urfinkel.prg`, and it is the object GitHub serves
