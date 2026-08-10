@@ -91,10 +91,18 @@ numbers:
 
 ```sh
 cd src/urfinkel
-make bench        # build/basicbench.png and build/bench.png
+make bench        # build/bench.png (the compiled half; see the note below)
 make conform      # both editions draw the board; the pngs must match
 make check        # the rule table, on the host, in milliseconds
 ```
+
+**`make bench` no longer produces the BASIC half.** `bench/basic-bench.bas`
+— the block appended to a patched throwaway copy of the frozen edition —
+was deleted from the repository on 2026-08-10, and the frozen edition it
+patched was never published here. Every BASIC number in this report is
+therefore a record of a measurement that was taken, not one you can take
+again; the compiled column is still reproducible. Reviving the comparison
+needs both the harness and `urroyal.bas` restored.
 
 The BASIC benchmark is built by patching a **throwaway copy** of the
 frozen source — line 300, the head of the stage intro, becomes a jump into
@@ -668,10 +676,11 @@ development tree; the target design is in
 
 ## Appendix A — Maintenance log
 
-This report is maintained, not archived. Every measurement in it is
+This report is maintained, not archived. Every measurement in it was
 reproducible with `make bench`, `make conform` and `make check`, and any
 epic that changes a measured number must update the table it appears in
-and add a row here.
+and add a row here. Since 2026-08-10 that holds for every number except
+the BASIC column, whose harness was deleted — see the note in §II.
 
 | Date | Change | Effect on the numbers |
 |---|---|---|
@@ -679,12 +688,13 @@ and add a row here.
 | 2026-08-07 | Binary size re-taken after the cabinet, the trophy, the music engine and the trace facility landed | §Abstract and §IX: 19 413 → **25 137 bytes**. The §VI speed table is unaffected — none of those additions is in a timed path. Tumble length corrected in §IX‑A to the 16–21 frames `dice.c` actually runs |
 | 2026-08-07 | Raster interrupt moved from the KERNAL's `$0314` to the processor's `$FFFE`, so it is entered with RAM rather than ROM switched in | §IX‑D gains bug 5. The interrupt now counts **199 frames in 200** raster frames and takes four entries a frame, both measured in the running game; before the change the counter never moved at all. `make check` 13/13 and `make conform` pixel-identical are unaffected |
 | 2026-08-10 | Binary size re-taken after the transcribed music beds landed | §Abstract and §IX: **25 137 → 56 511 bytes** (30 119 CODE, 26 106 RODATA, measured from the linker map). The compiled edition is no longer *smaller* than the BASIC one, and the §VI speed table is unaffected — none of the added data is in a timed path. The last link left 364 bytes free; song data is capped by `MIDBUDGET` |
+| 2026-08-10 | `bench/*.bas` deleted; the BASIC half of `make bench` and the `basicboard` target retired with them | No number changes. The §III and §VI BASIC columns become a historical record rather than a reproducible measurement — see the note in §II |
 
 **Numbers that must be re-taken when touched:**
 
 | If you change… | Re-run | Update |
 |---|---|---|
-| anything in `src/blit.s`, `board.c` | `make bench`, `make conform` | §VI table, §VI‑B analysis |
+| anything in `src/blit.s`, `board.c` | `make bench` (compiled half only), `make conform` | §VI table, §VI‑B analysis |
 | anything in `src/rules.c` | `make check`, and the frozen edition's `make ruletest-shot` | §VII‑B, and the golden race |
 | the cc65 flags in the Makefile | `make bench` | §VI‑A table |
 | the frozen edition (bug fix only) | `make conform`, `make bench` | §III table if the baseline moved |

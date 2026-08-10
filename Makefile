@@ -43,12 +43,6 @@ GAME  = $(BUILD)/urfinkel.prg
 DBGGAME = $(BUILD)/urfinkel-dbg.prg
 DISK  = $(BUILD)/urfinkel.d64
 
-# The frozen BASIC edition, which is both the conformance oracle and the
-# other half of every benchmark comparison.  It is not published in this
-# repository: set BASIC=/path/to/urroyal.bas to build the BASIC half of
-# `make bench`.
-BASIC ?= urroyal.bas
-
 VICEENV = XDG_DATA_DIRS=$(BREW_PREFIX)/share:$$XDG_DATA_DIRS
 
 # Headless screenshots go through tools/viceshot.py rather than straight
@@ -57,7 +51,6 @@ VICEENV = XDG_DATA_DIRS=$(BREW_PREFIX)/share:$$XDG_DATA_DIRS
 # verifies that the program actually ran and retries when it did not.
 SHOT     = BREW_PREFIX=$(BREW_PREFIX) $(PYTHON) $(TOOLS)/viceshot.py
 CYCLES   ?= 400000000
-BASCYCLES ?= 900000000
 
 all: $(GAME)
 
@@ -308,26 +301,32 @@ $(BUILD)/smoke.png: $(BUILD)/smoke.prg
 	@echo "smoke test ok - and still moving at 900e6: $@"
 
 # --- the migration measurement -------------------------------------------
-# Both halves of the comparison, each a screenshot of the machine reporting
-# its own timings.  Read build/bench.png next to build/basicbench.png.
-bench: $(BUILD)/bench.png $(BUILD)/basicbench.png
+# The compiled half, a screenshot of the machine reporting its own timings.
+#
+# THE BASIC HALF IS RETIRED, AND THIS IS WHAT IT WAS.  bench/basic-bench.bas
+# and bench/basic-board.bas were blocks appended to a throwaway copy of the
+# frozen source with line 300 - the head of the stage intro - patched to jump
+# into them, so the boot-time tables were built and nothing else ran.  The
+# frozen edition itself was never modified.  Those blocks were deleted from
+# the repository, so `make bench` and `make basicboard` can no longer produce
+# the BASIC side and the rules that did have been removed rather than left to
+# fail with "no rule to make target".
+#
+# The numbers themselves stand.  They are a record of a measurement that was
+# taken, on the machine, against the same PAL jiffy clock, and are written up
+# in docs/lab-report.md section VI; the README table still reports them.  What
+# is gone is the ability to take that measurement AGAIN, which is a real loss
+# and is stated as one rather than quietly dropped.
+#
+# Reviving it needs both halves back: the .bas blocks, and the frozen edition
+# itself (urroyal.bas), which has never been published here.  The BASIC and
+# BASCYCLES variables went with them.
+bench: $(BUILD)/bench.png
 	@echo "compiled: $(BUILD)/bench.png"
-	@echo "basic   : $(BUILD)/basicbench.png"
+	@echo "basic   : retired - see the note above this target in the Makefile"
 
 $(BUILD)/bench.png: $(BUILD)/bench.prg
 	$(SHOT) $(BUILD)/bench.prg $@ $(CYCLES)
-
-# The BASIC baseline is built by patching a throwaway copy of the frozen
-# source: line 300 (the head of the stage intro) becomes a jump into an
-# appended benchmark block, so the boot-time tables are built and nothing
-# else runs.  The frozen edition itself is never modified.
-$(BUILD)/basicbench.prg: $(BASIC) bench/basic-bench.bas | $(BUILD)
-	sed 's/^300 .*/300 goto 9700/' $(BASIC) > $(BUILD)/basicbench.bas
-	cat bench/basic-bench.bas >> $(BUILD)/basicbench.bas
-	$(PETCAT) -w3 -o $@ -- $(BUILD)/basicbench.bas
-
-$(BUILD)/basicbench.png: $(BUILD)/basicbench.prg
-	$(SHOT) $(BUILD)/basicbench.prg $@ $(BASCYCLES)
 
 # --- renderer regression -------------------------------------------------
 # WHAT THIS USED TO BE, AND WHAT IT IS NOW.  READ THIS BEFORE TRUSTING IT.
@@ -371,21 +370,14 @@ conform-bless: $(BUILD)/demo.png
 	cp $(BUILD)/demo.png $(GOLDEN)
 	@echo "approved as the reference board: $(GOLDEN)"
 
-# The frozen edition's board, still buildable, because the comparison is
-# worth making by eye even though it is no longer an equality.
-basicboard: $(BUILD)/basicboard.png
-	@echo "the frozen edition's board: $(BUILD)/basicboard.png"
+# `basicboard` built the frozen edition's board so the comparison could be
+# made by eye once the pixel-equality oracle was retired.  It needed
+# bench/basic-board.bas, which has been deleted, so the eye comparison is
+# gone too and `conform` is now the golden snapshot alone.  See the note on
+# `bench` above.
 
 $(BUILD)/demo.png: $(BUILD)/demo.prg
 	$(SHOT) $(BUILD)/demo.prg $@ 200000000
-
-$(BUILD)/basicboard.prg: $(BASIC) bench/basic-board.bas | $(BUILD)
-	sed 's/^300 .*/300 goto 9700/' $(BASIC) > $(BUILD)/basicboard.bas
-	cat bench/basic-board.bas >> $(BUILD)/basicboard.bas
-	$(PETCAT) -w3 -o $@ -- $(BUILD)/basicboard.bas
-
-$(BUILD)/basicboard.png: $(BUILD)/basicboard.prg
-	$(SHOT) $(BUILD)/basicboard.prg $@ $(BASCYCLES)
 
 # --- deploy --------------------------------------------------------------
 # The d64 is the boot form for both VICE (`make run`) and the SD2IEC, and

@@ -434,7 +434,8 @@ the two orders of magnitude came from.
 Targets: `make` builds the game, `make debug` builds the same sources
 with `-DDEBUG` for the traced binary, `make check` tests the rules on the
 host, `make conform` diffs the rendered board against the frozen edition,
-`make bench` produces both halves of the measurement, `make test` boots the
+`make bench` produces the compiled half of the measurement (the BASIC half
+was retired with `bench/*.bas`), `make test` boots the
 game and screenshots a demo game in progress, and `make run` boots it in
 VICE.
 

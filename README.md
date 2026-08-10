@@ -205,7 +205,11 @@ budgets — has not been run.
 ## The measurement
 
 Taken on the machine, both editions against the same PAL jiffy clock, with
-`make bench`:
+`make bench`. The BASIC half of that command has since been retired — the
+harness it needed was deleted, and the frozen edition it patched was never
+published here — so the compiled column can be re-measured but the BASIC
+column can no longer be reproduced. It is a record of a measurement that was
+made, not a claim you can re-run today:
 
 | Primitive | BASIC 3.5 | Compiled | Speedup |
 |---|---:|---:|---:|
@@ -404,9 +408,11 @@ a fourteen-row board cannot be pixel-identical to a twelve-row one. What
 it checks now is a golden snapshot of our own renderer, which answers
 *has the board changed since somebody approved it* and not *does the
 board still match the specification*. Re-baselining is `make
-conform-bless`, deliberately a command you have to type on purpose, and
-`make basicboard` still builds the frozen edition's board so the
-comparison can be made by eye.
+conform-bless`, deliberately a command you have to type on purpose.
+
+`make basicboard` used to build the frozen edition's board so the
+comparison could still be made by eye. Its harness has since been deleted
+too, so that fallback is gone and the golden snapshot now stands alone.
 
 **That is a real loss and worth stating plainly**, because the old test
 earned its keep on the first run: it caught cc65's
@@ -452,7 +458,7 @@ make            # build/urfinkel.prg
 make music      # recompile tools/songs.mml -> src/song.h
 make check      # rule tests on the host, milliseconds
 make conform    # renderer conformance against the frozen edition
-make bench      # both halves of the measurement, as screenshots
+make bench      # the compiled half of the measurement, as a screenshot
 make test       # boot, let the attract start a demo, screenshot it
 make run        # boot in the VICE xplus4 emulator
 make run200     # ...at 200%, for watching a whole demo game
@@ -502,7 +508,6 @@ stopped rather than one that is merely wrong.
 | `src/kbdiag.c`, `src/kbhunt.c`, `src/kbtype.c` | keyboard instruments: the jiffy-clock verdict, the matrix signatures, the live probe |
 | `tools/mml.py`, `tools/songs.mml` | the music notation and its compiler |
 | `tools/viceshot.py` | headless screenshots that verify the program actually ran |
-| `bench/*.bas` | the blocks appended to a throwaway copy of `urroyal.bas` for the BASIC half |
 
 ## Documentation
 
