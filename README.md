@@ -1,33 +1,17 @@
 # UR FINKEL — the Royal Game of Ur for the Commodore Plus/4, compiled
 
-**[▶ Watch it running](https://youtu.be/Cw-SaWI046o)** — a video
-demonstration of the game on a Commodore Plus/4.
+## Play it
 
-## How to play
+**[▶ Play it in your browser](https://vonglurt.github.io/urfinkel/play/)** —
+a Commodore Plus/4 boots inside the page and runs the game. Nothing to
+install, nothing to download. Give it up to two minutes to load.
 
-Two builds. **Right-click → Save Link As** — a plain click may open the file
-in a browser tab rather than saving it.
+**[▶ Watch it running](https://youtu.be/Cw-SaWI046o)** — a video, if you would
+rather watch than play.
 
-| Download | What it is | Size |
-|---|---|---:|
-| [**urfinkel.d64**](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64) | a **disk image** with the program inside; on the machine, `dload"urfinkel"` | 174 848 B |
-| [**urfinkel.prg**](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg) | the **program** by itself, ready to attach or drag in | 56 511 B |
-
-Take the `.d64` if your emulator wants a disk, the `.prg` if it will accept a
-bare program. The `.prg` loads inside the machine's 64K, so tape or disk both
-have room for it.
-
-### In a browser
-
-[**plus4.cybernoid.xyz**](https://plus4.cybernoid.xyz/) runs a Plus/4 in a
-browser tab — no install, no login. Save one of the files above, then
-**ADD MEDIA** → choose it from your computer → double-click the entry to load
-and run it. Either file works; the `.prg` starts faster.
-
-### On the desktop
-
-**VICE** (`xplus4 urfinkel.d64`), **YAPE**, or **plus4emu** — all three take
-either file. Build-from-source instructions are further down.
+Downloads, and every other way to run it — a real Plus/4 over SD2IEC, VICE,
+YAPE, plus4emu — are in **[INSTALL.md](INSTALL.md)**. Building it yourself is
+[further down](#requirements).
 
 The compiled edition of **UR ROYAL**: the same ~4,600-year-old
 Royal Game of Ur, the same Finkel ruleset, the same screen — written in C
@@ -45,6 +29,32 @@ open on the menu](docs/media/01-title.png)
 
 *Boot lands here. The curtains open on a fanfare; left alone for two
 minutes, the cabinet starts playing by itself.*
+
+## The game
+
+The Royal Game of Ur is a race. Seven pieces a side travel a fixed path —
+**a walks 1 to 14 and b mirrors it** — and the first player to bring all seven
+home wins.
+
+You throw **four tetrahedral lots**, each with two tipped corners. Count the
+tips that land up: **0 to 4 steps**, and because it is four coins rather than a
+die, the distribution is not flat — 2 is common, 0 and 4 are one in sixteen
+each. A **nil throw loses the turn**, and there are no doubles to fall back on.
+
+A piece **enters on the square equal to the throw**, so a 4 enters directly
+onto rosette 4. Squares **5 to 12 are the shared middle**, and that is where
+the game is won and lost: land on a foe there and it is **sent back to the
+start**, losing everything it had walked. The three **rosettes — 4, 8 and 14 —
+are safe from capture and grant another throw**, which is what turns a good
+throw into a run of them.
+
+**Bearing off is exact**: a piece on 14 needs a 1, not a 1-or-more. A match
+ends when one side has all seven home.
+
+Five things sit on the menu: **vs URBOT** (the machine, with four doctrines it
+narrates as it plays), **two players**, **two players with real lots** — where
+you throw physical dice and type the count in — the **URBOT demo**, and the
+rules screen. See [Controls](#controls) for the keys.
 
 ## Where it stands
 
