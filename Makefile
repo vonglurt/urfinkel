@@ -244,9 +244,18 @@ anim:
 # compiler in milliseconds instead of a minute of emulation.  This is the
 # fast inner loop for rules work; the on-target self-test stays the final
 # word, because only it exercises the real machine.
+# The two host binaries are removed once they have passed.  They are the only
+# executables in build/ that are neither shipped nor screenshotted, they cost
+# well under a second to compile, and make will rebuild them the next time
+# anything they depend on changes anyway.
+#
+# ON FAILURE THEY ARE LEFT BEHIND, deliberately: make stops at the line that
+# failed, so a test that has just gone red is still sitting in build/ ready to
+# be re-run under a debugger, which is the moment you actually want it.
 check: $(BUILD)/test_rules $(BUILD)/test_kbd
 	./$(BUILD)/test_rules
 	./$(BUILD)/test_kbd
+	@rm -f $(BUILD)/test_rules $(BUILD)/test_kbd
 
 $(BUILD)/test_rules: test/test_rules.c $(SRC)/rules.c $(SRC)/rules.h | $(BUILD)
 	$(HOSTCC) -std=c99 -Wall -Wextra -O2 -I$(SRC) -o $@ \
