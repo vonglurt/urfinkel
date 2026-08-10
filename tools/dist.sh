@@ -101,11 +101,31 @@ for k in ("DATE", "COMPILE", "DISKIMAGE"):
 open(sys.argv[1], "w", encoding="utf-8").write(t)
 ' "$STAGE/RUNNING.txt"
 
-# --------------------------------------------------- the offline play page
-python3 - "$PAGE" "$STAGE/index.html" "$BEGIN" "$END" <<'PY'
+# ------------------------------------------------------ the emulator itself
+# Vendored rather than fetched at build time: the archives are byte-checked by
+# pre-push, and an archive whose contents arrive over the network is not
+# reproducible.  It is also somebody else's GPL code - see vendor/emulatorjs/
+# SOURCE.txt, which travels with it and is why this is a copy and not a link.
+[ -f vendor/emulatorjs/loader.js ] || {
+    echo "dist: vendor/emulatorjs is missing - run tools/vendor-emulator.sh" >&2
+    exit 1; }
+tools/vendor-emulator.sh --check >/dev/null || {
+    echo "dist: vendor/emulatorjs does not match its manifest - re-run" >&2
+    echo "      tools/vendor-emulator.sh" >&2
+    exit 1; }
+mkdir -p "$STAGE/emulatorjs"
+cp -R vendor/emulatorjs/. "$STAGE/emulatorjs/"
+
+# --------------------------------------------------- the two offline pages
+# TWO PAGES, because they answer different questions.  index.html is this
+# site's page with its addresses made local - it still pulls the emulator from
+# the CDN, which is the smaller download and always the current version.
+# index-offline.html additionally points at the emulatorjs/ folder beside it
+# and needs nothing from the network at all.
+python3 - "$PAGE" "$STAGE/index.html" "$BEGIN" "$END" "$STAGE/index-offline.html" <<'PY'
 import re, sys
 
-src, out, begin, end = sys.argv[1:5]
+src, out, begin, end, out_offline = sys.argv[1:6]
 html = open(src, encoding="utf-8").read()
 
 OFFLINE = """<p class="dl"><strong>The files are in this folder already</strong> —
@@ -150,19 +170,58 @@ if n != 1:
 #    own .note block, which has since been deleted; the bar is structural and
 #    cannot be reworded away without this build saying so.
 ANCHOR = '<div class="bar">'
-note = ('<div class="note">\n'
-        '  <strong>This is the offline copy.</strong> It loads\n'
-        '  <code>urfinkel.prg</code> from the folder it is in, so it must be\n'
-        '  served rather than opened directly — run <code>./start-html.sh</code>\n'
-        '  next to it. EmulatorJS, the emulator itself, is still fetched from\n'
-        '  its CDN, so this page needs a connection even though the game does\n'
-        '  not. With no connection, use VICE and the <code>.prg</code>.\n'
-        '</div>\n\n' + ANCHOR)
-html, n = re.subn(re.escape(ANCHOR), note, html, count=1)
-if n != 1:
-    sys.exit("dist: could not find %s to insert the offline note before" % ANCHOR)
 
-open(out, "w", encoding="utf-8").write(html)
+def with_note(page, body):
+    out, n = re.subn(re.escape(ANCHOR),
+                     '<div class="note">\n' + body + '</div>\n\n' + ANCHOR,
+                     page, count=1)
+    if n != 1:
+        sys.exit("dist: could not find %s to insert the note before" % ANCHOR)
+    return out
+
+CDN_NOTE = (
+    '  <strong>This is the local copy, using the online emulator.</strong> It\n'
+    '  loads <code>urfinkel.prg</code> from the folder it is in, so it must be\n'
+    '  served rather than opened directly — run <code>./start-html.sh</code>\n'
+    '  next to it. EmulatorJS itself is fetched from its CDN, so this page\n'
+    '  wants a connection even though the game does not.\n'
+    '  <br><br>\n'
+    '  <strong>No connection? Open <code>index-offline.html</code> instead</strong>\n'
+    '  — the same page running the emulator from the <code>emulatorjs/</code>\n'
+    '  folder beside it, with nothing fetched from anywhere.\n')
+
+OFFLINE_NOTE = (
+    '  <strong>This is the fully offline copy.</strong> The game, the\n'
+    '  emulator and this page all come from this folder — nothing is fetched\n'
+    '  from any network. It still has to be <em>served</em> rather than opened\n'
+    '  directly, because a <code>file://</code> page may not read the files\n'
+    '  beside it: run <code>./start-html.sh</code>.\n'
+    '  <br><br>\n'
+    '  The emulator in <code>emulatorjs/</code> is EmulatorJS, which is GPL-3.0\n'
+    '  and is not part of UR FINKEL — see <code>emulatorjs/SOURCE.txt</code>.\n'
+    '  <code>index.html</code> beside this file is the same page taking the\n'
+    '  emulator from its CDN instead, which is always the current version.\n')
+
+open(out, "w", encoding="utf-8").write(with_note(html, CDN_NOTE))
+
+# 4. The offline page differs by two addresses: where the loader comes from,
+#    and where the loader is told to look for everything else.  Both are
+#    rewritten from the same source rather than kept as a second copy of the
+#    page, so the two cannot drift apart.
+off, n = re.subn(r'(EJS_pathtodata\s*=\s*)"[^"]*";',
+                 r'\1"emulatorjs/";     // the folder beside this page', html)
+if n != 1:
+    sys.exit("dist: expected exactly one EJS_pathtodata, found %d" % n)
+
+off, n = re.subn(r'(s\.src\s*=\s*)"https://cdn\.emulatorjs\.org/[^"]*";',
+                 r'\1"emulatorjs/loader.js";', off)
+if n != 1:
+    sys.exit("dist: expected exactly one CDN loader URL, found %d" % n)
+
+if "cdn.emulatorjs.org" in off:
+    sys.exit("dist: the offline page still refers to the CDN somewhere")
+
+open(out_offline, "w", encoding="utf-8").write(with_note(off, OFFLINE_NOTE))
 PY
 
 # ----------------------------------------------------------------- the source
@@ -233,11 +292,12 @@ fingerprint = hashlib.sha256(
 TOP = {
     "urfinkel.prg":  "the compiled program - this is the game",
     "urfinkel.d64":  "a 1541 disk image holding the same program",
-    "index.html":    "the play page, pointed at the .prg beside it",
+    "index.html":    "the play page, emulator fetched from its CDN",
+    "index-offline.html": "the same page, emulator from emulatorjs/ - needs no network",
     "start-html.sh": "serves this folder on a free port and opens that page",
     "RUNNING.txt":   "how to run it, three ways, and how to rebuild it",
     "index.txt":     "this file",
-    "LICENCE":       "MIT - covers the binaries and the source alike",
+    "LICENCE":       "MIT - covers UR FINKEL: the binaries and src/",
 }
 
 out = []
@@ -281,9 +341,15 @@ w("")
 w("THE FILES")
 w("---------")
 w("")
-for name in ("urfinkel.prg", "urfinkel.d64", "index.html", "start-html.sh",
-             "RUNNING.txt", "index.txt", "LICENCE"):
-    w("%-18s %s" % (name, TOP[name]))
+for name in ("urfinkel.prg", "urfinkel.d64", "index.html", "index-offline.html",
+             "start-html.sh", "RUNNING.txt", "index.txt", "LICENCE"):
+    w("%-20s %s" % (name, TOP[name]))
+w("%-20s %s" % ("emulatorjs/", "EmulatorJS - GPL-3.0, NOT part of UR FINKEL"))
+w("")
+w("The emulator in emulatorjs/ is somebody else's work under a different")
+w("licence, included so index-offline.html needs no network. LICENCE above")
+w("covers UR FINKEL only; emulatorjs/LICENSE and emulatorjs/SOURCE.txt cover")
+w("that folder and say where its source is.")
 w("")
 w("")
 w("src/ - THE SOURCE")
@@ -309,10 +375,14 @@ find "$DIST" -exec touch -t "$(echo "$stamp" | tr -d '-')0000" {} +
 # which is what keeps the member order the same on someone else's machine.
 SRCMEMBERS=$(cd "$STAGE" && ls src/*.c src/*.h src/*.s | LC_ALL=C sort | sed 's|^|urfinkel/|' | tr '\n' ' ')
 
+# The vendored emulator, found rather than listed: its file set is decided by
+# tools/vendor-emulator.sh and would otherwise have to be kept in step here.
+EJSMEMBERS=$(cd "$STAGE" && find emulatorjs -type f | LC_ALL=C sort | sed 's|^|urfinkel/|' | tr '\n' ' ')
+
 MEMBERS="urfinkel/LICENCE urfinkel/RUNNING.txt urfinkel/index.html \
-         urfinkel/index.txt urfinkel/start-html.sh \
+         urfinkel/index.txt urfinkel/index-offline.html urfinkel/start-html.sh \
          urfinkel/urfinkel.d64 urfinkel/urfinkel.prg \
-         $SRCMEMBERS"
+         $SRCMEMBERS $EJSMEMBERS"
 
 rm -f "$ZIP" "$TGZ"
 

@@ -319,6 +319,9 @@ from the repository.">
   }
   footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #3a2f16;
            font-size: .8rem; color: #b3a179; }
+  /* The colophon: quieter than the byline above it, and the last thing on
+     the page rather than a claim competing with the game. */
+  .colophon { display: block; margin-top: .6rem; font-size: .75rem; color: #6f6350; }
 </style>
 </head>
 <body>
@@ -403,24 +406,24 @@ the download to check it arrived whole.</p>
     <a class="file zip" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>urfinkel.zip</span></a>
     <span class="tag">plays offline on a PC</span>
     <span class="tag">full source included</span>
-    <span class="what">the whole collection, zipped — 233 743 bytes — built <b>2026-08-10</b></span>
+    <span class="what">the whole collection, zipped — 2 024 065 bytes — built <b>2026-08-10</b></span>
     <span class="use">Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. Everything on this page except the emulator itself, which is why the browser copy still wants a connection and VICE with the <code>.prg</code> does not.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip</a>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>9598b0b49c5f4ed76c23a3f8c384b990d9cdea7b10baddab46d07c47f5144773</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
-      <dt>MD5</dt><dd><code>6e81a0197d690556c0b0049ba045ce1e</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>cea1d3992ad546e0c1db520dcc07c6b6129d0ce1070cdcc9c30c3f7f9f3cc184</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
+      <dt>MD5</dt><dd><code>fe5430bd83703be81aaac89744e26bfc</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
     </dl>
   </li>
   <li>
     <a class="file targz" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>urfinkel.tar.gz</span></a>
     <span class="tag">plays offline on a PC</span>
     <span class="tag">full source included</span>
-    <span class="what">the same collection as a gzipped tar, for Linux and macOS — 215 202 bytes — built <b>2026-08-10</b></span>
+    <span class="what">the same collection as a gzipped tar, for Linux and macOS — 2 004 358 bytes — built <b>2026-08-10</b></span>
     <span class="use">Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. Everything on this page except the emulator itself, which is why the browser copy still wants a connection and VICE with the <code>.prg</code> does not.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz</a>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>b4442e5ced85afeccbb508791a6174cd493b755be6ff186a1eb566876a5a1d49</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.sha256">urfinkel.tar.gz.sha256</a></dd>
-      <dt>MD5</dt><dd><code>b2e6dc72c7fa0cb9a6eaf733b7ef73ca</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.md5">urfinkel.tar.gz.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>05b267c7a825694b6198efe697e9ee27a1723034c858edd338c5e15f9fccabfd</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.sha256">urfinkel.tar.gz.sha256</a></dd>
+      <dt>MD5</dt><dd><code>487e01ecb66602f8d578dc2e90d3db7d</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.md5">urfinkel.tar.gz.md5</a></dd>
     </dl>
   </li>
 </ul>
@@ -605,6 +608,7 @@ and is loaded from its CDN. It is not part of this project.</p>
 Written by <strong>Paul Richeson</strong> —
 <a href="https://github.com/vonglurt">vonglurt</a> on GitHub.
 Contact: paulr@sdf.org
+<span class="colophon">Written in C for the Commodore Plus/4.</span>
 </footer>
 
 </main>

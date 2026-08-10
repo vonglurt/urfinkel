@@ -8,8 +8,11 @@ This archive holds:
 
     urfinkel.prg    the program alone
     urfinkel.d64    a disk image holding the same program
-    index.html      the play page, pointed at the .prg next to it
+    index.html      the play page, using the emulator from its CDN
+    index-offline.html  the same page, using the emulator in emulatorjs/
     index.txt       what every file here is, and which build this is
+    emulatorjs/     EmulatorJS itself - GPL-3.0, NOT part of UR FINKEL,
+                    see emulatorjs/SOURCE.txt
     start-html.sh   serves this folder and opens that page
     src/            the C and 6502 assembly the program was built from
     LICENCE         MIT - it covers the source in src/ as well
@@ -104,11 +107,21 @@ If none of them is found the script says all of this again rather than
 failing with "command not found", and if the server it picked dies on
 startup it prints what that server said instead of guessing.
 
-ONE THING STILL COMES FROM THE INTERNET.  The emulator itself - EmulatorJS,
-which is not part of this project and carries its own licence - is fetched
-from its CDN when the page loads.  The game is local; the machine it runs
-on is not.  With no connection, use VICE and the .prg instead, which needs
-nothing but the two files in front of you.
+NOTHING HERE NEEDS THE INTERNET.  index-offline.html runs the emulator out
+of the emulatorjs/ folder beside it, so the game, the machine it runs on
+and the page around them all come off your own disk.  start-html.sh opens
+that page when it is present.
+
+index.html is the same page taking the emulator from its CDN instead.  It
+is worth keeping for one reason: it is always the current EmulatorJS,
+where the copy in emulatorjs/ is the version this collection was built
+with and will age.
+
+THE EMULATOR IS NOT PART OF UR FINKEL, and is not MIT.  EmulatorJS is
+GPL-3.0 and the Plus/4 core inside it is VICE, GPL-2.0-or-later.  They sit
+alongside this project rather than inside it - each keeps its own licence -
+and the full text, the version and where to get the corresponding source
+are in emulatorjs/LICENSE and emulatorjs/SOURCE.txt.
 
 The same page is hosted, if you would rather not run anything:
 

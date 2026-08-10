@@ -1,0 +1,27 @@
+EmulatorJS 4.2.3 - the emulator this project's play page runs on.
+
+NOT PART OF UR FINKEL.  UR FINKEL is MIT licensed.  These files are not:
+
+  EmulatorJS            GPL-3.0
+  vice_xplus4 core      VICE, GPL-2.0-or-later, built for EmulatorJS
+
+They are included here, and in the downloadable collections, so that the
+play page works with no network at all.  Bundling them alongside an MIT
+program is mere aggregation: each half keeps its own licence.
+
+The full GPL-3.0 text is in LICENSE beside this file.
+
+CORRESPONDING SOURCE, as the GPL requires it be offered:
+
+    https://github.com/EmulatorJS/EmulatorJS         (tag v4.2.3)
+    https://github.com/libretro/vice-libretro        (the core)
+    https://vice-emu.sourceforge.io/                 (VICE itself)
+
+These files were downloaded verbatim from
+
+    https://cdn.emulatorjs.org/4.2.3/data/
+
+and were not modified.  MANIFEST.sha256 beside this file records the
+SHA-256 of every one of them; tools/vendor-emulator.sh --check verifies
+them, and re-running that script fetches them again from the same pinned
+version.

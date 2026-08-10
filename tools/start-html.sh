@@ -113,12 +113,27 @@ NOSERVER
     exit 1
 fi
 
+# WHICH PAGE.  index-offline.html runs the emulator out of the emulatorjs/
+# folder beside it and needs nothing from the network; index.html takes it
+# from a CDN.  Prefer the offline one when it is there, because this script is
+# what someone runs after unpacking the collection, and the collection carries
+# its own emulator precisely so that works with the wire pulled out.
+page=index.html
+if [ -f "$dir/index-offline.html" ] && [ -f "$dir/emulatorjs/loader.js" ]; then
+    page=index-offline.html
+fi
+
 port=$(find_port)
-url="http://localhost:$port/"
+url="http://localhost:$port/$page"
 
 echo "UR FINKEL - serving $dir"
 echo "           $url"
 echo "           using $label"
+if [ "$page" = "index-offline.html" ]; then
+    echo "           emulator from ./emulatorjs - nothing is fetched"
+else
+    echo "           emulator from its CDN - this page wants a connection"
+fi
 echo "           Ctrl-C to stop."
 echo
 
