@@ -113,6 +113,14 @@ if n != 1:
 
 # 3. Say plainly that the emulator itself still comes from a CDN. An offline
 #    bundle that quietly needs the network is worse than one that says so.
+#
+#    Anchored on the control bar, so it lands under the screen AND under the
+#    click-me line rather than between them. That line opens with an arrow
+#    pointing up at the screen, and anything inserted above it becomes what
+#    the arrow appears to mean. It used to be anchored on the hosted page's
+#    own .note block, which has since been deleted; the bar is structural and
+#    cannot be reworded away without this build saying so.
+ANCHOR = '<div class="bar">'
 note = ('<div class="note">\n'
         '  <strong>This is the offline copy.</strong> It loads\n'
         '  <code>urfinkel.prg</code> from the folder it is in, so it must be\n'
@@ -120,10 +128,10 @@ note = ('<div class="note">\n'
         '  next to it. EmulatorJS, the emulator itself, is still fetched from\n'
         '  its CDN, so this page needs a connection even though the game does\n'
         '  not. With no connection, use VICE and the <code>.prg</code>.\n'
-        '</div>\n\n<div class="note">')
-html, n = re.subn(r'<div class="note">', note, html, count=1)
+        '</div>\n\n' + ANCHOR)
+html, n = re.subn(re.escape(ANCHOR), note, html, count=1)
 if n != 1:
-    sys.exit("dist: could not find the note block to insert before")
+    sys.exit("dist: could not find %s to insert the offline note before" % ANCHOR)
 
 open(out, "w", encoding="utf-8").write(html)
 PY
