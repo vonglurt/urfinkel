@@ -10,7 +10,8 @@ This archive holds:
     urfinkel.d64    a disk image holding the same program
     index.html      the play page, pointed at the .prg next to it
     start-html.sh   serves this folder and opens that page
-    LICENCE         MIT
+    src/            the C and 6502 assembly the program was built from
+    LICENCE         MIT - it covers the source in src/ as well
     RUNNING.txt     this file
 
 Either binary plays the whole game.  Which one you want depends on what you
@@ -90,9 +91,42 @@ the file it names and run:
     md5sum -c urfinkel.prg.md5
 
 
-THE SOURCE
+BUILDING IT YOURSELF
 ---------------------------------------------------------------------------
+
+src/ holds everything the program is made of - the C, the headers, and the
+two assembly files (blit.s, the blitter; irq.s, the raster interrupt) that
+the rest is linked against.
+
+You need cc65, which gives you cl65:
+
+    brew install cc65          # macOS
+    apt install cc65           # Debian, Ubuntu
+
+Then, from the folder holding src/, this exact command rebuilds
+urfinkel.prg - it is the one that produced the copy in this archive, and
+the build date is passed in rather than taken from today's clock so that
+what comes out is byte-for-byte the same file:
+
+@COMPILE@
+
+And to pack it back into a disk image, with c1541 from VICE:
+
+@DISKIMAGE@
+
+The output is named urfinkel-rebuilt.prg rather than urfinkel.prg so that
+the file you started with survives to be compared against:
+
+    cmp urfinkel-rebuilt.prg urfinkel.prg && echo identical
+
+That should report nothing but "identical".  If it does not, the compiler
+version is the first thing to check - see CHECKSUMS.txt on GitHub, which
+records the exact cl65 this was built with.
+
+The full project - the Makefile, the tests, the reports, the history - is
+at:
 
     https://github.com/vonglurt/urfinkel
 
-Written in C and 6502 assembly.  MIT licensed; see LICENCE.
+MIT licensed; see LICENCE, which covers the source here as well as the
+binaries.

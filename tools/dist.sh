@@ -70,7 +70,36 @@ cp "$BUILD/urfinkel.prg" "$BUILD/urfinkel.d64" "$STAGE/"
 cp LICENSE "$STAGE/LICENCE"
 cp tools/start-html.sh "$STAGE/start-html.sh"
 chmod +x "$STAGE/start-html.sh"
-sed "s/@DATE@/$stamp/g" tools/RUNNING.txt.in > "$STAGE/RUNNING.txt"
+# The build commands come from `make buildinfo` rather than being written out
+# again here, so the notes cannot drift from the recipe.  BUILD_DATE is passed
+# so the flags quoted are the ones that produced THIS binary; without it the
+# notes would print today's date into a command that rebuilds a different file.
+info=$(make buildinfo BUILD_DATE="$stamp" 2>/dev/null) || {
+    echo "dist: 'make buildinfo' failed - is the toolchain installed?" >&2; exit 1; }
+field() { printf '%s\n' "$info" | awk -F'\t' -v k="$1" '$1==k{print $2; exit}'; }
+
+# awk rather than sed for the substitution: the compile line contains slashes
+# and quotes, and picking a sed delimiter it cannot contain is a losing game.
+# THE PATHS ARE REWRITTEN FOR THE ARCHIVE'S LAYOUT.  make builds into build/,
+# which does not exist once this is unpacked, so a command quoting it would
+# fail on its output file the moment anyone tried it.  The rebuilt artefacts
+# are also given -rebuilt names rather than the shipped ones, so running the
+# command leaves you with something to compare against instead of quietly
+# overwriting the file you were checking.
+COMPILE="    $(field compile | sed 's|-o build/urfinkel\.prg|-o urfinkel-rebuilt.prg|')" \
+DISKIMAGE="    $(field diskimage | sed -e 's|d64 build/urfinkel\.d64|d64 urfinkel-rebuilt.d64|' \
+                                       -e 's|-write build/urfinkel\.prg|-write urfinkel-rebuilt.prg|')" \
+STAMP="$stamp" \
+python3 -c '
+import os, sys
+t = open("tools/RUNNING.txt.in", encoding="utf-8").read()
+for k in ("DATE", "COMPILE", "DISKIMAGE"):
+    v = os.environ["STAMP" if k == "DATE" else k]
+    if "@%s@" % k not in t:
+        sys.exit("dist: RUNNING.txt.in has no @%s@ placeholder" % k)
+    t = t.replace("@%s@" % k, v)
+open(sys.argv[1], "w", encoding="utf-8").write(t)
+' "$STAGE/RUNNING.txt"
 
 # --------------------------------------------------- the offline play page
 python3 - "$PAGE" "$STAGE/index.html" "$BEGIN" "$END" <<'PY'
@@ -136,12 +165,26 @@ if n != 1:
 open(out, "w", encoding="utf-8").write(html)
 PY
 
+# ----------------------------------------------------------------- the source
+# THE .s FILES COME TOO, though only .c and .h were asked for.  blit.s and
+# irq.s are linked into the program - the blitter and the raster interrupt -
+# so a src/ without them is a source tree that cannot be built, which is a
+# worse thing to ship than none at all.
+mkdir -p "$STAGE/src"
+cp src/*.c src/*.h src/*.s "$STAGE/src/"
+
 # --------------------------------------------------------------- reproduce
 # One mtime for everything, taken from the build rather than from the clock.
+# Run after the source is staged, so those files are stamped too.
 find "$DIST" -exec touch -t "$(echo "$stamp" | tr -d '-')0000" {} +
 
+# LC_ALL=C so the sort is byte order rather than whatever the locale thinks,
+# which is what keeps the member order the same on someone else's machine.
+SRCMEMBERS=$(cd "$STAGE" && ls src/*.c src/*.h src/*.s | LC_ALL=C sort | sed 's|^|urfinkel/|' | tr '\n' ' ')
+
 MEMBERS="urfinkel/LICENCE urfinkel/RUNNING.txt urfinkel/index.html \
-         urfinkel/start-html.sh urfinkel/urfinkel.d64 urfinkel/urfinkel.prg"
+         urfinkel/start-html.sh urfinkel/urfinkel.d64 urfinkel/urfinkel.prg \
+         $SRCMEMBERS"
 
 rm -f "$ZIP" "$TGZ"
 

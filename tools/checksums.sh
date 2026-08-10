@@ -84,7 +84,7 @@ what() {
     case "$1" in
         *.prg)    echo "the program alone, for the $2" ;;
         *.d64)    echo "a disk image, for the $2" ;;
-        *.zip)    echo "the whole collection, zipped — the program, the disk image, this page with a script that serves it, the licence and notes" ;;
+        *.zip)    echo "the whole collection, zipped — the program, the disk image, the C and 6502 source it was built from, this page with a script that serves it, the licence and notes" ;;
         *.tar.gz) echo "the same collection as a gzipped tar, for Linux and macOS" ;;
     esac
 }
@@ -93,10 +93,13 @@ what() {
 # play this on a PC with the network unplugged - and that is the reason to
 # take one rather than a loose binary, so it is said on the button instead of
 # left to be inferred from a file list.
+# One label per line; the caller emits a span for each.
 tag() {
     case "$1" in
-        *.zip|*.tar.gz) echo 'plays offline on a PC' ;;
-        *)              echo '' ;;
+        *.zip|*.tar.gz)
+            echo 'plays offline on a PC'
+            echo 'full source included' ;;
+        *) ;;
     esac
 }
 
@@ -349,8 +352,9 @@ machine=$(field target | sed -e 's/^[^(]*(//' -e 's/)$//')
         # buttons gradients running opposite ways without counting children.
         printf '    <a class="file %s" href="%s/raw/main/%s" download>%s<span>%s</span></a>\n' \
             "$(kind "$b")" "$REPO" "$f" "$(icon "$b")" "$b"
-        t=$(tag "$b")
-        [ -z "$t" ] || printf '    <span class="tag">%s</span>\n' "$t"
+        tag "$b" | while IFS= read -r t; do
+            [ -z "$t" ] || printf '    <span class="tag">%s</span>\n' "$t"
+        done
         printf '    <span class="what">%s — %s bytes — built <b>%s</b></span>\n' \
             "$(what "$b" "$machine")" "$(group "$(size_of "$f")")" "$stamp"
         # The address the button goes to, spelled out.  A button hides where it
