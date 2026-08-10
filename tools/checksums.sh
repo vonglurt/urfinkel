@@ -84,8 +84,19 @@ what() {
     case "$1" in
         *.prg)    echo "the program alone, for the $2" ;;
         *.d64)    echo "a disk image, for the $2" ;;
-        *.zip)    echo "everything, zipped — both of the above, the play page, a script to serve it, and notes" ;;
-        *.tar.gz) echo "the same collection as a gzipped tar" ;;
+        *.zip)    echo "the whole collection, zipped — the program, the disk image, this page with a script that serves it, the licence and notes" ;;
+        *.tar.gz) echo "the same collection as a gzipped tar, for Linux and macOS" ;;
+    esac
+}
+
+# The archives are the offline kit - the program, a disk image and VICE will
+# play this on a PC with the network unplugged - and that is the reason to
+# take one rather than a loose binary, so it is said on the button instead of
+# left to be inferred from a file list.
+tag() {
+    case "$1" in
+        *.zip|*.tar.gz) echo 'plays offline on a PC' ;;
+        *)              echo '' ;;
     esac
 }
 
@@ -338,6 +349,8 @@ machine=$(field target | sed -e 's/^[^(]*(//' -e 's/)$//')
         # buttons gradients running opposite ways without counting children.
         printf '    <a class="file %s" href="%s/raw/main/%s" download>%s<span>%s</span></a>\n' \
             "$(kind "$b")" "$REPO" "$f" "$(icon "$b")" "$b"
+        t=$(tag "$b")
+        [ -z "$t" ] || printf '    <span class="tag">%s</span>\n' "$t"
         printf '    <span class="what">%s — %s bytes — built <b>%s</b></span>\n' \
             "$(what "$b" "$machine")" "$(group "$(size_of "$f")")" "$stamp"
         # The address the button goes to, spelled out.  A button hides where it

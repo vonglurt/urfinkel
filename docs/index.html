@@ -153,6 +153,19 @@ from the repository.">
     stroke-linecap: round; stroke-linejoin: round;
   }
 
+  /* The badge on the archive rows. Sits on the button's own line rather than
+     under it, so it reads as part of the label and not as the description. */
+  .tag {
+    display: inline-block; margin-left: .7rem; vertical-align: 2px;
+    font-size: .62rem; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--loam); background: var(--moss);
+    border-radius: 2px; padding: .22rem .5rem; white-space: nowrap;
+  }
+  @media (max-width: 30rem) {
+    /* On a narrow column the badge would push the button off the edge, so it
+       drops to its own line instead of forcing the page to scroll. */
+    .tag { display: block; margin: .5rem 0 0; width: fit-content; }
+  }
   .what { display: block; color: var(--moss-dim); font-size: .8rem; margin-top: .5rem; }
   .what b { color: var(--moss); font-weight: normal; }
   /* The address the button hides, written out.  Selectable in one gesture for
@@ -224,10 +237,12 @@ you are going to run it on:</p>
   <li><b>A floppy emulator, or the real machine.</b> Take the <b>.d64</b>, put
       it on an SD2IEC or a Pi1541, mount it as a disk and
       <code>dload"urfinkel"</code>.</li>
-  <li><b>Everything, to keep.</b> Take the <b>.zip</b> or the
-      <b>.tar.gz</b>. Both hold the program, the disk image, this page with a
-      script that serves it on your own machine, the licence, and a page of
-      notes on running each one.</li>
+  <li><b>Offline, on a PC.</b> Take the <b>.zip</b> or the <b>.tar.gz</b>.
+      Both hold the program, the disk image, this page with a script that
+      serves it on your own machine, the licence, and notes on running each
+      one — everything on this page except the emulator, which is why the
+      browser copy still wants a connection and VICE with the
+      <code>.prg</code> does not.</li>
 </ul>
 <p class="dl">Clicking a binary saves it. The checksum files below each one
 open in the browser instead; save one next to the download to check it arrived
@@ -255,20 +270,22 @@ whole.</p>
   </li>
   <li>
     <a class="file zip" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>urfinkel.zip</span></a>
-    <span class="what">everything, zipped — both of the above, the play page, a script to serve it, and notes — 78 385 bytes — built <b>2026-08-10</b></span>
+    <span class="tag">plays offline on a PC</span>
+    <span class="what">the whole collection, zipped — the program, the disk image, this page with a script that serves it, the licence and notes — 78 640 bytes — built <b>2026-08-10</b></span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip</a>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>2b7f7c3a7efec0934b881fc3d6375a5aa3688f262af4a2b42f72bc25eaded3d5</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
-      <dt>MD5</dt><dd><code>55be2d883cf3f05ad7cffb41ae54a961</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>a31bd8cb5b7002dbaaf9036d5bbe2ed105b1583d226fc6e48d5a8c180aa463d6</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
+      <dt>MD5</dt><dd><code>b572721ffe72088465927b3310596bc0</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
     </dl>
   </li>
   <li>
     <a class="file targz" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>urfinkel.tar.gz</span></a>
-    <span class="what">the same collection as a gzipped tar — 76 730 bytes — built <b>2026-08-10</b></span>
+    <span class="tag">plays offline on a PC</span>
+    <span class="what">the same collection as a gzipped tar, for Linux and macOS — 76 962 bytes — built <b>2026-08-10</b></span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz</a>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>bc2af5b4fe329b6cf34bd5d0db4278880fa711da420076629f3019a708a77f7d</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.sha256">urfinkel.tar.gz.sha256</a></dd>
-      <dt>MD5</dt><dd><code>7cc3d926056adb267c3268e5ca61548b</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.md5">urfinkel.tar.gz.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>77fa3cc81de8cff2de97fdd9f60af669269ecf935e84365a7d8a41957068a064</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.sha256">urfinkel.tar.gz.sha256</a></dd>
+      <dt>MD5</dt><dd><code>ac4a2a9f7300930a3b5748125758dfc9</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.md5">urfinkel.tar.gz.md5</a></dd>
     </dl>
   </li>
 </ul>
