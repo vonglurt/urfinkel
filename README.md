@@ -1,9 +1,30 @@
 # UR FINKEL — the Royal Game of Ur for the Commodore Plus/4, compiled
 
-HOW TO PLAY:
-in the build folder, we have the compiled output. 
-Look for urfinkel.d64 for the disk iamge to mount; image has prg inside.
-Look for urfinkel.prg for the program to drag onto to VICE
+## How to play
+
+Two builds. **Right-click → Save Link As** — a plain click may open the file
+in a browser tab rather than saving it.
+
+| Download | What it is | Size |
+|---|---|---:|
+| [**urfinkel.d64**](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64) | a **disk image** with the program inside; on the machine, `dload"urfinkel"` | 174 848 B |
+| [**urfinkel.prg**](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg) | the **program** by itself, ready to attach or drag in | 56 511 B |
+
+Take the `.d64` if your emulator wants a disk, the `.prg` if it will accept a
+bare program. The `.prg` loads inside the machine's 64K, so tape or disk both
+have room for it.
+
+### In a browser
+
+[**plus4.cybernoid.xyz**](https://plus4.cybernoid.xyz/) runs a Plus/4 in a
+browser tab — no install, no login. Save one of the files above, then
+**ADD MEDIA** → choose it from your computer → double-click the entry to load
+and run it. Either file works; the `.prg` starts faster.
+
+### On the desktop
+
+**VICE** (`xplus4 urfinkel.d64`), **YAPE**, or **plus4emu** — all three take
+either file. Build-from-source instructions are further down.
 
 The compiled edition of [UR ROYAL](../urroyal-basic/): the same ~4,600-year-old
 Royal Game of Ur, the same Finkel ruleset, the same screen — written in C
