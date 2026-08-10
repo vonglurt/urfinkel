@@ -36,7 +36,15 @@
 #include "plus4.h"
 #include "music.h"
 #include "dice.h"                       /* rnd_below: the opening banks   */
+/* The traced build carries fewer beds: -DDEBUG costs more than the machine
+** has spare, and the shipped game keeps its music rather than paying for a
+** bench tool.  Same engine, same flags, a shorter rotation.  See
+** tools/bedtrim.py. */
+#ifdef DEBUG
+#include "song_dbg.h"
+#else
 #include "song.h"
+#endif
 #include "dbg.h"
 
 /* --- the interrupt's tables (irq.s) ----------------------------------- */

@@ -298,7 +298,13 @@ PY
 # so a src/ without them is a source tree that cannot be built, which is a
 # worse thing to ship than none at all.
 mkdir -p "$STAGE/src"
-cp src/*.c src/*.h src/*.s "$STAGE/src/"
+# NOT *_dbg*: those are generated only when someone runs `make debug`, so
+# copying whatever happens to be in src/ would make the archive depend on
+# whether a bench tool had been built - and the archives are byte-checked.
+for f in src/*.c src/*.h src/*.s; do
+    case "$f" in *_dbg*) continue ;; esac
+    cp "$f" "$STAGE/src/"
+done
 
 # -------------------------------------------------------------- the index
 # A map of the archive: what every file in it is, and what build it belongs

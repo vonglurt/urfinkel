@@ -41,7 +41,7 @@ src/rules.c          b50fcb77ba6e57d7b57566337f1e826e2694ec02
 src/text.c           31c85960fd0ee442ce94c53fc55f2e6517386a16
 src/dice.c           d6d8fc9a1ac5be4c2e0f73ee6a5fe6d775f57f46
 src/urbot.c          d255bc9c45f1901573257d2163fac4f55b9afc26
-src/music.c          e8854c8f6fb30d5870d5e7b3b9b9feb9a2b42010
+src/music.c          f404a98eccf27bb07dc8fe0429f510b6c98732ac
 src/front.c          5a670bc3b3a4ffb58e867a7246b9c5b73579ec63
 src/kbd.c            158262d393689eac3f4be594446d2c2cc3803d31
 src/etch.c           9e099dc655b6569d77552017f2b4126fedbc7ddc
@@ -54,7 +54,7 @@ src/rules.h          43a41c68160322e26191cdd19f6a3801583d51f9
 src/text.h           82196678a2e819214bc6e8ec3e2e8dd06335f183
 src/dice.h           fdaaa915f91ac703db2f71256245d67a19c2d456
 src/urbot.h          0345816811c0b55a8ac46c60124b74c9c0e45998
-src/music.h          bcc88bfbe93496018c4dc4a97ce1678b5351459e
+src/music.h          948bff972db6418ef97a2ac6c730d48895bc05d9
 src/front.h          40aefbee851dbe130fd2d8add4be005cbf6d1053
 src/kbd.h            a924aadbd4ef2310fac715407ca76e0595ea6de6
 src/etch.h           cd0ce028ccb171d269543419729d620b731c950c
@@ -76,16 +76,16 @@ urfinkel.d64
   git blob     7c83ffc43e1349b94dfa5199c669e849c94719ce
 
 urfinkel.zip
-  size         4 934 427 bytes
-  md5          1457fc6f7bc149ffea1bd64334479ec0
-  sha256       b5d32d4815675b3da43111384749653dbe6dbf1f5c91e642fda4fa5336252ab9
-  git blob     d034d29594bd9e8b3b30e222164394d486bd8978
+  size         4 934 604 bytes
+  md5          11e8143b4eea6aed04ad478ffc95a844
+  sha256       bedd56500bbe00f9334c5230c4b318cbd848541ffebc35d52e66d5bcb42242ea
+  git blob     7bc52b9c1bb67c350fae95e6f280f04bd8ebab8a
 
 urfinkel.tar.gz
-  size         4 914 596 bytes
-  md5          5619d85e08eb13fdc6589e95d7124eb4
-  sha256       c4432b8c19625b5cdae32cfc6a8fca9cded15aad332b72f83b6a2f088639f212
-  git blob     173e1ba36210a70763d5096bd781a25f9c65bb7b
+  size         4 914 726 bytes
+  md5          d53f75fb0f2bd0b1e78a658b9405c146
+  sha256       2a0fc8ede2073d26d0cddcce0fce7c6cf33de22b939ec71d5ca0789e18396f3e
+  git blob     59c4a379550a04680e2873bbedae9ee834c2c804
 
 VERIFYING A DOWNLOAD
 --------------------

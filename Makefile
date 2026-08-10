@@ -94,7 +94,37 @@ $(GAME): $(SRC)/game.c $(CORE) $(HDRS) | $(BUILD)
 #   f1  overlay on/off   f2  filter a subsystem   f3  breadcrumb   f4  step
 debug: $(DBGGAME)
 
-$(DBGGAME): $(SRC)/game.c $(CORE) $(HDRS) | $(BUILD)
+# THE TRACED BUILD CARRIES FEWER BEDS.  -DDEBUG costs 3 671 bytes against
+# 324 free, and the choice was between taking music out of the shipped game
+# or out of this build alone.  The game keeps it.  DBGBEDS is how many of the
+# transcribed beds the traced build compiles; the rest of the program - the
+# engine, the flags, the optimiser - is identical to production, which is the
+# property that makes a trace worth reading.
+DBGBEDS ?= 12
+
+# The count is a variable, not a file, so make cannot see it change.  The
+# stamp gives it one: it is rewritten only when the value differs, so its
+# timestamp moves exactly when the trimmed set should be rebuilt.  Without
+# this, `make DBGBEDS=13 debug` quietly relinked the previous set.
+.PHONY: force
+# RUN EVERY TIME, and let the tool decide whether anything changed.  DBGBEDS
+# is a variable, and make cannot see a variable change - a stamp file was the
+# obvious fix and did not work: the stamp and the files it governs land in the
+# same second, and make reads equal timestamps as up to date.  bedtrim.py
+# writes only when the content actually differs, so running it unconditionally
+# costs a few milliseconds and relinks the traced build exactly when it should.
+.PHONY: force
+$(SRC)/song_beds_dbg.h $(TOOLS)/songs-midi-dbg.mml: force
+	$(PYTHON) $(TOOLS)/bedtrim.py $(DBGBEDS) \
+		$(TOOLS)/songs-midi.mml $(SRC)/song_beds.h \
+		$(TOOLS)/songs-midi-dbg.mml $(SRC)/song_beds_dbg.h
+
+$(SRC)/song_dbg.h: $(TOOLS)/mml.py $(TOOLS)/songs.mml $(TOOLS)/songs-midi-dbg.mml
+	$(PYTHON) $(TOOLS)/mml.py $(TOOLS)/songs.mml $(TOOLS)/songs-midi-dbg.mml $@
+
+DBGHDRS = $(SRC)/song_dbg.h $(SRC)/song_beds_dbg.h
+
+$(DBGGAME): $(SRC)/game.c $(CORE) $(HDRS) $(DBGHDRS) | $(BUILD)
 	$(CL65) $(CC65FLAGS) -DDEBUG -o $@ $(SRC)/game.c $(CORE)
 	@echo "traced build: $@  (f1 overlay, f2 filter, f3 crumb, f4 step)"
 
@@ -140,7 +170,7 @@ $(BUILD)/demo.prg: $(SRC)/demo.c $(CORE) $(HDRS) | $(BUILD)
 # SEVEN bytes free before this was lowered; it has 364 now, which is thin
 # enough that the next feature should expect to lower this again.
 #
-# WHAT IT DOES NOT PAY FOR IS `make debug`, and the figure here was wrong.
+# WHAT IT DOES NOT PAY FOR IS `make debug` - see DBGBEDS, which does.
 # Measured 2026-08-10 by linking both with a reduced stack to get past the
 # overflow and reading the maps: -DDEBUG costs 3 671 bytes - 2 936 of CODE,
 # 246 of RODATA, 374 of BSS, 2 of DATA - against 324 bytes free, so the
@@ -150,19 +180,30 @@ $(BUILD)/demo.prg: $(SRC)/demo.c $(CORE) $(HDRS) | $(BUILD)
 # midibed.py, which transcribes assets/midi - and assets/ is not published
 # here.  `make music` finds nothing to do; tools/songs-midi.mml and
 # src/song.h are committed as generated artefacts whose sources are absent.
-# Lowering the number below changes nothing on its own.  Buying those 3 347
-# bytes means trimming beds out of tools/songs-midi.mml by hand and
-# regenerating, which takes music out of the shipped game - a decision about
-# the product, not about the build.
+# Lowering the number below changes nothing on its own.  Those 3 347 bytes
+# are bought by DBGBEDS instead: the traced build compiles fewer beds, and
+# the shipped game keeps all nineteen.
 MIDBUDGET ?= 22200
 MIDS  = $(wildcard assets/midi/*.mid)
 MIDMML = $(TOOLS)/songs-midi.mml
 
 music: $(SRC)/song.h
 
+# THESE TWO ARE COMMITTED GENERATED ARTEFACTS WHOSE SOURCES ARE ABSENT.
+# midibed.py transcribes assets/midi, and assets/ is not published here, so
+# with no .mid files this rule cannot re-derive them - and must not run
+# midibed.py with an empty input list, which is how it errored the moment
+# anything depended on it.  It says so and leaves the committed files alone.
 $(MIDMML) $(SRC)/song_beds.h: $(TOOLS)/midibed.py $(TOOLS)/mml.py $(MIDS)
-	PYTHONPATH=$(TOOLS) $(PYTHON) $(TOOLS)/midibed.py $(MIDS) \
-		--budget=$(MIDBUDGET) --out=$(MIDMML) --beds=$(SRC)/song_beds.h
+	@if [ -z "$(strip $(MIDS))" ]; then \
+		echo "music: assets/midi is not in this repository, so the beds cannot"; \
+		echo "       be re-transcribed.  $(MIDMML) and $(SRC)/song_beds.h are"; \
+		echo "       committed as generated artefacts and are left as they are."; \
+		touch $(MIDMML) $(SRC)/song_beds.h; \
+	else \
+		PYTHONPATH=$(TOOLS) $(PYTHON) $(TOOLS)/midibed.py $(MIDS) \
+			--budget=$(MIDBUDGET) --out=$(MIDMML) --beds=$(SRC)/song_beds.h; \
+	fi
 
 $(SRC)/song.h: $(TOOLS)/mml.py $(TOOLS)/songs.mml $(MIDMML)
 	$(PYTHON) $(TOOLS)/mml.py $(TOOLS)/songs.mml $(MIDMML) $@

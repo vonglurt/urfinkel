@@ -24,8 +24,8 @@ Right-click → Save Link As. Either file works; the `.prg` starts faster.
 |---|---:|---|---|
 | [urfinkel.prg](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg) | 56 511 | `991db4f541b3ecd1e92ef86aae59ced0` | `075545a1cf34f7e6c615c3670e1d28158b51a78d3a090e41d5261c72a9f546b0` |
 | [urfinkel.d64](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64) | 174 848 | `35694f66c5dfd2578be5f81e1335c75f` | `513048d68076f25403553b874c4dd4a1fc9502636b00a14253e08d93310030cd` |
-| [urfinkel.zip](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip) | 4 934 427 | `1457fc6f7bc149ffea1bd64334479ec0` | `b5d32d4815675b3da43111384749653dbe6dbf1f5c91e642fda4fa5336252ab9` |
-| [urfinkel.tar.gz](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz) | 4 914 596 | `5619d85e08eb13fdc6589e95d7124eb4` | `c4432b8c19625b5cdae32cfc6a8fca9cded15aad332b72f83b6a2f088639f212` |
+| [urfinkel.zip](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip) | 4 934 604 | `11e8143b4eea6aed04ad478ffc95a844` | `bedd56500bbe00f9334c5230c4b318cbd848541ffebc35d52e66d5bcb42242ea` |
+| [urfinkel.tar.gz](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz) | 4 914 726 | `d53f75fb0f2bd0b1e78a658b9405c146` | `2a0fc8ede2073d26d0cddcce0fce7c6cf33de22b939ec71d5ca0789e18396f3e` |
 
 Built **2026-08-10** — the date the program stamps on its own menu, so a
 download can be identified from the machine without unpacking it.
@@ -64,8 +64,8 @@ point `shasum` and `md5sum` at.
 |---|---|---|
 | urfinkel.prg | `12994dcb599b35f6a428200c21909787bd4da25d` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.prg) |
 | urfinkel.d64 | `7c83ffc43e1349b94dfa5199c669e849c94719ce` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.d64) |
-| urfinkel.zip | `d034d29594bd9e8b3b30e222164394d486bd8978` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.zip) |
-| urfinkel.tar.gz | `173e1ba36210a70763d5096bd781a25f9c65bb7b` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.tar.gz) |
+| urfinkel.zip | `7bc52b9c1bb67c350fae95e6f280f04bd8ebab8a` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.zip) |
+| urfinkel.tar.gz | `59c4a379550a04680e2873bbedae9ee834c2c804` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.tar.gz) |
 
 The blob SHA is git's own address for that content — reproduce it with
 `git hash-object build/urfinkel.prg`, and it is the object GitHub serves
@@ -540,6 +540,7 @@ stopped rather than one that is merely wrong.
 | `tools/mml.py`, `tools/songs.mml` | the music notation and its compiler |
 | `tools/viceshot.py` | headless screenshots that verify the program actually ran |
 | `tools/midibed.py`, `tools/songs-midi.mml` | transcribes `assets/midi` into song data, capped by `MIDBUDGET` |
+| `tools/bedtrim.py` | trims the beds for the traced build, so `make debug` fits without the game losing music |
 | `tools/mmlstat.py`, `tools/anim.py` | bench instruments: what the songs cost, and one animation in isolation |
 | `tools/checksums.sh` | the one place sizes and hashes are produced — writes the sidecars, `CHECKSUMS.txt`, and the generated blocks in this file, `INSTALL.md` and the play page |
 | `tools/dist.sh` | packs the two downloadable collections, byte-reproducibly |

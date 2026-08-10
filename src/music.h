@@ -70,7 +70,11 @@
 ** packs in as many as the ROM will hold.  There is no hand-written table
 ** of them here, because a hand-written one drifts the moment a source is
 ** added or the budget moves. */
+#ifdef DEBUG
+#include "song_beds_dbg.h"      /* the trimmed rotation - tools/bedtrim.py */
+#else
 #include "song_beds.h"
+#endif
 
 #define BED_GEN         (BED_SONG_COUNT)        /* generated bed - no end */
 #define BED_OFF         (BED_SONG_COUNT + 1)    /* silence                */
