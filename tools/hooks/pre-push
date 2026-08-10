@@ -1,0 +1,81 @@
+#!/bin/sh
+#
+# Refuse to push a binary that these sources do not produce.
+#
+# The pre-commit hook rebuilds and stages; this one checks the result, so a
+# commit made with --no-verify, an amend, a rebase or a merge cannot slip a
+# stale .prg past. What it asserts is exact: the pushed binary is byte-for-byte
+# what a clean build of the pushed sources emits.
+#
+# THE DATE STAMP IS HANDLED RATHER THAN IGNORED.  The Makefile stamps the
+# program with `date +%Y-%m-%d`, so a naive rebuild-and-compare would differ
+# every day in ten bytes and prove nothing. The stamp is stored as plain ASCII
+# in the binary, so it is read back OUT of the commit's own .prg and fed to
+# make as BUILD_DATE. The comparison is then total: every byte must match,
+# including the stamp, and a build from a different day still verifies.
+#
+# Install:  git config core.hooksPath tools/hooks
+# Bypass:   git push --no-verify
+
+set -e
+
+PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+export PATH
+
+root=$(git rev-parse --show-toplevel)
+cd "$root"
+
+if ! git cat-file -e HEAD:build/urfinkel.prg 2>/dev/null; then
+    echo "pre-push: no tracked binary at HEAD - nothing to verify"
+    exit 0
+fi
+
+if ! command -v cl65 >/dev/null 2>&1; then
+    echo "pre-push: cl65 not found - cannot verify the binary." >&2
+    echo "          Install cc65, or push with --no-verify." >&2
+    exit 1
+fi
+
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+
+git show HEAD:build/urfinkel.prg > "$tmp/pushed.prg"
+git show HEAD:build/urfinkel.d64 > "$tmp/pushed.d64"
+
+stamp=$(python3 -c "
+import re,sys
+d=open('$tmp/pushed.prg','rb').read()
+m=re.search(rb'20\d\d-\d\d-\d\d',d)
+sys.stdout.write(m.group().decode() if m else '')
+")
+
+if [ -z "$stamp" ]; then
+    echo "pre-push: no build stamp found in the pushed binary - cannot verify" >&2
+    exit 1
+fi
+
+echo "pre-push: rebuilding clean at the pushed stamp ($stamp)..."
+make clean >/dev/null
+make      BUILD_DATE="$stamp" >/dev/null
+make disk BUILD_DATE="$stamp" >/dev/null
+
+fail=0
+cmp -s build/urfinkel.prg "$tmp/pushed.prg" || { echo "pre-push: .prg DIFFERS from a clean build" >&2; fail=1; }
+cmp -s build/urfinkel.d64 "$tmp/pushed.d64" || { echo "pre-push: .d64 DIFFERS from a clean build" >&2; fail=1; }
+
+if [ "$fail" = "1" ]; then
+    echo "pre-push: the committed binary is not what these sources build." >&2
+    echo "          Run 'make clean && make && make disk', commit the result," >&2
+    echo "          then push again." >&2
+    exit 1
+fi
+
+echo "pre-push: host tests..."
+if ! make check >"$tmp/check.log" 2>&1; then
+    echo "pre-push: TESTS FAILED - push refused" >&2
+    tail -30 "$tmp/check.log" >&2
+    exit 1
+fi
+
+echo "pre-push: verified - the pushed .prg and .d64 are exactly what these sources build"
+exit 0

@@ -93,6 +93,13 @@ already matched, and that is deliberate: the Makefile stamps the program with
 different days are byte-different on purpose. A comparison would fail every
 morning for a reason that is not a defect.
 
+There is a `pre-push` hook as well, and it *does* compare — exactly. It reads
+the build stamp back out of the binary being pushed, rebuilds clean at that
+same stamp, and requires every byte of both the `.prg` and the `.d64` to
+match. That closes the gap the first hook leaves: a commit made with
+`--no-verify`, an amend, a rebase or a merge cannot push a binary these
+sources do not produce. It takes about two seconds.
+
 ## Two constraints that will surprise you
 
 **The machine is full, and the link fails rather than growing.** Song data
