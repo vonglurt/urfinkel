@@ -9,6 +9,7 @@ This archive holds:
     urfinkel.prg    the program alone
     urfinkel.d64    a disk image holding the same program
     index.html      the play page, pointed at the .prg next to it
+    index.txt       what every file here is, and which build this is
     start-html.sh   serves this folder and opens that page
     src/            the C and 6502 assembly the program was built from
     LICENCE         MIT - it covers the source in src/ as well
