@@ -131,6 +131,53 @@ from the repository.">
     font-size: .78rem; color: var(--moss-dim);
   }
   .use code { color: var(--moss); }
+  .use em { color: var(--moss); font-style: normal; }
+
+  /* THE REPOSITORY PANEL - the last thing in the block, and about something
+     else: not a built artefact but the source of all of them, so it is ruled
+     off first.  Shaped after GitHub's own Code button because that is where
+     anyone would otherwise go looking for these three links. */
+  .sep { border: 0; border-top: 1px solid var(--bark); margin: 1.8rem 0 1.4rem; }
+  .repo { border: 1px solid var(--bark); background: #12170a; }
+  .repo > summary {
+    cursor: pointer; list-style: none;
+    display: flex; align-items: center; gap: .5rem;
+    padding: .7rem 1rem; font-size: .82rem; color: var(--moss-dim);
+    border-bottom: 1px solid var(--bark);
+  }
+  /* Safari draws its own triangle through ::-webkit-details-marker, which
+     list-style: none does not reach. */
+  .repo > summary::-webkit-details-marker { display: none; }
+  .repo > summary:hover { background: #171d0d; color: var(--moss-lit); }
+  .repo > summary b { color: var(--moss); }
+  .repo > summary .ico { width: 1.1em; height: 1.1em; color: var(--moss); }
+  /* Only meaningful when closed, so it says which way it will go. */
+  .repo:not([open]) > summary { border-bottom: 0; }
+  .repo:not([open]) > summary::after { content: "▾"; margin-left: auto; }
+  .repo[open] > summary::after { content: "▴"; margin-left: auto; }
+
+  .repobody { padding: 1rem; }
+  .repobody p { font-size: .78rem; color: var(--moss-dim); margin: 0 0 1rem; }
+  .repobody p a { color: var(--moss); }
+  .repobody .use { margin: 1.2rem 0; }
+  /* One clone URL per row: the label, then the address in a field of its own
+     so it can be swiped in a single gesture. */
+  .clone { display: flex; align-items: stretch; margin-bottom: .5rem; }
+  .clone .cl {
+    flex: none; width: 4.2rem; display: flex; align-items: center;
+    justify-content: center; font-size: .62rem; letter-spacing: .12em;
+    color: var(--loam); background: var(--moss-far);
+  }
+  .clone code {
+    flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere;
+    background: #0d1206; border: 1px solid var(--bark); border-left: 0;
+    padding: .5rem .7rem; font-size: .72rem; color: var(--moss-lit);
+  }
+  a.file.zipall   { background: linear-gradient(135deg, var(--moss-mid), var(--moss-deep)); }
+  a.file.targzall { background: linear-gradient(315deg, var(--moss-mid), var(--moss-deep)); }
+  /* These two sit in a padded panel rather than an indented list row, so they
+     get their own left margin to hang the spilling icon in. */
+  .repobody a.file { margin: .4rem 0 0 1.2rem; }
   ul.dl { list-style: none; padding-left: 0; margin: 0 0 1.25rem; }
   /* The icon hangs off the left of each button, so every row is inset far
      enough to give it that room without leaving the block. */
@@ -285,24 +332,24 @@ the download to check it arrived whole.</p>
     <a class="file zip" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>urfinkel.zip</span></a>
     <span class="tag">plays offline on a PC</span>
     <span class="tag">full source included</span>
-    <span class="what">the whole collection, zipped — 229 077 bytes — built <b>2026-08-10</b></span>
+    <span class="what">the whole collection, zipped — 232 864 bytes — built <b>2026-08-10</b></span>
     <span class="use">Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. Everything on this page except the emulator itself, which is why the browser copy still wants a connection and VICE with the <code>.prg</code> does not.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip</a>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>4b020152e2661d5d4a8e73c8b3d19eb8399aa8798db00c692c96dcef871ba541</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
-      <dt>MD5</dt><dd><code>7844f95c2a7f26ab8c579f3171bb52d0</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>9deab792786a61101c432c97e0306f1f2e33e510f87ae1413701073303529af0</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
+      <dt>MD5</dt><dd><code>0d23a7644edbb26fc3459a0bdeb7d49a</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
     </dl>
   </li>
   <li>
     <a class="file targz" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>urfinkel.tar.gz</span></a>
     <span class="tag">plays offline on a PC</span>
     <span class="tag">full source included</span>
-    <span class="what">the same collection as a gzipped tar, for Linux and macOS — 209 395 bytes — built <b>2026-08-10</b></span>
+    <span class="what">the same collection as a gzipped tar, for Linux and macOS — 214 089 bytes — built <b>2026-08-10</b></span>
     <span class="use">Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. Everything on this page except the emulator itself, which is why the browser copy still wants a connection and VICE with the <code>.prg</code> does not.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz</a>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>a4eaa0b0da170637a1db73238b25aa009d4d433deecc835176ebb6b3bea3ca88</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.sha256">urfinkel.tar.gz.sha256</a></dd>
-      <dt>MD5</dt><dd><code>61785f3eb308b210a46a89bf08d37e93</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.md5">urfinkel.tar.gz.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>660bc2fbfc11cd5ad8d23be68ff9b0b368aeb202898525420c248aceb9c2baa3</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.sha256">urfinkel.tar.gz.sha256</a></dd>
+      <dt>MD5</dt><dd><code>02df65008b4eab84ae74f84888120082</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.md5">urfinkel.tar.gz.md5</a></dd>
     </dl>
   </li>
 </ul>
@@ -311,6 +358,45 @@ its <code>.sha256</code> beside it and run <code>shasum -a 256 -c
 urfinkel.prg.sha256</code>. What built these — compiler, version and the
 exact command — is in <a href="https://github.com/vonglurt/urfinkel/blob/main/build/CHECKSUMS.txt">CHECKSUMS.txt</a>.</p>
 <!-- CHECKSUMS:END -->
+
+<hr class="sep">
+
+<details class="repo" open>
+  <summary>
+    <svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5.5 4.5 2 8l3.5 3.5M10.5 4.5 14 8l-3.5 3.5"/></svg>
+    <b>Code</b> — the whole repository
+  </summary>
+  <div class="repobody">
+    <p>The four files above are built from, and committed to,
+    <a href="https://github.com/vonglurt/urfinkel">github.com/vonglurt/urfinkel</a>
+    — along with the Makefile, the tests, the hooks and the reports that none
+    of the archives carry. This is the same panel GitHub's green
+    <b>Code</b> button opens, kept here so you do not have to go and find it.</p>
+
+    <div class="clone">
+      <span class="cl">HTTPS</span>
+      <code>https://github.com/vonglurt/urfinkel.git</code>
+    </div>
+    <div class="clone">
+      <span class="cl">SSH</span>
+      <code>git@github.com:vonglurt/urfinkel.git</code>
+    </div>
+
+    <p class="use">Clone with either, then <code>make &amp;&amp; make disk</code>.
+    Or take a snapshot of <code>main</code> as an archive — these are GitHub's
+    own, made from the branch on request, and are <em>not</em> the same files
+    as the collections above: they are the whole repository, and they carry no
+    checksums of their own.</p>
+
+    <a class="file zipall" href="https://github.com/vonglurt/urfinkel/archive/refs/heads/main.zip">
+      <svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>Download ZIP</span></a>
+    <a class="path" href="https://github.com/vonglurt/urfinkel/archive/refs/heads/main.zip">https://github.com/vonglurt/urfinkel/archive/refs/heads/main.zip</a>
+
+    <a class="file targzall" href="https://github.com/vonglurt/urfinkel/archive/refs/heads/main.tar.gz">
+      <svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>Download TAR.GZ</span></a>
+    <a class="path" href="https://github.com/vonglurt/urfinkel/archive/refs/heads/main.tar.gz">https://github.com/vonglurt/urfinkel/archive/refs/heads/main.tar.gz</a>
+  </div>
+</details>
 </section>
 
 <h2>VIDEO</h2>

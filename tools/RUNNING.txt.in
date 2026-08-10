@@ -62,8 +62,47 @@ IT HAS TO BE SERVED, not opened by double-clicking.  A page opened as a
 file:// URL is not allowed to read urfinkel.prg off your disk, so the
 emulator would come up and then sit there with nothing to run.  Serving the
 folder over http://localhost is what makes that read legal, and it is the
-only thing the script is for.  It needs python3, which macOS and every
-Linux already have.
+only thing the script is for.
+
+IT DOES NOT INSIST ON PYTHON.  Any static file server will do, so it uses
+the first of these it finds, and prints which one it picked:
+
+    python3      python3 -m http.server
+    python       python -m SimpleHTTPServer   (Python 2)
+    php          php -S
+    ruby         ruby -run -e httpd
+    miniserve    miniserve
+    darkhttpd    darkhttpd
+    busybox      busybox httpd
+    npx          npx serve
+
+npx is last on purpose: it is the only one that may go to the network to
+fetch a server before it can serve anything, which is a poor thing to do
+inside a collection whose point is working offline.
+
+ON macOS, THE USUAL ONE IS python3, and it comes from Apple's Command Line
+Tools rather than from the system itself.  A Mac that has never had
+developer tools installed has none of the eight.  The shortest fix is
+Apple's own - a system dialog, no third-party anything:
+
+    xcode-select --install
+
+Ruby is also present on macOS today, so a machine with it will serve
+without installing a thing; Apple has been deprecating it for years,
+though, so do not count on that for long.
+
+If you would rather have Homebrew - worth it anyway, because it is also
+where VICE comes from, and VICE plays this better than a browser does:
+
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    brew install python          # or: brew install miniserve
+    brew install vice            # then: xplus4 urfinkel.prg
+
+ON DEBIAN OR UBUNTU:  sudo apt install python3
+
+If none of them is found the script says all of this again rather than
+failing with "command not found", and if the server it picked dies on
+startup it prints what that server said instead of guessing.
 
 ONE THING STILL COMES FROM THE INTERNET.  The emulator itself - EmulatorJS,
 which is not part of this project and carries its own licence - is fetched
