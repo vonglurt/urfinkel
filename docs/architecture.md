@@ -59,7 +59,6 @@ src/
 ├── song_ids.h   generated: the song names, safe to include anywhere
 ├── game.c       the controller, the front end, the end of a match
 ├── demo.c       draws the opening board and parks (conformance proof)
-└── bench.c      times the primitives against the jiffy clock
 
 test/
 ├── test_rules.c   the frozen edition's rule table, run by the host cc
@@ -434,8 +433,7 @@ the two orders of magnitude came from.
 Targets: `make` builds the game, `make debug` builds the same sources
 with `-DDEBUG` for the traced binary, `make check` tests the rules on the
 host, `make conform` diffs the rendered board against the frozen edition,
-`make bench` produces the compiled half of the measurement (the BASIC half
-was retired with `bench/*.bas`), `make test` boots the
+`make test` boots the
 game and screenshots a demo game in progress, and `make run` boots it in
 VICE.
 

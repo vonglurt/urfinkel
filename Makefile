@@ -50,7 +50,6 @@ VICEENV = XDG_DATA_DIRS=$(BREW_PREFIX)/share:$$XDG_DATA_DIRS
 # eight and there is no setting that makes it certain, so the harness
 # verifies that the program actually ran and retries when it did not.
 SHOT     = BREW_PREFIX=$(BREW_PREFIX) $(PYTHON) $(TOOLS)/viceshot.py
-CYCLES   ?= 400000000
 
 all: $(GAME)
 
@@ -87,9 +86,6 @@ DBGCYCLES ?= 900000000
 
 $(BUILD)/demo.prg: $(SRC)/demo.c $(CORE) $(HDRS) | $(BUILD)
 	$(CL65) $(CC65FLAGS) -o $@ $(SRC)/demo.c $(CORE)
-
-$(BUILD)/bench.prg: $(SRC)/bench.c $(CORE) $(HDRS) | $(BUILD)
-	$(CL65) $(CC65FLAGS) -o $@ $(SRC)/bench.c $(CORE)
 
 # --- music ---------------------------------------------------------------
 # Songs are written as strings in tools/songs.mml and compiled on the host
@@ -310,32 +306,23 @@ $(BUILD)/smoke.png: $(BUILD)/smoke.prg
 	@echo "smoke test ok - and still moving at 900e6: $@"
 
 # --- the migration measurement -------------------------------------------
-# The compiled half, a screenshot of the machine reporting its own timings.
+# RETIRED, BOTH HALVES.  `make bench` is gone, and so is src/bench.c.
 #
-# THE BASIC HALF IS RETIRED, AND THIS IS WHAT IT WAS.  bench/basic-bench.bas
-# and bench/basic-board.bas were blocks appended to a throwaway copy of the
-# frozen source with line 300 - the head of the stage intro - patched to jump
-# into them, so the boot-time tables were built and nothing else ran.  The
-# frozen edition itself was never modified.  Those blocks were deleted from
-# the repository, so `make bench` and `make basicboard` can no longer produce
-# the BASIC side and the rules that did have been removed rather than left to
-# fail with "no rule to make target".
+# The BASIC half went first: bench/basic-bench.bas was a block appended to a
+# patched throwaway copy of the frozen edition, and it was deleted from the
+# repository along with the frozen edition never having been published here.
+# The compiled half - bench.c timing the primitives against the PAL jiffy
+# clock and drawing its own results - has now gone too.
 #
-# The numbers themselves stand.  They are a record of a measurement that was
-# taken, on the machine, against the same PAL jiffy clock, and are written up
-# in docs/lab-report.md section VI; the README table still reports them.  What
-# is gone is the ability to take that measurement AGAIN, which is a real loss
-# and is stated as one rather than quietly dropped.
+# THE NUMBERS STAND AND ARE NOW HISTORY.  Every figure in the README's speed
+# table and in docs/lab-report.md section VI was measured on the machine, and
+# each is still a true record of that measurement.  What no longer exists is
+# any way to take either measurement again.  That is a real loss and is said
+# so here rather than left to be discovered by someone typing a target that
+# is not there.
 #
-# Reviving it needs both halves back: the .bas blocks, and the frozen edition
-# itself (urroyal.bas), which has never been published here.  The BASIC and
-# BASCYCLES variables went with them.
-bench: $(BUILD)/bench.png
-	@echo "compiled: $(BUILD)/bench.png"
-	@echo "basic   : retired - see the note above this target in the Makefile"
-
-$(BUILD)/bench.png: $(BUILD)/bench.prg
-	$(SHOT) $(BUILD)/bench.prg $@ $(CYCLES)
+# Reviving it needs bench.c back out of git history, and for the BASIC column
+# the .bas harness and urroyal.bas as well.
 
 # --- renderer regression -------------------------------------------------
 # WHAT THIS USED TO BE, AND WHAT IT IS NOW.  READ THIS BEFORE TRUSTING IT.
@@ -523,4 +510,4 @@ clean:
 
 .PHONY: all debug debug-shot kbtest card-probe music check run run200 test \
         anim anim-run buildinfo dist checksums checksums-check \
-        bench conform disk card card-eject clean kbdiag kbdiag-shot
+        conform disk card card-eject clean kbdiag kbdiag-shot

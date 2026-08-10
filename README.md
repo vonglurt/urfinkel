@@ -24,8 +24,8 @@ Right-click → Save Link As. Either file works; the `.prg` starts faster.
 |---|---:|---|---|
 | [urfinkel.prg](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg) | 56 511 | `991db4f541b3ecd1e92ef86aae59ced0` | `075545a1cf34f7e6c615c3670e1d28158b51a78d3a090e41d5261c72a9f546b0` |
 | [urfinkel.d64](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64) | 174 848 | `35694f66c5dfd2578be5f81e1335c75f` | `513048d68076f25403553b874c4dd4a1fc9502636b00a14253e08d93310030cd` |
-| [urfinkel.zip](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip) | 4 935 925 | `900b522851e21cd720afa4fe47e82e19` | `9989bf4154a5322ebdb10549ef75b67dd2b9beb2a21d6d56d8501a3cc166f115` |
-| [urfinkel.tar.gz](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz) | 4 915 351 | `810194f1a6dd4bd8a94c65a38c00ffe5` | `86bd89ca0e2d264933d066edfebe9784ba7824dcdc89b382d97bd212575633b4` |
+| [urfinkel.zip](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip) | 4 934 427 | `1457fc6f7bc149ffea1bd64334479ec0` | `b5d32d4815675b3da43111384749653dbe6dbf1f5c91e642fda4fa5336252ab9` |
+| [urfinkel.tar.gz](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz) | 4 914 596 | `5619d85e08eb13fdc6589e95d7124eb4` | `c4432b8c19625b5cdae32cfc6a8fca9cded15aad332b72f83b6a2f088639f212` |
 
 Built **2026-08-10** — the date the program stamps on its own menu, so a
 download can be identified from the machine without unpacking it.
@@ -64,8 +64,8 @@ point `shasum` and `md5sum` at.
 |---|---|---|
 | urfinkel.prg | `12994dcb599b35f6a428200c21909787bd4da25d` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.prg) |
 | urfinkel.d64 | `7c83ffc43e1349b94dfa5199c669e849c94719ce` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.d64) |
-| urfinkel.zip | `c89e38fc8732f03c8175b3bd955d32557231bb1a` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.zip) |
-| urfinkel.tar.gz | `951a80e1ad1a28d7d8432127a718f559f8069755` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.tar.gz) |
+| urfinkel.zip | `d034d29594bd9e8b3b30e222164394d486bd8978` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.zip) |
+| urfinkel.tar.gz | `173e1ba36210a70763d5096bd781a25f9c65bb7b` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.tar.gz) |
 
 The blob SHA is git's own address for that content — reproduce it with
 `git hash-object build/urfinkel.prg`, and it is the object GitHub serves
@@ -236,11 +236,10 @@ budgets — has not been run.
 ## The measurement
 
 Taken on the machine, both editions against the same PAL jiffy clock, with
-`make bench`. The BASIC half of that command has since been retired — the
-harness it needed was deleted, and the frozen edition it patched was never
-published here — so the compiled column can be re-measured but the BASIC
-column can no longer be reproduced. It is a record of a measurement that was
-made, not a claim you can re-run today:
+`make bench`. That command no longer exists: the BASIC harness was deleted,
+the frozen edition it patched was never published here, and the compiled
+half went with it. Both columns below are a record of a measurement that was
+made on the machine, not a claim you can re-run today:
 
 | Primitive | BASIC 3.5 | Compiled | Speedup |
 |---|---:|---:|---:|
@@ -489,7 +488,6 @@ make            # build/urfinkel.prg
 make music      # recompile tools/songs.mml -> src/song.h
 make check      # rule tests on the host, milliseconds
 make conform    # renderer conformance against the frozen edition
-make bench      # the compiled half of the measurement, as a screenshot
 make test       # boot, let the attract start a demo, screenshot it
 make run        # boot in the VICE xplus4 emulator
 make run200     # ...at 200%, for watching a whole demo game
@@ -533,7 +531,6 @@ stopped rather than one that is merely wrong.
 | `src/dbg.c` | the trace facility — an empty translation unit without `-DDEBUG` |
 | `src/game.c` | the controller, the front end, the end of a match |
 | `src/demo.c` | draws the opening board and parks — the conformance proof |
-| `src/bench.c` | times the primitives against the jiffy clock |
 | `test/test_rules.c` | the frozen edition's rule table, run by the host compiler |
 | `test/test_kbd.c` | the keyboard decode and debounce, run by the host compiler |
 | `src/kbdiag.c`, `src/kbhunt.c`, `src/kbtype.c` | keyboard instruments: the jiffy-clock verdict, the matrix signatures, the live probe |
