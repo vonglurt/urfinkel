@@ -2,7 +2,7 @@
 
 ## Play it
 
-**[▶ Play it in your browser](https://vonglurt.github.io/urfinkel/play/)** —
+**[▶ Play it in your browser](https://vonglurt.github.io/urfinkel/)** —
 a Commodore Plus/4 boots inside the page and runs the game. Nothing to
 install, nothing to download. Give it up to two minutes to load.
 

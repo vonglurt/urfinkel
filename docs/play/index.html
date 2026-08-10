@@ -2,237 +2,26 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>UR FINKEL — the Royal Game of Ur for the Commodore Plus/4</title>
-<meta name="description" content="Play UR FINKEL, the Royal Game of Ur for the
-Commodore Plus/4, in your browser. A Plus/4 emulator boots the real disk image
-from the repository.">
+<title>UR FINKEL — the game moved to the site root</title>
+<!-- The play page and the landing page are now one page, served at the site
+     root. This stub is all that remains at the old address, so links already
+     out in the world still arrive somewhere. -->
+<link rel="canonical" href="https://vonglurt.github.io/urfinkel/">
+<meta http-equiv="refresh" content="0; url=../">
+<meta name="robots" content="noindex">
 <style>
   :root { color-scheme: dark; }
-  * { box-sizing: border-box; }
   body {
-    margin: 0; padding: 2rem 1rem 4rem;
-    background: #1a1408; color: #e8dcc0;
+    margin: 0; min-height: 100vh; padding: 2rem 1rem;
+    background: #1a1408; color: #b3a179;
     font: 15px/1.6 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    display: flex; align-items: center; justify-content: center; text-align: center;
   }
-  main { max-width: 52rem; margin: 0 auto; }
-  h1 { font-size: 1.4rem; letter-spacing: .1em; margin: 0 0 .2rem; }
-  h2 { font-size: .95rem; letter-spacing: .08em; color: #d8a657;
-       margin: 2.5rem 0 .75rem; border-bottom: 1px solid #3a2f16; padding-bottom: .3rem; }
-  .sub { color: #b3a179; font-size: .85rem; margin: 0 0 1.5rem; }
   a { color: #d8a657; }
-  a:hover { color: #f0c274; }
-  p { margin: 0 0 1rem; }
-  .note {
-    border: 1px solid #4a3c1e; border-left: 3px solid #d8a657;
-    background: #241c0c; padding: .7rem 1rem; margin: 0 0 1.25rem; font-size: .85rem;
-  }
-  .note strong { color: #e8dcc0; }
-  #box { width: 100%; aspect-ratio: 4 / 3; background: #000; margin-bottom: .5rem; scroll-margin-top: 0; }
-  .bar { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin: 0 0 1.25rem; }
-  .bar button {
-    font: inherit; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase;
-    background: #241c0c; color: #d8a657; border: 1px solid #4a3c1e;
-    padding: .5rem .6rem; cursor: pointer; width: 100%;
-  }
-  .bar button:hover { background: #33270f; color: #f0c274; border-color: #6b5726; }
-  .bar button:active { background: #3d2f13; }
-  @media (max-width: 34rem) { .bar { grid-template-columns: 1fr; } }
-  table { border-collapse: collapse; width: 100%; font-size: .85rem; }
-  th, td { text-align: left; padding: .3rem .6rem .3rem 0; border-bottom: 1px solid #2e2512; }
-  th { color: #b3a179; font-weight: normal; }
-  td.n { text-align: right; color: #e8dcc0; }
-  .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; }
-  .shots figure { margin: 0; }
-  .shots img { width: 100%; image-rendering: pixelated; border: 1px solid #3a2f16; }
-  .shots figcaption { font-size: .75rem; color: #b3a179; margin-top: .35rem; }
-  ul { padding-left: 1.2rem; }
-  p.dl { margin-bottom: .3rem; font-size: .85rem; }
-  ul.dl { margin: 0 0 1.25rem; font-size: .85rem; }
-  li { margin-bottom: .4rem; }
-  pre.licence {
-    white-space: pre-wrap; font-size: .72rem; color: #9c8c66;
-    background: #150f06; border: 1px solid #2e2512; padding: 1rem; margin: 0;
-  }
-  footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #3a2f16;
-           font-size: .8rem; color: #b3a179; }
 </style>
 </head>
 <body>
-<main>
-
-<h1>UR FINKEL</h1>
-<p class="sub">The Royal Game of Ur — a ~4,600-year-old board game — written in
-C and 6502 assembly for the Commodore Plus/4.</p>
-
-<div id="box"><div id="game"></div></div>
-
-<div class="bar">
-  <button id="fit" type="button">▲ Fit the game to the top</button>
-  <button id="past" type="button">▼ Skip past — instructions</button>
-</div>
-
-<p class="dl"><strong>Downloads</strong> — right-click, Save Link As:</p>
-<ul class="dl">
-  <li><a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64">urfinkel.d64</a> — a disk image (174 848 B)</li>
-  <li><a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg">urfinkel.prg</a> — the program alone (56 511 B)</li>
-</ul>
-
-<div class="note">
-  <strong>This page launches a Commodore Plus/4 emulator in your browser.</strong>
-  It boots VICE (<code>xplus4</code>) through EmulatorJS and loads the real
-  program straight from the <code>main</code> branch of the repository — the
-  same file you would put on a disk.
-  <br><br>
-  <strong>Give it up to two minutes.</strong> A white screen with a pink border
-  means it is still loading; that is the Plus/4 sitting at its own boot screen
-  while the program comes in. You will know it is ready when the screen fills
-  with animation and the music starts.
-</div>
-
-<h2 id="controls">CONTROLS</h2>
-<table>
-  <tr><th>Key</th><th>Where</th><th>What</th></tr>
-  <tr><td><code>1</code>–<code>5</code></td><td>menu</td><td>choose a mode</td></tr>
-  <tr><td><code>1</code>–<code>7</code></td><td>any turn</td><td>choose which piece to move</td></tr>
-  <tr><td><code>m</code></td><td>menu and prompts</td><td>cycle the music</td></tr>
-  <tr><td><code>space</code></td><td>after a win, rules screen</td><td>continue</td></tr>
-  <tr><td><code>x</code> <code>x</code> <code>x</code></td><td>any match</td><td>leave, and return to the cabinet</td></tr>
-</table>
-<p class="sub" style="margin-top:.75rem">Left alone for two minutes, the cabinet
-starts the URBOT demo by itself and plays against itself.</p>
-
-<h2>WHAT THIS IS</h2>
-<p>A compiled port of a game that already existed in Commodore BASIC 3.5. The
-BASIC edition took <strong>24 seconds to draw the board</strong> and
-<strong>2.8 seconds to work out which moves are legal</strong>. Rewritten in C
-and 6502 assembly, the same work takes milliseconds — and the recovered time
-was spent on things the BASIC edition had ruled out: motion tweening, a real
-dice tumble, and music playing from a raster interrupt while the game runs.</p>
-
-<table>
-  <tr><th>Primitive</th><th class="n">BASIC 3.5</th><th class="n">Compiled</th><th class="n">Speedup</th></tr>
-  <tr><td>draw the board</td><td class="n">23 960 ms</td><td class="n">123.4 ms</td><td class="n">194×</td></tr>
-  <tr><td>paint one 4×4 square</td><td class="n">594 ms</td><td class="n">2.05 ms</td><td class="n">290×</td></tr>
-  <tr><td>refresh both token rows</td><td class="n">1 826 ms</td><td class="n">7.48 ms</td><td class="n">244×</td></tr>
-  <tr><td>find the legal moves</td><td class="n">2 785 ms</td><td class="n">4.83 ms</td><td class="n">577×</td></tr>
-</table>
-<p class="sub" style="margin-top:.75rem">Measured on the machine, both editions
-against the same PAL jiffy clock. It has also been run on real restored
-hardware, loaded from an SD2IEC.</p>
-
-<h2>SCREENS</h2>
-<div class="shots">
-  <figure><img src="../media/01-title.png" alt="The title screen: a theatre proscenium with chasing lamps">
-    <figcaption>The cabinet the game is played inside.</figcaption></figure>
-  <figure><img src="../media/03-play.png" alt="The board mid-match with the chronicle below">
-    <figcaption>A match in progress.</figcaption></figure>
-  <figure><img src="../media/05-capture.png" alt="CAPTURED in block letters over a bed of flame">
-    <figcaption>A capture takes the bottom of the screen.</figcaption></figure>
-  <figure><img src="../media/06-victory.png" alt="A gold trophy with the winner's name engraved in the bowl">
-    <figcaption>The winner's name, poured into the cup.</figcaption></figure>
-</div>
-
-<h2>VIDEO</h2>
-<p><a href="https://youtu.be/Cw-SaWI046o">▶ Watch it running</a> — a demonstration
-of the game on a Commodore Plus/4.</p>
-
-<h2>THE PROJECT</h2>
-<p>Everything below points at the <code>main</code> branch on GitHub.</p>
-<ul>
-  <li><a href="https://github.com/vonglurt/urfinkel/tree/main">Repository</a> — the whole project</li>
-  <li><a href="https://github.com/vonglurt/urfinkel/blob/main/README.md">README</a> — what it is, the numbers, and what it cost</li>
-  <li><a href="https://github.com/vonglurt/urfinkel/blob/main/INSTALL.md">INSTALL</a> — build it on a Mac, or run it in a browser</li>
-  <li><a href="https://github.com/vonglurt/urfinkel/blob/main/CONTRIBUTING.md">CONTRIBUTING</a> — forking is encouraged; commits must be signed</li>
-  <li><a href="https://github.com/vonglurt/urfinkel/tree/main/src">src/</a> — the C and 6502 assembly</li>
-  <li><a href="https://github.com/vonglurt/urfinkel/tree/main/docs">docs/</a> — the migration report, the architecture, the keyboard, the music</li>
-</ul>
-
-<h2>LICENCE</h2>
-<pre class="licence">MIT License
-
-Copyright (c) 2026 Paul Richeson
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.</pre>
-<p class="sub" style="margin-top:.75rem">The emulator on this page is
-<a href="https://emulatorjs.org/">EmulatorJS</a>, which carries its own licence
-and is loaded from its CDN. It is not part of this project.</p>
-
-<footer>
-Written by <strong>Paul Richeson</strong> —
-<a href="https://github.com/vonglurt">vonglurt</a> on GitHub.
-Contact: paulr@sdf.org
-</footer>
-
-</main>
-
-<script>
-  // The program is fetched straight from the main branch. GitHub serves raw
-  // files with `access-control-allow-origin: *`, so this cross-origin fetch
-  // is allowed.
-  EJS_player        = "#game";
-  EJS_core          = "plus4";           // VICE xplus4
-  EJS_gameUrl       = "https://raw.githubusercontent.com/vonglurt/urfinkel/main/build/urfinkel.prg";
-  EJS_gameName      = "UR FINKEL";
-  EJS_pathtodata    = "https://cdn.emulatorjs.org/stable/data/";
-  EJS_startOnLoaded = true;              // no click-to-start
-  EJS_color         = "#d8a657";
-  EJS_volume        = 0.5;
-
-  // Direct Keyboard Input hands raw key presses to the emulated machine
-  // instead of routing them through the virtual gamepad. It ships DISABLED
-  // for this core, and a Plus/4 is a computer you type at, so it is turned
-  // on here rather than left for the player to find under Input Options.
-  //
-  // Note this is a DEFAULT: a browser that already has a saved setting for
-  // this page keeps its own. Set EJS_disableLocalStorage = true to force it
-  // every time, at the cost of remembering anything else.
-  EJS_defaultOptions = { keyboardInput: "enabled" };
-
-  // EmulatorJS maps the keyboard onto a virtual gamepad by default, and
-  // binds buttons 24, 25 and 26 to "1", "2" and "3" - the save-state slot
-  // functions. UR FINKEL is played entirely on the keyboard, and 1-7 are
-  // how you choose a piece, so those presses were being eaten before the
-  // Plus/4 ever saw them. This game reads no joystick, so every binding is
-  // cleared rather than only the three that collided.
-  EJS_defaultControls = (function () {
-    var none = {};
-    for (var i = 0; i < 30; i++) none[i] = {};
-    return { 0: none, 1: {}, 2: {}, 3: {} };
-  })();
-</script>
-<script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
-
-<script>
-  // "Fit the game to the top" puts the emulator's top-left corner in the
-  // viewport's top-left corner, which is as close to fullscreen as this can
-  // get without taking the browser over. The emulator's own fullscreen
-  // button is still there in its toolbar for the real thing.
-  function snapTo(id) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    var y = el.getBoundingClientRect().top + window.pageYOffset;
-    window.scrollTo({ top: y, behavior: "smooth" });
-  }
-  document.getElementById("fit").addEventListener("click", function () { snapTo("box"); });
-  document.getElementById("past").addEventListener("click", function () { snapTo("controls"); });
-</script>
-
+<p>UR FINKEL is now at the site root.<br>
+<a href="../">▶ Play it in your browser</a></p>
 </body>
 </html>
