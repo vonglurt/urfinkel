@@ -110,7 +110,20 @@ use() {
     case "$1" in
         *.prg) echo 'Drag it onto VICE, YAPE or plus4emu. It starts faster than the disk image — there is no directory to read first.' ;;
         *.d64) echo 'Put it on an SD2IEC or a Pi1541, mount it as a disk, then <code>dload"urfinkel"</code>. Desktop emulators open it directly.' ;;
-        *.zip|*.tar.gz) echo 'Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. Everything on this page except the emulator itself, which is why the browser copy still wants a connection and VICE with the <code>.prg</code> does not.' ;;
+        *.zip|*.tar.gz) echo 'Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. The emulator comes too, so the browser copy plays with nothing plugged in.' ;;
+    esac
+}
+
+# The small print, on the archives only.  It is the offline browser copy for a
+# PC or a Mac, and everything a person needs to know before taking it - that it
+# must be served rather than double-clicked, and that the emulator inside it is
+# somebody else's GPL code - belongs with the button rather than in a banner
+# they meet only after unpacking.
+fine() {
+    case "$1" in
+        *.zip|*.tar.gz)
+            echo 'Fully offline: the game, the emulator and the page all come out of the folder — nothing is fetched from anywhere. It has to be <b>served rather than opened directly</b>, because a <code>file://</code> page may not read the files beside it: run <code>./start-html.sh</code>. The emulator in <code>emulatorjs/</code> is EmulatorJS, GPL-3.0 and not part of UR FINKEL — see <code>emulatorjs/SOURCE.txt</code>. <code>index.html</code> beside it is the same page taking the emulator from its CDN instead, which is always the current version.' ;;
+        *) ;;
     esac
 }
 
@@ -358,7 +371,9 @@ machine=$(field target | sed -e 's/^[^(]*(//' -e 's/)$//')
     echo '<ul class="dl">'
     for f in $FILES; do
         b=$(basename "$f")
-        echo '  <li>'
+        # An id per entry, so the cards above can jump straight to the one
+        # they name rather than at the block as a whole.
+        printf '  <li id="dl-%s">\n' "$(kind "$b")"
         # The kind is emitted as a class so the stylesheet can give the two
         # buttons gradients running opposite ways without counting children.
         printf '    <a class="file %s" href="%s/raw/main/%s" download>%s<span>%s</span></a>\n' \
@@ -374,6 +389,8 @@ machine=$(field target | sed -e 's/^[^(]*(//' -e 's/)$//')
         printf '    <span class="use">%s</span>\n' "$(use "$b")"
         printf '    <a class="path" href="%s/raw/main/%s">%s/raw/main/%s</a>\n' \
             "$REPO" "$f" "$REPO" "$f"
+        fp=$(fine "$b")
+        [ -z "$fp" ] || printf '    <span class="fine">%s</span>\n' "$fp"
         echo '    <dl class="sums">'
         printf '      <dt>SHA-256</dt><dd><code>%s</code> — <a href="%s/raw/main/%s.sha256">%s.sha256</a></dd>\n' \
             "$(digest sha256 "$f")" "$REPO" "$f" "$b"

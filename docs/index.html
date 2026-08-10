@@ -80,7 +80,7 @@ from the repository.">
     display: flex; flex-direction: column; align-items: center;
     text-align: center; text-decoration: none;
     background: #241c0c; border: 1px solid #6b5726;
-    padding: 1rem .9rem 1.1rem;
+    padding: .9rem .7rem 1rem;
     /* The clipped corner is the whole trick: it reads as a dealt card rather
        than a box, and costs one line. */
     clip-path: polygon(0 0, calc(100% - .8rem) 0, 100% .8rem, 100% 100%, 0 100%);
@@ -95,15 +95,25 @@ from the repository.">
     filter: grayscale(1) sepia(1) saturate(2.2) hue-rotate(-12deg) brightness(1.15);
   }
   .card b {
-    font-size: .8rem; letter-spacing: .12em; text-transform: uppercase;
+    font-size: .74rem; letter-spacing: .08em; text-transform: uppercase;
     color: #f0c274; margin-bottom: .4rem;
   }
-  .card .say { font-size: .72rem; line-height: 1.45; color: #b3a179; }
+  .card .say { font-size: .68rem; line-height: 1.4; color: #b3a179;
+               text-wrap: balance; }
 
+  /* FOUR ACROSS, ALWAYS - a fixed count rather than auto-fit, which sized the
+     cards by a minimum width and so dealt three and dropped the fourth onto a
+     row of its own. minmax(0,1fr) rather than 1fr because a grid track's
+     default minimum is its content, and one long word would otherwise push
+     the row wider than the column it sits in. */
   .deck {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
-    gap: .6rem; margin: 0 0 1.25rem;
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: .5rem; margin: 0 0 1.25rem;
   }
+  /* Four 12rem cards need the full column; below that they pair up, and
+     below that they stack. */
+  @media (max-width: 48rem) { .deck { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 26rem) { .deck { grid-template-columns: 1fr; } }
   .deck .card { transition: transform .12s ease, border-color .12s ease; }
   .deck .card:hover {
     border-color: #d8a657; background: #33270f; transform: translateY(-3px);
@@ -137,7 +147,12 @@ from the repository.">
   td.n { text-align: right; color: #e8dcc0; }
   .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; }
   .shots figure { margin: 0; }
-  .shots img { width: 100%; image-rendering: pixelated; border: 1px solid #3a2f16; }
+  /* Every screenshot is a 384x288 Plus/4 frame, so the box it will occupy is
+     known before it arrives.  Declaring it stops the four of them reflowing
+     the page as they load - which was undoing an anchor jump made while they
+     were still coming in, so a card clicked early landed nowhere. */
+  .shots img { width: 100%; aspect-ratio: 4 / 3; height: auto;
+               image-rendering: pixelated; border: 1px solid #3a2f16; }
   .shots figcaption { font-size: .75rem; color: #b3a179; margin-top: .35rem; }
   ul { padding-left: 1.2rem; }
   li { margin-bottom: .4rem; }
@@ -174,6 +189,27 @@ from the repository.">
   }
   .use code { color: var(--moss); }
   .use em { color: var(--moss); font-style: normal; }
+  /* The small print on the archive downloads: everything worth knowing before
+     taking one, sized so it is available without competing with the button. */
+  .fine {
+    display: block; margin-top: .5rem; font-size: .62rem; line-height: 1.5;
+    color: var(--moss-far);
+  }
+  .fine b { color: var(--moss-dim); font-weight: normal; }
+  .fine code { color: var(--moss-dim); }
+
+  /* The deck inside the downloads block wears that block's colours rather
+     than the page's gold, so it reads as part of the green room. */
+  .downloads .card { background: #1d2410; border-color: var(--bark); }
+  .downloads .card b { color: var(--moss); }
+  .downloads .card .say { color: var(--moss-dim); }
+  .downloads .card .pip { color: var(--moss); }
+  .downloads .deck .card:hover {
+    background: #232c14; border-color: var(--moss-far);
+  }
+  .downloads .deck .card:hover b { color: var(--moss-lit); }
+  /* Landing room, so a card does not put its target under the window edge. */
+  ul.dl > li, .repo { scroll-margin-top: 1.5rem; }
 
   /* THE REPOSITORY PANEL - the last thing in the block, and about something
      else: not a built artefact but the source of all of them, so it is ruled
@@ -347,26 +383,23 @@ C and 6502 assembly for the Commodore Plus/4.</p>
   <a class="card" href="#downloads">
     <span class="pip">💾</span>
     <b>Download now</b>
-    <span class="say">The program, the disk image and the source, with
-    checksums — for VICE, a floppy emulator, or a real Plus/4.</span>
+    <span class="say">The program, the disk image and the source — with
+    checksums.</span>
   </a>
   <a class="card" href="#controls">
     <span class="pip">⌨</span>
     <b>How to play</b>
-    <span class="say">The keys, the Finkel ruleset, and what URBOT is
-    thinking while it takes your piece.</span>
+    <span class="say">The keys, the ruleset, and what URBOT is thinking.</span>
   </a>
   <a class="card" href="#video">
     <span class="pip">🎬</span>
     <b>Watch it run</b>
-    <span class="say">Three minutes of the game on a real Commodore Plus/4,
-    if you would rather watch than play.</span>
+    <span class="say">The game running on real hardware.</span>
   </a>
   <a class="card" href="#project">
     <span class="pip">🛠</span>
     <b>The project</b>
-    <span class="say">Clone it, build it, fork it — the source, the reports
-    and how the port was measured.</span>
+    <span class="say">Clone it, build it, fork it.</span>
   </a>
 </nav>
 
@@ -376,13 +409,37 @@ C and 6502 assembly for the Commodore Plus/4.</p>
 </div>
 
 <section class="downloads" id="downloads">
-<p class="dl"><strong>Downloads</strong> — clicking a binary saves it. The
-checksum files under each one open in the browser instead; save one next to
-the download to check it arrived whole.</p>
+<p class="dl"><strong>Downloads</strong> — four ways to take it away. Each
+card goes to the file it names; clicking a binary there saves it, while the
+checksum files open in the browser so you can save one beside the download and
+check it arrived whole.</p>
+
+<nav class="deck">
+  <a class="card" href="#dl-prg">
+    <span class="pip">📄</span>
+    <b>The program</b>
+    <span class="say">urfinkel.prg — drag it onto VICE.</span>
+  </a>
+  <a class="card" href="#dl-d64">
+    <span class="pip">💾</span>
+    <b>The disk image</b>
+    <span class="say">urfinkel.d64 — for a floppy emulator or a real Plus/4.</span>
+  </a>
+  <a class="card" href="#dl-zip">
+    <span class="pip">🌐</span>
+    <b>Offline browser</b>
+    <span class="say">Zip or tar.gz — plays on a PC or Mac with no network.</span>
+  </a>
+  <a class="card" href="#repo">
+    <span class="pip">🛠</span>
+    <b>All the code</b>
+    <span class="say">Clone it, or take the whole repository as an archive.</span>
+  </a>
+</nav>
 <!-- CHECKSUMS:START -->
 <!-- Generated by tools/checksums.sh - do not edit between these markers. -->
 <ul class="dl">
-  <li>
+  <li id="dl-prg">
     <a class="file prg" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 1.5h6l3 3v10h-9z"/><path d="M9.5 1.5v3h3"/><path d="M5.5 8.5 7 10l-1.5 1.5M8.5 11.5h2"/></svg><span>urfinkel.prg</span></a>
     <span class="what">the program alone, for the Commodore Plus/4 — 56 511 bytes — built <b>2026-08-10</b></span>
     <span class="use">Drag it onto VICE, YAPE or plus4emu. It starts faster than the disk image — there is no directory to read first.</span>
@@ -392,7 +449,7 @@ the download to check it arrived whole.</p>
       <dt>MD5</dt><dd><code>991db4f541b3ecd1e92ef86aae59ced0</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg.md5">urfinkel.prg.md5</a></dd>
     </dl>
   </li>
-  <li>
+  <li id="dl-d64">
     <a class="file d64" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 1.5h10l3 3v10h-13z"/><path d="M4.5 1.5h6v4h-6zM4.5 9.5h7v5h-7z"/></svg><span>urfinkel.d64</span></a>
     <span class="what">a disk image, for the Commodore Plus/4 — 174 848 bytes — built <b>2026-08-10</b></span>
     <span class="use">Put it on an SD2IEC or a Pi1541, mount it as a disk, then <code>dload"urfinkel"</code>. Desktop emulators open it directly.</span>
@@ -402,28 +459,30 @@ the download to check it arrived whole.</p>
       <dt>MD5</dt><dd><code>35694f66c5dfd2578be5f81e1335c75f</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64.md5">urfinkel.d64.md5</a></dd>
     </dl>
   </li>
-  <li>
+  <li id="dl-zip">
     <a class="file zip" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>urfinkel.zip</span></a>
     <span class="tag">plays offline on a PC</span>
     <span class="tag">full source included</span>
-    <span class="what">the whole collection, zipped — 2 024 065 bytes — built <b>2026-08-10</b></span>
-    <span class="use">Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. Everything on this page except the emulator itself, which is why the browser copy still wants a connection and VICE with the <code>.prg</code> does not.</span>
+    <span class="what">the whole collection, zipped — 4 935 925 bytes — built <b>2026-08-10</b></span>
+    <span class="use">Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. The emulator comes too, so the browser copy plays with nothing plugged in.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip</a>
+    <span class="fine">Fully offline: the game, the emulator and the page all come out of the folder — nothing is fetched from anywhere. It has to be <b>served rather than opened directly</b>, because a <code>file://</code> page may not read the files beside it: run <code>./start-html.sh</code>. The emulator in <code>emulatorjs/</code> is EmulatorJS, GPL-3.0 and not part of UR FINKEL — see <code>emulatorjs/SOURCE.txt</code>. <code>index.html</code> beside it is the same page taking the emulator from its CDN instead, which is always the current version.</span>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>cea1d3992ad546e0c1db520dcc07c6b6129d0ce1070cdcc9c30c3f7f9f3cc184</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
-      <dt>MD5</dt><dd><code>fe5430bd83703be81aaac89744e26bfc</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>9989bf4154a5322ebdb10549ef75b67dd2b9beb2a21d6d56d8501a3cc166f115</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
+      <dt>MD5</dt><dd><code>900b522851e21cd720afa4fe47e82e19</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
     </dl>
   </li>
-  <li>
+  <li id="dl-targz">
     <a class="file targz" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>urfinkel.tar.gz</span></a>
     <span class="tag">plays offline on a PC</span>
     <span class="tag">full source included</span>
-    <span class="what">the same collection as a gzipped tar, for Linux and macOS — 2 004 358 bytes — built <b>2026-08-10</b></span>
-    <span class="use">Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. Everything on this page except the emulator itself, which is why the browser copy still wants a connection and VICE with the <code>.prg</code> does not.</span>
+    <span class="what">the same collection as a gzipped tar, for Linux and macOS — 4 915 351 bytes — built <b>2026-08-10</b></span>
+    <span class="use">Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. The emulator comes too, so the browser copy plays with nothing plugged in.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz</a>
+    <span class="fine">Fully offline: the game, the emulator and the page all come out of the folder — nothing is fetched from anywhere. It has to be <b>served rather than opened directly</b>, because a <code>file://</code> page may not read the files beside it: run <code>./start-html.sh</code>. The emulator in <code>emulatorjs/</code> is EmulatorJS, GPL-3.0 and not part of UR FINKEL — see <code>emulatorjs/SOURCE.txt</code>. <code>index.html</code> beside it is the same page taking the emulator from its CDN instead, which is always the current version.</span>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>05b267c7a825694b6198efe697e9ee27a1723034c858edd338c5e15f9fccabfd</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.sha256">urfinkel.tar.gz.sha256</a></dd>
-      <dt>MD5</dt><dd><code>487e01ecb66602f8d578dc2e90d3db7d</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.md5">urfinkel.tar.gz.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>86bd89ca0e2d264933d066edfebe9784ba7824dcdc89b382d97bd212575633b4</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.sha256">urfinkel.tar.gz.sha256</a></dd>
+      <dt>MD5</dt><dd><code>810194f1a6dd4bd8a94c65a38c00ffe5</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.md5">urfinkel.tar.gz.md5</a></dd>
     </dl>
   </li>
 </ul>
@@ -435,7 +494,7 @@ exact command — is in <a href="https://github.com/vonglurt/urfinkel/blob/main/
 
 <hr class="sep">
 
-<details class="repo" open>
+<details class="repo" id="repo" open>
   <summary>
     <svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5.5 4.5 2 8l3.5 3.5M10.5 4.5 14 8l-3.5 3.5"/></svg>
     <b>Code</b> — the whole repository
@@ -623,6 +682,17 @@ Contact: paulr@sdf.org
   EJS_gameName      = "UR FINKEL";
   EJS_pathtodata    = "https://cdn.emulatorjs.org/stable/data/";
   EJS_startOnLoaded = true;              // no click-to-start
+
+  // EmulatorJS focuses its own canvas once it is up, and focusing an element
+  // scrolls the page to it. The board is at the top, so anyone who had
+  // followed a card down to the downloads was thrown back to the top the
+  // moment the emulator finished loading - which looked like the anchors
+  // being broken, and was not.
+  //
+  // Nothing is lost by declining it: the machine needs a click before the
+  // browser will give it sound or keys anyway, and that click is what the
+  // prompt over the board asks for.
+  EJS_noAutoFocus = true;
   EJS_color         = "#d8a657";
   EJS_volume        = 0.5;
 

@@ -116,16 +116,24 @@ tools/vendor-emulator.sh --check >/dev/null || {
 mkdir -p "$STAGE/emulatorjs"
 cp -R vendor/emulatorjs/. "$STAGE/emulatorjs/"
 
+# The SCREENS section of the page points at docs/media/*.png. Without them the
+# archived copy shows four broken images - found by loading it in a browser,
+# which is the only way that kind of fault ever surfaces.
+mkdir -p "$STAGE/media"
+cp docs/media/*.png "$STAGE/media/"
+
 # --------------------------------------------------- the two offline pages
 # TWO PAGES, because they answer different questions.  index.html is this
 # site's page with its addresses made local - it still pulls the emulator from
 # the CDN, which is the smaller download and always the current version.
 # index-offline.html additionally points at the emulatorjs/ folder beside it
 # and needs nothing from the network at all.
+EJSVERSION="$(python3 -c 'import json;print(json.load(open("vendor/emulatorjs/version.json"))["version"])')" \
 python3 - "$PAGE" "$STAGE/index.html" "$BEGIN" "$END" "$STAGE/index-offline.html" <<'PY'
-import re, sys
+import os, re, sys
 
 src, out, begin, end, out_offline = sys.argv[1:6]
+EJSVERSION = os.environ["EJSVERSION"]
 html = open(src, encoding="utf-8").read()
 
 OFFLINE = """<p class="dl"><strong>The files are in this folder already</strong> —
@@ -138,7 +146,15 @@ this is the offline copy, so there is nothing here to download.</p>
 </ul>
 <p class="verify">Sizes, checksums and the exact command that built these are
 in <a href="https://github.com/vonglurt/urfinkel/blob/main/build/CHECKSUMS.txt">CHECKSUMS.txt</a>
-on GitHub. RUNNING.txt beside this file says how to run either one.</p>"""
+on GitHub. RUNNING.txt beside this file says how to run either one.</p>
+<p class="fine">A <code>file://</code> page may not read the files beside it,
+which is why this folder has to be served rather than double-clicked —
+<code>./start-html.sh</code> does that and opens the right page. The emulator
+in <code>emulatorjs/</code> is EmulatorJS, GPL-3.0 and not part of UR FINKEL:
+see <code>emulatorjs/LICENSE</code> and <code>emulatorjs/SOURCE.txt</code>.
+<code>index.html</code> beside this file is the same page taking the emulator
+from its CDN instead, which is always the current version, where this copy is
+the one that shipped and will age.</p>"""
 
 # 1. Replace the generated download block. Keeping it would put the archive's
 #    own checksum inside the archive - see the note at the top of dist.sh.
@@ -169,6 +185,24 @@ if n != 1:
 #    the arrow appears to mean. It used to be anchored on the hosted page's
 #    own .note block, which has since been deleted; the bar is structural and
 #    cannot be reworded away without this build saying so.
+# 3a. THE YOUTUBE EMBED COMES OUT OF BOTH ARCHIVED PAGES.
+#     Loading the archive in a browser showed it reaching for youtube.com,
+#     googleads.g.doubleclick.net, static.doubleclick.net and googleapis - an
+#     advertising and tracking stack, in a folder whose entire promise is that
+#     it touches no network. It cannot play offline either, so it was costing
+#     a visitor their privacy in exchange for a dead rectangle.
+#
+#     A plain link replaces it: still there, still one click, and it does
+#     nothing at all until that click.
+html, n = re.subn(
+    r'<div class="tube">.*?</div>',
+    '<p class="sub">The video is on YouTube — not embedded here, because this '
+    'copy is meant to touch no network until you ask it to: '
+    '<a href="https://youtu.be/Cw-SaWI046o">youtu.be/Cw-SaWI046o</a></p>',
+    html, count=1, flags=re.S)
+if n != 1:
+    sys.exit("dist: expected exactly one video embed to remove, found %d" % n)
+
 ANCHOR = '<div class="bar">'
 
 def with_note(page, body):
@@ -190,17 +224,15 @@ CDN_NOTE = (
     '  — the same page running the emulator from the <code>emulatorjs/</code>\n'
     '  folder beside it, with nothing fetched from anywhere.\n')
 
+# The offline page used to carry all of this as a banner under the screen.
+# It now sits as small print beside the download it belongs to - on the site,
+# and in the blurb below - so what is left here is the one line someone
+# looking at THIS page still needs: it works, and it needs serving.
 OFFLINE_NOTE = (
-    '  <strong>This is the fully offline copy.</strong> The game, the\n'
-    '  emulator and this page all come from this folder — nothing is fetched\n'
-    '  from any network. It still has to be <em>served</em> rather than opened\n'
-    '  directly, because a <code>file://</code> page may not read the files\n'
-    '  beside it: run <code>./start-html.sh</code>.\n'
-    '  <br><br>\n'
-    '  The emulator in <code>emulatorjs/</code> is EmulatorJS, which is GPL-3.0\n'
-    '  and is not part of UR FINKEL — see <code>emulatorjs/SOURCE.txt</code>.\n'
-    '  <code>index.html</code> beside this file is the same page taking the\n'
-    '  emulator from its CDN instead, which is always the current version.\n')
+    '  <strong>This is the fully offline copy.</strong> The game, the emulator\n'
+    '  and this page all come out of this folder — nothing is fetched from any\n'
+    '  network. It does have to be <em>served</em> rather than opened directly:\n'
+    '  run <code>./start-html.sh</code>.\n')
 
 open(out, "w", encoding="utf-8").write(with_note(html, CDN_NOTE))
 
@@ -218,7 +250,43 @@ off, n = re.subn(r'(s\.src\s*=\s*)"https://cdn\.emulatorjs\.org/[^"]*";',
 if n != 1:
     sys.exit("dist: expected exactly one CDN loader URL, found %d" % n)
 
-if "cdn.emulatorjs.org" in off:
+# 5. EmulatorJS checks itself for updates on startup, and that check is a
+#    hard-coded fetch of cdn.emulatorjs.org - there is no EJS_ flag to turn it
+#    off, and its only escape is a version string ending in "-beta". Loading
+#    the archive in a browser is how that showed up: one request, 126 bytes,
+#    no game data, and still a page that promised to touch no network
+#    reaching out to a CDN the moment it opened.
+#
+#    It is answered locally rather than patched out. Editing emulator.min.js
+#    would make the vendored copy no longer the verbatim upstream file that
+#    SOURCE.txt and MANIFEST.sha256 say it is; this is our own code, sitting
+#    in our own page, replying with the version we actually shipped.
+GUARD = '''  // EmulatorJS checks for a newer version over the network on startup, with
+  // no setting to prevent it. This copy is meant to work with nothing
+  // plugged in, so the question is answered here instead of over the wire -
+  // with the version actually vendored in emulatorjs/, which is the true
+  // answer. Nothing else is intercepted.
+  (function () {
+    var real = window.fetch;
+    window.fetch = function (input) {
+      var u = (typeof input === "string") ? input : (input && input.url) || "";
+      if (u.indexOf("cdn.emulatorjs.org") !== -1) {
+        return Promise.resolve(new Response(
+          JSON.stringify({ version: "@EJSVERSION@" }),
+          { status: 200, headers: { "Content-Type": "application/json" } }));
+      }
+      return real.apply(this, arguments);
+    };
+  })();
+
+  function loadEmulator('''
+off, n = re.subn(r'  function loadEmulator\(',
+                 GUARD.replace("@EJSVERSION@", EJSVERSION).replace("\\", "\\\\"),
+                 off, count=1)
+if n != 1:
+    sys.exit("dist: could not find loadEmulator to place the update guard before")
+
+if "cdn.emulatorjs.org" in off.replace('indexOf("cdn.emulatorjs.org")', ''):
     sys.exit("dist: the offline page still refers to the CDN somewhere")
 
 open(out_offline, "w", encoding="utf-8").write(with_note(off, OFFLINE_NOTE))
@@ -378,11 +446,12 @@ SRCMEMBERS=$(cd "$STAGE" && ls src/*.c src/*.h src/*.s | LC_ALL=C sort | sed 's|
 # The vendored emulator, found rather than listed: its file set is decided by
 # tools/vendor-emulator.sh and would otherwise have to be kept in step here.
 EJSMEMBERS=$(cd "$STAGE" && find emulatorjs -type f | LC_ALL=C sort | sed 's|^|urfinkel/|' | tr '\n' ' ')
+MEDIAMEMBERS=$(cd "$STAGE" && find media -type f | LC_ALL=C sort | sed 's|^|urfinkel/|' | tr '\n' ' ')
 
 MEMBERS="urfinkel/LICENCE urfinkel/RUNNING.txt urfinkel/index.html \
          urfinkel/index.txt urfinkel/index-offline.html urfinkel/start-html.sh \
          urfinkel/urfinkel.d64 urfinkel/urfinkel.prg \
-         $SRCMEMBERS $EJSMEMBERS"
+         $SRCMEMBERS $EJSMEMBERS $MEDIAMEMBERS"
 
 rm -f "$ZIP" "$TGZ"
 

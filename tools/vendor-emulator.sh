@@ -38,11 +38,22 @@ LICENSE_URL=https://raw.githubusercontent.com/EmulatorJS/EmulatorJS/v$VERSION/LI
 # is what the core file is called.
 CORE=vice_xplus4
 
+# ALL THREE CORE BUILDS, because the browser picks one at runtime and the
+# choice is not ours.  A page served without the cross-origin isolation
+# headers has no SharedArrayBuffer, so EmulatorJS takes the -legacy build;
+# with them it may take -thread.  Vendoring only the plain one is what made
+# the first offline bundle quietly fetch 1.4 MB from the CDN instead: the
+# local file 404s, and EmulatorJS falls back to its own CDN rather than
+# failing, so the page still worked and the bundle was not offline at all.
 FILES="loader.js
 emulator.min.js
 emulator.min.css
 version.json
+localization/en-US.json
 cores/$CORE-wasm.data
+cores/$CORE-legacy-wasm.data
+cores/$CORE-thread-wasm.data
+cores/reports/$CORE.json
 compression/extract7z.js
 compression/extractzip.js
 compression/libunrar.js
@@ -79,7 +90,7 @@ fi
 command -v curl >/dev/null 2>&1 || { echo "vendor: curl not found" >&2; exit 1; }
 
 rm -rf "$DEST"
-mkdir -p "$DEST/cores" "$DEST/compression"
+mkdir -p "$DEST/cores" "$DEST/cores/reports" "$DEST/compression" "$DEST/localization"
 
 echo "vendor: fetching EmulatorJS $VERSION"
 for f in $FILES; do
