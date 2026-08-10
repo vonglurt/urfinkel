@@ -77,10 +77,13 @@ ALGOS="sha256 md5"
 
 # What each artefact is, in the words the play page already used for it.  The
 # byte count beside it used to be typed in by hand and had been wrong before.
+# The machine is filled in by the caller from `make buildinfo`, so these read
+# "the program alone, for the Commodore Plus/4" and would follow the target if
+# a second one is ever added rather than quietly describing the wrong machine.
 what() {
     case "$1" in
-        *.prg) echo "the program alone" ;;
-        *.d64) echo "a disk image" ;;
+        *.prg) echo "the program alone, for the $2" ;;
+        *.d64) echo "a disk image, for the $2" ;;
     esac
 }
 
@@ -165,6 +168,15 @@ info=$(make buildinfo BUILD_DATE="$stamp" 2>/dev/null) || {
     exit 1
 }
 field() { printf '%s\n' "$info" | awk -F'\t' -v k="$1" '$1==k{print $2; exit}'; }
+
+# "plus4 (Commodore Plus/4)" -> "Commodore Plus/4".  The machine is named on
+# every download rather than left implicit, because a file called urfinkel.prg
+# says nothing about what it runs on to anyone who has not met a Plus/4 - and
+# because a second target would otherwise inherit the first one's description
+# silently.  Taken from `make buildinfo` so that renaming the target in the
+# Makefile renames it everywhere it is written down.
+machine=$(field target | sed -e 's/^[^(]*(//' -e 's/)$//')
+[ -n "$machine" ] || machine=$(field target)
 
 {
     echo "UR FINKEL - build manifest"
@@ -310,9 +322,17 @@ field() { printf '%s\n' "$info" | awk -F'\t' -v k="$1" '$1==k{print $2; exit}'; 
     for f in $FILES; do
         b=$(basename "$f")
         echo '  <li>'
-        printf '    <a class="file" href="%s/raw/main/%s" download>%s<span>%s</span></a>\n' \
-            "$REPO" "$f" "$(icon "$b")" "$b"
-        printf '    <span class="what">%s — %s bytes</span>\n' "$(what "$b")" "$(group "$(size_of "$f")")"
+        # The kind is emitted as a class so the stylesheet can give the two
+        # buttons gradients running opposite ways without counting children.
+        printf '    <a class="file %s" href="%s/raw/main/%s" download>%s<span>%s</span></a>\n' \
+            "${b##*.}" "$REPO" "$f" "$(icon "$b")" "$b"
+        printf '    <span class="what">%s — %s bytes — built <b>%s</b></span>\n' \
+            "$(what "$b" "$machine")" "$(group "$(size_of "$f")")" "$stamp"
+        # The address the button goes to, spelled out.  A button hides where it
+        # leads, and this is a file someone may want to fetch with curl or wget,
+        # or simply satisfy themselves about before clicking.
+        printf '    <a class="path" href="%s/raw/main/%s">%s/raw/main/%s</a>\n' \
+            "$REPO" "$f" "$REPO" "$f"
         echo '    <dl class="sums">'
         printf '      <dt>SHA-256</dt><dd><code>%s</code> — <a href="%s/raw/main/%s.sha256">%s.sha256</a></dd>\n' \
             "$(digest sha256 "$f")" "$REPO" "$f" "$b"
@@ -322,7 +342,7 @@ field() { printf '%s\n' "$info" | awk -F'\t' -v k="$1" '$1==k{print $2; exit}'; 
         echo '  </li>'
     done
     echo '</ul>'
-    echo '<p class="verify">Built '"$stamp"'. To check a download arrived intact, save'
+    echo '<p class="verify">To check a download arrived intact, save'
     echo 'its <code>.sha256</code> beside it and run <code>shasum -a 256 -c'
     printf 'urfinkel.prg.sha256</code>. What built these — compiler, version and the\n'
     printf 'exact command — is in <a href="%s/blob/main/build/CHECKSUMS.txt">CHECKSUMS.txt</a>.</p>\n' "$REPO"

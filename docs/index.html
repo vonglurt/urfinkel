@@ -79,41 +79,99 @@ from the repository.">
   ul { padding-left: 1.2rem; }
   li { margin-bottom: .4rem; }
 
-  /* Downloads.  The filename is the thing being clicked, so it carries the
-     weight; the digests are reference material you only look at once you
-     have the file, so they sit under it, indented and quiet. */
-  p.dl { margin-bottom: .5rem; font-size: .85rem; }
+  /* DOWNLOADS - the one green room in an amber house.
+     The rest of the page is gold on dark brown.  This block turns to autumn
+     moss instead, so the two things a visitor can take away are the one
+     place that does not look like the surrounding prose.  Every colour it
+     needs is declared here as a token, so the section can be retuned in one
+     place rather than hunted through the sheet. */
+  .downloads {
+    --moss:      #b4cc55;   /* the bright edge - links and the label      */
+    --moss-lit:  #d3e585;   /* hover                                      */
+    --moss-mid:  #8aa337;   /* the light end of the button gradient       */
+    --moss-deep: #3f5015;   /* the dark end                               */
+    --moss-dim:  #93a55f;   /* body text inside the block                 */
+    --moss-far:  #6f8330;   /* the quietest labels                        */
+    --acorn:     #e8c15a;   /* the icon: autumn gold against the green    */
+    --loam:      #161c0b;   /* the block's own ground                     */
+    --bark:      #3f4d1a;   /* its edge                                   */
+
+    background: var(--loam); border: 1px solid var(--bark);
+    padding: 1.3rem 1.3rem .4rem; margin: 0 0 1.5rem;
+  }
+  .downloads p.dl { margin-bottom: 1.4rem; font-size: .85rem; color: var(--moss-dim); }
+  .downloads p.dl strong { color: var(--moss); letter-spacing: .06em; }
   ul.dl { list-style: none; padding-left: 0; margin: 0 0 1.25rem; }
-  ul.dl > li { margin-bottom: 1.1rem; }
-  /* The filename is a button, sized and coloured like the controls under the
-     game so the page has one idea of what a thing you press looks like. */
+  /* The icon hangs off the left of each button, so every row is inset far
+     enough to give it that room without leaving the block. */
+  ul.dl > li { margin: 0 0 1.6rem 1.2rem; }
+
+  /* THE BUTTONS.  Two gradients running opposite ways - the .prg lit from the
+     top-left, the .d64 from the bottom-right - so the pair reads as a pair
+     rather than as one button repeated. */
   a.file {
-    display: inline-flex; align-items: center; gap: .55rem;
+    position: relative;
+    display: inline-flex; align-items: center;
     font-size: .85rem; font-weight: bold; letter-spacing: .1em;
     text-transform: uppercase; text-decoration: none;
-    background: #241c0c; color: #d8a657; border: 1px solid #6b5726;
-    padding: .6rem 1.1rem;
+    color: #f4f8e4;
+    border: 1px solid #7d9630; border-radius: 2px;
+    padding: .75rem 1.2rem .75rem 2.5rem;
+    box-shadow: 0 2px 0 #0b0f05, inset 0 1px 0 rgba(255,255,255,.14);
   }
-  a.file:hover { background: #33270f; color: #f0c274; border-color: #8a7130; }
-  a.file:active { background: #3d2f13; }
-  /* Strokes in currentColor, so the glyph follows the label on hover. */
+  a.file.prg { background: linear-gradient(135deg, var(--moss-mid), var(--moss-deep)); }
+  a.file.d64 { background: linear-gradient(315deg, var(--moss-mid), var(--moss-deep)); }
+  a.file:hover { filter: brightness(1.22); border-color: #a8c552; }
+  a.file:active { transform: translateY(2px); box-shadow: 0 0 0 #0b0f05, inset 0 1px 0 rgba(255,255,255,.14); }
+  /* The download affordance, kept out of the generated markup because it is
+     decoration rather than fact. */
+  a.file::after { content: "↓"; margin-left: .7rem; font-size: 1.15em; opacity: .75; }
+  a.file:hover::after { opacity: 1; }
+
+  /* THE ICON SPILLS OUT.  Twice the line height - the button's line box is
+     1.6em, so 3.2em - and hung half outside the left edge, which is why the
+     button carries 2.5rem of left padding and the row is inset to match.
+     Absolute, so growing it never reflows the label. */
+  a.file .ico {
+    position: absolute; left: -1.2rem; top: 50%; transform: translateY(-50%);
+    width: 3.2em; height: 3.2em;
+    color: var(--acorn); stroke-width: 1.1;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,.65));
+  }
+  a.file:hover .ico { color: #ffd97a; }
+  /* Strokes in currentColor, so the glyph follows whatever colour it is given. */
   .ico {
-    width: 1.15em; height: 1.15em; flex: none;
-    fill: none; stroke: currentColor; stroke-width: 1.2;
+    flex: none; fill: none; stroke: currentColor; stroke-width: 1.2;
     stroke-linecap: round; stroke-linejoin: round;
   }
-  .what { display: block; color: #b3a179; font-size: .8rem; margin-top: .15rem; }
-  dl.sums { margin: .45rem 0 0 1.4rem; font-size: .7rem; line-height: 1.5; }
+
+  .what { display: block; color: var(--moss-dim); font-size: .8rem; margin-top: .5rem; }
+  .what b { color: var(--moss); font-weight: normal; }
+  /* The address the button hides, written out.  Selectable in one gesture for
+     anyone reaching for curl, and it must be allowed to wrap: the URL is
+     longer than a phone is wide, and this page never scrolls sideways. */
+  a.path {
+    display: block; margin-top: .35rem; font-size: .72rem;
+    color: var(--moss-far); text-decoration: none;
+    overflow-wrap: anywhere; border-bottom: 1px dotted #3f4d1a;
+    padding-bottom: .3rem;
+  }
+  a.path:hover { color: var(--moss); border-bottom-color: var(--moss-far); }
+  dl.sums { margin: .45rem 0 0 0; font-size: .7rem; line-height: 1.5; }
   dl.sums dt {
-    color: #8a7a52; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--moss-far); letter-spacing: .1em; text-transform: uppercase;
     margin-top: .3rem;
   }
   /* The sha256 is 64 characters and the page is 52rem at its widest, so on a
      phone it has to be allowed to break mid-string rather than push the body
      sideways. */
-  dl.sums dd { margin: 0; color: #9c8c66; overflow-wrap: anywhere; }
-  dl.sums dd a { font-size: .95em; }
-  p.verify { font-size: .78rem; color: #9c8c66; margin: -.4rem 0 1.5rem; }
+  dl.sums dd { margin: 0; color: var(--moss-dim); overflow-wrap: anywhere; }
+  dl.sums dd a { font-size: .95em; color: var(--moss); }
+  dl.sums dd a:hover { color: var(--moss-lit); }
+  p.verify { font-size: .78rem; color: var(--moss-dim); margin: 0 0 1.2rem; }
+  p.verify a { color: var(--moss); }
+  p.verify a:hover { color: var(--moss-lit); }
+  .downloads code { color: var(--moss-dim); }
 
   /* The embed ships as a fixed 560x315.  This page must never scroll
      sideways, and 560px is wider than a phone, so the frame is given a 16:9
@@ -148,6 +206,7 @@ inside it, so the machine cannot hear you before that.</p>
   <button id="power" type="button">⏏ Unload the emulator</button>
 </div>
 
+<section class="downloads">
 <p class="dl"><strong>Downloads</strong> — click either to save it. The checksum
 files beneath them open in the browser instead; save one next to the download
 to check it arrived whole.</p>
@@ -155,27 +214,30 @@ to check it arrived whole.</p>
 <!-- Generated by tools/checksums.sh - do not edit between these markers. -->
 <ul class="dl">
   <li>
-    <a class="file" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 1.5h6l3 3v10h-9z"/><path d="M9.5 1.5v3h3"/><path d="M5.5 8.5 7 10l-1.5 1.5M8.5 11.5h2"/></svg><span>urfinkel.prg</span></a>
-    <span class="what">the program alone — 56 511 bytes</span>
+    <a class="file prg" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 1.5h6l3 3v10h-9z"/><path d="M9.5 1.5v3h3"/><path d="M5.5 8.5 7 10l-1.5 1.5M8.5 11.5h2"/></svg><span>urfinkel.prg</span></a>
+    <span class="what">the program alone, for the Commodore Plus/4 — 56 511 bytes — built <b>2026-08-10</b></span>
+    <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg</a>
     <dl class="sums">
       <dt>SHA-256</dt><dd><code>075545a1cf34f7e6c615c3670e1d28158b51a78d3a090e41d5261c72a9f546b0</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg.sha256">urfinkel.prg.sha256</a></dd>
       <dt>MD5</dt><dd><code>991db4f541b3ecd1e92ef86aae59ced0</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg.md5">urfinkel.prg.md5</a></dd>
     </dl>
   </li>
   <li>
-    <a class="file" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 1.5h10l3 3v10h-13z"/><path d="M4.5 1.5h6v4h-6zM4.5 9.5h7v5h-7z"/></svg><span>urfinkel.d64</span></a>
-    <span class="what">a disk image — 174 848 bytes</span>
+    <a class="file d64" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 1.5h10l3 3v10h-13z"/><path d="M4.5 1.5h6v4h-6zM4.5 9.5h7v5h-7z"/></svg><span>urfinkel.d64</span></a>
+    <span class="what">a disk image, for the Commodore Plus/4 — 174 848 bytes — built <b>2026-08-10</b></span>
+    <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64</a>
     <dl class="sums">
       <dt>SHA-256</dt><dd><code>513048d68076f25403553b874c4dd4a1fc9502636b00a14253e08d93310030cd</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64.sha256">urfinkel.d64.sha256</a></dd>
       <dt>MD5</dt><dd><code>35694f66c5dfd2578be5f81e1335c75f</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64.md5">urfinkel.d64.md5</a></dd>
     </dl>
   </li>
 </ul>
-<p class="verify">Built 2026-08-10. To check a download arrived intact, save
+<p class="verify">To check a download arrived intact, save
 its <code>.sha256</code> beside it and run <code>shasum -a 256 -c
 urfinkel.prg.sha256</code>. What built these — compiler, version and the
 exact command — is in <a href="https://github.com/vonglurt/urfinkel/blob/main/build/CHECKSUMS.txt">CHECKSUMS.txt</a>.</p>
 <!-- CHECKSUMS:END -->
+</section>
 
 <h2>VIDEO</h2>
 <!-- loading="lazy" so YouTube's player does not compete with the emulator
