@@ -128,7 +128,12 @@ that the cost of a feature is paid in music rather than in an unexplained
 link failure: the Makefile records the ceiling coming down from 23 400 to
 22 200 on 2026-08-08, buying 1 525 bytes for the apron effects at the
 price of three pieces out of the rotation.  The traced build (`make
-debug`) wants about 1.6 KB more than exists and has not linked since.
+debug`) does not link: measured on 2026-08-10, `-DDEBUG` costs **3 671
+bytes** — 2 936 of code, 246 of read-only data, 374 of BSS — against 324
+free, leaving it **3 347 bytes short**. The earlier figure of ~1.6 KB was
+wrong. `MIDBUDGET` cannot buy that back on its own, because the `assets/midi`
+it transcribes is not published here; the beds would have to be trimmed out
+of `tools/songs-midi.mml` by hand, which takes music out of the game.
 
 **The $0400 invariant.** The colour matrix sits exactly $0400 below the
 screen matrix. Every blitter leans on this — one pointer walks both

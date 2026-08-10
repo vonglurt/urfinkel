@@ -140,8 +140,20 @@ $(BUILD)/demo.prg: $(SRC)/demo.c $(CORE) $(HDRS) | $(BUILD)
 # SEVEN bytes free before this was lowered; it has 364 now, which is thin
 # enough that the next feature should expect to lower this again.
 #
-# What it does NOT yet pay for is `make debug`, which wants ~1.6 KB more
-# than exists and has not linked for some time - see backlog 15.18.
+# WHAT IT DOES NOT PAY FOR IS `make debug`, and the figure here was wrong.
+# Measured 2026-08-10 by linking both with a reduced stack to get past the
+# overflow and reading the maps: -DDEBUG costs 3 671 bytes - 2 936 of CODE,
+# 246 of RODATA, 374 of BSS, 2 of DATA - against 324 bytes free, so the
+# traced build is 3 347 short and not the ~1.6 KB recorded here before.
+#
+# AND THIS LEVER CANNOT BE PULLED IN THIS REPOSITORY.  MIDBUDGET feeds
+# midibed.py, which transcribes assets/midi - and assets/ is not published
+# here.  `make music` finds nothing to do; tools/songs-midi.mml and
+# src/song.h are committed as generated artefacts whose sources are absent.
+# Lowering the number below changes nothing on its own.  Buying those 3 347
+# bytes means trimming beds out of tools/songs-midi.mml by hand and
+# regenerating, which takes music out of the shipped game - a decision about
+# the product, not about the build.
 MIDBUDGET ?= 22200
 MIDS  = $(wildcard assets/midi/*.mid)
 MIDMML = $(TOOLS)/songs-midi.mml
