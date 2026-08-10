@@ -10,6 +10,24 @@ If you want a change to land *here*, read on. There is one rule that is not
 negotiable and a handful of constraints that will bite you if nobody warns
 you first.
 
+## Two directories are not hand-edited
+
+`build/` and `vendor/` are both generated, and a commit that edits either by
+hand will be rejected by the push gate rather than merged.
+
+- **`build/`** — the binaries, their checksum sidecars, `CHECKSUMS.txt` and the
+  two collections. `make checksums` produces every number in them, and the
+  same script writes the generated blocks in `README.md`, `INSTALL.md` and
+  `docs/index.html`. Change a source file, not a published figure.
+- **`vendor/emulatorjs/`** — **somebody else's code, under a different
+  licence.** EmulatorJS is GPL-3.0 and the Plus/4 core inside it is VICE,
+  GPL-2.0-or-later; this project is MIT. It is copied in verbatim so the
+  offline collection needs no network, and `vendor/emulatorjs/SOURCE.txt`
+  records the version and where the corresponding source lives. To move to a
+  newer EmulatorJS, edit the version in `tools/vendor-emulator.sh` and re-run
+  it; `tools/vendor-emulator.sh --check` verifies what is there against the
+  manifest it wrote.
+
 ## Every commit must be signed
 
 **Unsigned commits will not be merged.** Not as a matter of taste — this is a
@@ -78,6 +96,7 @@ is therefore a *visitor's* problem, not a developer's, so a hook rebuilds them
 from nothing before every commit:
 
 ```sh
+make hooks      # or, the same thing by hand:
 git config core.hooksPath tools/hooks
 ```
 

@@ -484,7 +484,10 @@ yet switched on; the executor exists, the assertions are backlog 4.5.
 ## Build & run
 
 ```sh
+make hooks      # turn on the commit and push gates (git cannot clone them)
 make            # build/urfinkel.prg
+make dist       # pack build/urfinkel.zip and .tar.gz
+make checksums  # regenerate every published size and hash
 make music      # recompile tools/songs.mml -> src/song.h
 make check      # rule tests on the host, milliseconds
 make conform    # renderer conformance against the frozen edition
@@ -536,6 +539,17 @@ stopped rather than one that is merely wrong.
 | `src/kbdiag.c`, `src/kbhunt.c`, `src/kbtype.c` | keyboard instruments: the jiffy-clock verdict, the matrix signatures, the live probe |
 | `tools/mml.py`, `tools/songs.mml` | the music notation and its compiler |
 | `tools/viceshot.py` | headless screenshots that verify the program actually ran |
+| `tools/midibed.py`, `tools/songs-midi.mml` | transcribes `assets/midi` into song data, capped by `MIDBUDGET` |
+| `tools/mmlstat.py`, `tools/anim.py` | bench instruments: what the songs cost, and one animation in isolation |
+| `tools/checksums.sh` | the one place sizes and hashes are produced — writes the sidecars, `CHECKSUMS.txt`, and the generated blocks in this file, `INSTALL.md` and the play page |
+| `tools/dist.sh` | packs the two downloadable collections, byte-reproducibly |
+| `tools/vendor-emulator.sh` | fetches EmulatorJS into `vendor/`, pinned and checksummed |
+| `tools/start-html.sh` | ships inside the collections: serves the folder and opens the play page |
+| `tools/RUNNING.txt.in` | the notes that go in the collections, with the build commands filled in |
+| `tools/hooks/pre-commit` | rebuilds, tests, regenerates the checksums and stages them — `make hooks` |
+| `tools/hooks/pre-push` | refuses to push a binary these sources do not produce |
+| `vendor/emulatorjs/` | **not part of this project** — EmulatorJS, GPL-3.0, so the offline collection needs no network. See `vendor/emulatorjs/SOURCE.txt` |
+| `docs/index.html` | the play page — hand-written, except the block between its `CHECKSUMS` markers |
 
 ## Documentation
 

@@ -52,6 +52,29 @@ VICEENV = XDG_DATA_DIRS=$(BREW_PREFIX)/share:$$XDG_DATA_DIRS
 SHOT     = BREW_PREFIX=$(BREW_PREFIX) $(PYTHON) $(TOOLS)/viceshot.py
 
 all: $(GAME)
+	@$(HOOKWARN)
+
+# --- the gate ------------------------------------------------------------
+# GIT DOES NOT CLONE HOOKS, and it does not clone core.hooksPath either, so
+# every guarantee this repository makes about its own contents - that the
+# committed binary is what these sources build, that the published checksums
+# describe the published files - is opt-in per clone and off by default.
+# Someone who clones, edits and commits gets none of it and is told nothing.
+#
+# `make hooks` turns them on.  Every build prints one line when they are off,
+# rather than setting the config unasked: writing to somebody's git
+# configuration as a side effect of `make` is not a thing a build should do.
+HOOKWARN = if [ "$$(git config --get core.hooksPath)" != "tools/hooks" ]; then 	     echo ""; 	     echo "  NOTE: this clone has no commit or push gate installed."; 	     echo "        git does not clone hooks - turn them on with:  make hooks"; 	     echo ""; 	   fi
+
+hooks:
+	@git config core.hooksPath tools/hooks
+	@echo "hooks: core.hooksPath = $$(git config --get core.hooksPath)"
+	@echo "       pre-commit  rebuilds, tests, regenerates checksums, stages"
+	@echo "       pre-push    verifies the pushed binary against a clean build"
+
+hooks-off:
+	@git config --unset core.hooksPath || true
+	@echo "hooks: uninstalled - commits and pushes are no longer checked"
 
 $(BUILD):
 	mkdir -p $(BUILD)
@@ -510,4 +533,5 @@ clean:
 
 .PHONY: all debug debug-shot kbtest card-probe music check run run200 test \
         anim anim-run buildinfo dist checksums checksums-check \
+        hooks hooks-off \
         conform disk card card-eject clean kbdiag kbdiag-shot
