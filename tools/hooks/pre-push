@@ -46,9 +46,15 @@ SIDECARS="build/urfinkel.prg.sha256 build/urfinkel.prg.md5 \
           build/urfinkel.tar.gz.sha256 build/urfinkel.tar.gz.md5 \
           build/CHECKSUMS.txt"
 
-if ! git diff --quiet HEAD -- README.md $SIDECARS; then
-    echo "pre-push: README.md or a sidecar checksum differs from HEAD, so the" >&2
-    echo "          published hashes cannot be verified against what is pushed." >&2
+# checksums.sh --check reads the play page as well, so it belongs in the same
+# assertion. It was missing, which is why a stale page reported itself as
+# "a sidecar differs from HEAD" rather than by name.
+GENERATED="README.md docs/index.html"
+
+if ! git diff --quiet HEAD -- $GENERATED $SIDECARS; then
+    echo "pre-push: one of these differs from HEAD, so the published hashes" >&2
+    echo "          cannot be verified against what is pushed:" >&2
+    git diff --name-only HEAD -- $GENERATED $SIDECARS | sed 's/^/            /' >&2
     echo "          Commit or stash the change, then push again." >&2
     exit 1
 fi
@@ -110,6 +116,9 @@ for s in $SIDECARS; do
         git checkout HEAD -- "$s"
     fi
 done
+# The archives are already there from the clean rebuild above, and being
+# reproducible they are the same bytes a second `make dist` would write, so
+# they are not rebuilt again here.
 if ! tools/checksums.sh --check; then
     echo "pre-push: the published hashes do not describe the pushed binary." >&2
     echo "          Run 'make checksums', commit the result, then push again." >&2

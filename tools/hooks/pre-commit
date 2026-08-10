@@ -63,19 +63,30 @@ if [ "${URFINKEL_CONFORM:-0}" = "1" ]; then
     rm -f /tmp/urfinkel-conform.$$
 fi
 
-# The README quotes the size and the hashes of both binaries, so a rebuild
-# that changed them has just made the README wrong.  Regenerating here keeps
-# the claim and the file it describes in the same commit, which is the only
-# arrangement in which the claim is worth anything.
+# The README and the play page both quote the size and the hashes of what is
+# published, so a rebuild that changed them has just made both wrong.
+# Regenerating here keeps the claim and the file it describes in the same
+# commit, which is the only arrangement in which the claim is worth anything.
 #
-# Whether the result may be staged is decided BEFORE the script runs. If the
-# README already had unstaged edits, they are someone's work in progress -
-# a `git add -p` session, most likely - and staging the file wholesale would
-# sweep all of it into this commit. In that case the edit is made on disk and
-# left unstaged, with a notice; pre-push is the gate that stops a stale one
-# from ever reaching the remote.
-readme_clean=1
-git diff --quiet -- README.md || readme_clean=0
+# BOTH FILES ARE HANDLED, not just the README.  checksums.sh has written the
+# play page since the download buttons were generated, and this hook staged
+# only the README - so a commit that changed the page could leave the page
+# itself behind: the archives would be built from the new one, their hashes
+# committed, and the page holding those hashes left unstaged.  pre-push
+# caught it, correctly and confusingly, as "a sidecar differs from HEAD".
+#
+# Whether either may be staged is decided BEFORE the script runs. If a file
+# already had unstaged edits, they are someone's work in progress - a
+# `git add -p` session, most likely - and staging it wholesale would sweep all
+# of it into this commit. In that case the edit is made on disk and left
+# unstaged, with a notice; pre-push is the gate that stops a stale one from
+# ever reaching the remote.
+GENERATED="README.md docs/index.html"
+
+clean_before=""
+for f in $GENERATED; do
+    git diff --quiet -- "$f" && clean_before="$clean_before $f"
+done
 
 echo "pre-commit: checksums..."
 tools/checksums.sh
@@ -83,16 +94,21 @@ tools/checksums.sh
 git add build/urfinkel.prg build/urfinkel.d64
 git add build/urfinkel.prg.sha256 build/urfinkel.prg.md5
 git add build/urfinkel.d64.sha256 build/urfinkel.d64.md5
+git add build/urfinkel.zip.sha256 build/urfinkel.zip.md5
+git add build/urfinkel.tar.gz.sha256 build/urfinkel.tar.gz.md5
 git add build/CHECKSUMS.txt
 git add build/urfinkel.zip build/urfinkel.tar.gz
 
-if [ "$readme_clean" = "1" ]; then
-    git add README.md
-elif ! git diff --quiet -- README.md; then
-    echo "pre-commit: README.md had unstaged edits, so the checksum table was"
-    echo "            written but NOT staged. Stage it yourself if it belongs"
-    echo "            in this commit."
-fi
+for f in $GENERATED; do
+    case " $clean_before " in
+        *" $f "*) git add "$f" ;;
+        *) git diff --quiet -- "$f" || {
+               echo "pre-commit: $f had unstaged edits, so the generated block was"
+               echo "            written but NOT staged. Stage it yourself if it"
+               echo "            belongs in this commit."
+           } ;;
+    esac
+done
 
 if git diff --cached --quiet -- build/urfinkel.prg build/urfinkel.d64; then
     echo "pre-commit: binaries unchanged"
