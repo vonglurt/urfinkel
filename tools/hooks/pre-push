@@ -49,7 +49,7 @@ SIDECARS="build/urfinkel.prg.sha256 build/urfinkel.prg.md5 \
 # checksums.sh --check reads the play page as well, so it belongs in the same
 # assertion. It was missing, which is why a stale page reported itself as
 # "a sidecar differs from HEAD" rather than by name.
-GENERATED="README.md docs/index.html"
+GENERATED="README.md docs/index.html INSTALL.md"
 
 if ! git diff --quiet HEAD -- $GENERATED $SIDECARS; then
     echo "pre-push: one of these differs from HEAD, so the published hashes" >&2

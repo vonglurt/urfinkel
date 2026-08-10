@@ -81,7 +81,7 @@ fi
 # of it into this commit. In that case the edit is made on disk and left
 # unstaged, with a notice; pre-push is the gate that stops a stale one from
 # ever reaching the remote.
-GENERATED="README.md docs/index.html"
+GENERATED="README.md docs/index.html INSTALL.md"
 
 clean_before=""
 for f in $GENERATED; do
