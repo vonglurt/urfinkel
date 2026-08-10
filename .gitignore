@@ -6,9 +6,11 @@ src/*.o
 
 # Build output is generated - except the two binaries the README offers as
 # downloads, which are tracked on purpose so those links resolve, and the
-# checksum file that describes them, which is no use to a downloader unless
-# it is published alongside them.
+# sidecar checksums that describe them, which are no use to a downloader
+# unless they are published alongside them.
 build/*
 !build/urfinkel.d64
 !build/urfinkel.prg
+!build/*.sha256
+!build/*.md5
 !build/CHECKSUMS.txt

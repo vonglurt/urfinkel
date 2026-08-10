@@ -470,6 +470,41 @@ card-eject:
 # table into README.md between its CHECKSUMS markers, and `checksums-check`
 # asserts both are current without touching either.  pre-commit runs the
 # first; pre-push runs the second.
+# Everything that determines the two artefacts, printed as `key<tab>value` so
+# tools/checksums.sh can record it in the build manifest without parsing this
+# file.  The Makefile is the only place these facts are written down, and this
+# target is how they leave it, so the manifest cannot drift from the recipe
+# that is actually run.
+#
+# THE COMMANDS ARE PRINTED WITH BARE TOOL NAMES, not $(CL65) and $(C1541),
+# which resolve to absolute Homebrew paths.  Those paths differ between
+# machines and have nothing to do with the bytes that come out, and the
+# manifest is committed and checked, so a machine-specific string in it would
+# fail that check for a build that is in fact identical.
+#
+# Pass BUILD_DATE to reproduce the flags of an older build, exactly as
+# pre-push does when it rebuilds at a pushed stamp.
+# CC65FLAGS IS READ FROM THE ENVIRONMENT, not interpolated into the recipe.
+# Its value contains both kinds of quote - -DBUILD_DATE='"2026-08-10"', where
+# the single pair protects the double pair that makes it a C string literal -
+# and pasting that through a recipe line lets the shell strip a layer, so what
+# got printed was -DBUILD_DATE=2026-08-10, which is a different flag and does
+# not compile.  Exporting it and reading $$CC65FLAGS hands the shell the value
+# rather than the text, so what the manifest records is what cl65 was given.
+#
+# c1541 announces itself on stdout after an OPENCBM warning on the same
+# stream, so its version is grepped for rather than taken off the top.
+export CC65FLAGS
+buildinfo:
+	@printf 'target\tplus4 (Commodore Plus/4)\n'
+	@printf 'cl65\t%s\n'  "$$($(CL65) --version 2>&1 | head -1)"
+	@printf 'c1541\t%s\n' "$$(echo quit | $(C1541) 2>/dev/null | grep -m1 '^c1541')"
+	@printf 'cc65flags\t%s\n' "$$CC65FLAGS"
+	@printf 'compile\tcl65 %s -o %s %s %s\n' "$$CC65FLAGS" '$(GAME)' '$(SRC)/game.c' '$(CORE)'
+	@printf 'diskimage\tc1541 -format "ur finkel,uf" d64 %s -write %s urfinkel\n' '$(DISK)' '$(GAME)'
+	@printf 'sources\t%s %s\n' '$(SRC)/game.c' '$(CORE)'
+	@printf 'headers\t%s\n' '$(HDRS)'
+
 checksums: $(GAME) $(DISK)
 	@$(TOOLS)/checksums.sh
 
@@ -480,5 +515,5 @@ clean:
 	rm -rf $(BUILD)
 
 .PHONY: all debug debug-shot kbtest card-probe music check run run200 test \
-        anim anim-run checksums checksums-check \
+        anim anim-run buildinfo checksums checksums-check \
         bench conform disk card card-eject clean kbdiag kbdiag-shot

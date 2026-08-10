@@ -1,13 +1,45 @@
 #!/bin/sh
 #
-# Hash the published binaries, write build/CHECKSUMS.txt, and paste a table of
-# the result into README.md between its CHECKSUMS markers.
+# Hash the published binaries, write a sidecar checksum file for each binary
+# and each algorithm, and paste a table of the result into README.md between
+# its CHECKSUMS markers.
 #
 # WHY THIS EXISTS.  build/urfinkel.prg and build/urfinkel.d64 are offered as
 # downloads, so a visitor needs a way to tell that the file that reached them
 # is the file that left here.  Hand-written hashes would be wrong by the second
 # commit; hand-written byte counts already were.  This is the one place the
 # numbers are produced, and everything that quotes them is filled in from it.
+#
+# ONE FILE PER BINARY PER ALGORITHM:
+#
+#     build/urfinkel.prg.sha256      build/urfinkel.prg.md5
+#     build/urfinkel.d64.sha256      build/urfinkel.d64.md5
+#
+# Each holds exactly one line in the format the checking tools already expect -
+# the digest, two spaces, the bare filename - and nothing else.  No header, no
+# comment, no second algorithm.  That is the whole point of the split: a file
+# with only the lines its tool understands is checked without a warning, and
+# the name says what it is, so a visitor who has downloaded urfinkel.d64 and
+# urfinkel.d64.sha256 into one folder can run
+#
+#     shasum -a 256 -c urfinkel.d64.sha256
+#     md5sum -c urfinkel.d64.md5
+#
+# and get one line of output that says OK.  The bare filename is deliberate:
+# it makes the sidecar work in the folder the download landed in rather than
+# only at the root of a clone.
+#
+# AND ONE MANIFEST, build/CHECKSUMS.txt, which is for a reader rather than a
+# checking tool: the hashes again, plus what produced them - the compiler and
+# its version, the exact command line, every source file with its git blob
+# SHA.  Enough to answer "what is this build, and could I make it again".
+#
+# WHAT THE MANIFEST DELIBERATELY LEAVES OUT: the host OS, the architecture,
+# the absolute path cl65 was found at, and the time of day.  None of them
+# changes the bytes that come out, all of them differ between machines, and
+# the manifest is committed and then checked by pre-push - so recording them
+# would fail that check for a build that is in fact identical.  What is
+# recorded is what determines the artefact, and nothing else.
 #
 # WHAT IT CANNOT DO.  It cannot stamp the README with the SHA of the commit
 # that carries it.  That commit's SHA is a hash of its own content, README
@@ -23,8 +55,8 @@
 #     commit last changed it, and so is never stale.
 #
 # Usage:
-#   tools/checksums.sh            regenerate CHECKSUMS.txt and README.md
-#   tools/checksums.sh --check    exit 1 if either is out of date, change nothing
+#   tools/checksums.sh            regenerate the sidecars and README.md
+#   tools/checksums.sh --check    exit 1 if any is out of date, change nothing
 
 set -e
 
@@ -34,13 +66,13 @@ cd "$root"
 CHECK=0
 [ "${1:-}" = "--check" ] && CHECK=1
 
-STAMPFILE=build/CHECKSUMS.txt
 README=README.md
 BEGIN='<!-- CHECKSUMS:START -->'
 END='<!-- CHECKSUMS:END -->'
 REPO=https://github.com/vonglurt/urfinkel
 
 FILES="build/urfinkel.prg build/urfinkel.d64"
+ALGOS="sha256 md5"
 
 for f in $FILES; do
     if [ ! -f "$f" ]; then
@@ -50,17 +82,20 @@ for f in $FILES; do
 done
 
 # macOS ships `md5` and `shasum`; GNU userlands ship `md5sum` and `sha256sum`.
-# Both are emitted in BSD tagged form ("MD5 (path) = hash") so that the two
-# algorithms can share one file and each still be checkable with -c.
-md5_of() {
-    if command -v md5 >/dev/null 2>&1; then md5 -q "$1"
-    else md5sum "$1" | cut -d' ' -f1
-    fi
-}
-sha256_of() {
-    if command -v shasum >/dev/null 2>&1; then shasum -a 256 "$1" | cut -d' ' -f1
-    else sha256sum "$1" | cut -d' ' -f1
-    fi
+# Only the bare digest is taken from either, because the line around it is
+# assembled here - the two differ on how they print it, and the sidecar has to
+# be identical whichever machine wrote it.
+digest() {  # digest <algo> <path>
+    case "$1" in
+        md5)
+            if command -v md5 >/dev/null 2>&1; then md5 -q "$2"
+            else md5sum "$2" | cut -d' ' -f1
+            fi ;;
+        sha256)
+            if command -v shasum >/dev/null 2>&1; then shasum -a 256 "$2" | cut -d' ' -f1
+            else sha256sum "$2" | cut -d' ' -f1
+            fi ;;
+    esac
 }
 
 size_of() { wc -c < "$1" | tr -d ' '; }
@@ -84,31 +119,91 @@ sys.stdout.write(m.group().decode() if m else '')
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
-# ---------------------------------------------------------------- the file
+# ------------------------------------------------------------- the sidecars
+for f in $FILES; do
+    b=$(basename "$f")
+    for a in $ALGOS; do
+        printf '%s  %s\n' "$(digest "$a" "$f")" "$b" > "$tmp/$b.$a"
+    done
+done
+
+# -------------------------------------------------------------- the manifest
+# BUILD_DATE is passed so the flags recorded are the ones that produced THIS
+# binary rather than the ones today's clock would produce.  Without it, a
+# manifest regenerated tomorrow for a binary built today would differ in the
+# -DBUILD_DATE flag, and pre-push would refuse a push that is perfectly sound.
+info=$(make buildinfo BUILD_DATE="$stamp" 2>/dev/null) || {
+    echo "checksums: 'make buildinfo' failed - is the toolchain installed?" >&2
+    exit 1
+}
+field() { printf '%s\n' "$info" | awk -F'\t' -v k="$1" '$1==k{print $2; exit}'; }
+
 {
-    echo "UR FINKEL - checksums for the published binaries"
-    echo "================================================"
+    echo "UR FINKEL - build manifest"
+    echo "=========================="
     echo
-    echo "Build date $stamp, as stamped into the program and drawn on its menu."
-    echo "Generated by tools/checksums.sh; do not edit by hand."
+    echo "What this build is, what produced it, and how to tell that a copy of"
+    echo "it arrived intact. Generated by tools/checksums.sh; do not edit."
     echo
-    echo "These two files are what $REPO"
-    echo "offers as downloads. The names below are bare, so save this file into"
-    echo "the same folder as the download, then run either of:"
+    echo "BUILD"
+    echo "-----"
+    echo "date          $stamp"
+    echo "              Compiled into the program and drawn on its menu, so a"
+    echo "              copy can be identified from the machine itself."
+    echo "target        $(field target)"
     echo
-    echo "    shasum -a 256 -c CHECKSUMS.txt"
-    echo "    md5sum -c CHECKSUMS.txt"
+    echo "TOOLCHAIN"
+    echo "---------"
+    echo "compiler      $(field cl65)"
+    echo "disk image    $(field c1541)"
     echo
-    echo "Each tool warns that the other's lines are improperly formatted and"
-    echo "skips them. That is expected - both algorithms share this one file -"
-    echo "and the lines it does read are still checked and still reported."
+    echo "The host OS, the architecture and the path the tools were found at are"
+    echo "deliberately not recorded: none of them changes the bytes that come"
+    echo "out, and all of them differ between machines."
     echo
-    for f in $FILES; do
-        echo "$(basename "$f")  $(group "$(size_of "$f")") bytes  git blob $(git hash-object "$f")"
+    echo "COMMANDS"
+    echo "--------"
+    echo "Run from the root of a clone, these two reproduce the artefacts below"
+    echo "exactly. Both were run verbatim and compared byte for byte."
+    echo
+    echo "    $(field compile)"
+    echo
+    echo "    $(field diskimage)"
+    echo
+    echo "SOURCES"
+    echo "-------"
+    echo "Every file the command above compiles, and every header they include,"
+    echo "with git's own address for its content. Reproduce any line with"
+    echo "\`git hash-object <path>\`."
+    echo
+    for s in $(field sources) $(field headers); do
+        printf '%-20s %s\n' "$s" "$(git hash-object "$s")"
     done
     echo
-    for f in $FILES; do echo "MD5 ($(basename "$f")) = $(md5_of "$f")"; done
-    for f in $FILES; do echo "SHA256 ($(basename "$f")) = $(sha256_of "$f")"; done
+    echo "ARTEFACTS"
+    echo "---------"
+    for f in $FILES; do
+        b=$(basename "$f")
+        echo "$b"
+        printf '  %-12s %s bytes\n' "size" "$(group "$(size_of "$f")")"
+        printf '  %-12s %s\n' "md5" "$(digest md5 "$f")"
+        printf '  %-12s %s\n' "sha256" "$(digest sha256 "$f")"
+        printf '  %-12s %s\n' "git blob" "$(git hash-object "$f")"
+        echo
+    done
+    echo "VERIFYING A DOWNLOAD"
+    echo "--------------------"
+    echo "Each hash above is also published on its own, as the single line the"
+    echo "checking tool expects. Save one next to the file you downloaded:"
+    echo
+    for f in $FILES; do
+        b=$(basename "$f")
+        echo "    shasum -a 256 -c $b.sha256"
+        echo "    md5sum -c $b.md5"
+    done
+    echo
+    echo "Do not point those tools at this file - it is prose, and they would"
+    echo "have nothing to read in it."
 } > "$tmp/CHECKSUMS.txt"
 
 # ---------------------------------------------------------------- the table
@@ -121,11 +216,39 @@ trap 'rm -rf "$tmp"' EXIT
     for f in $FILES; do
         b=$(basename "$f")
         printf '| [%s](%s/raw/main/%s) | %s | `%s` | `%s` |\n' \
-            "$b" "$REPO" "$f" "$(group "$(size_of "$f")")" "$(md5_of "$f")" "$(sha256_of "$f")"
+            "$b" "$REPO" "$f" "$(group "$(size_of "$f")")" \
+            "$(digest md5 "$f")" "$(digest sha256 "$f")"
     done
     echo
     printf 'Built **%s** — the date the program stamps on its own menu, so a\n' "$stamp"
     echo "download can be identified from the machine without unpacking it."
+    echo
+    echo "### Verifying a download"
+    echo
+    echo "Every hash above is also published as a sidecar file holding the single"
+    echo "line its checking tool expects. Save one next to the file you downloaded,"
+    echo "then run the command beside it:"
+    echo
+    echo "| Sidecar | Verify with |"
+    echo "|---|---|"
+    for f in $FILES; do
+        b=$(basename "$f")
+        printf '| [%s.sha256](%s/raw/main/%s.sha256) | `shasum -a 256 -c %s.sha256` |\n' "$b" "$REPO" "$f" "$b"
+        printf '| [%s.md5](%s/raw/main/%s.md5) | `md5sum -c %s.md5` |\n' "$b" "$REPO" "$f" "$b"
+    done
+    echo
+    echo "Each prints one line ending \`OK\`. The filename inside is bare, so this"
+    echo "works in whatever folder the download landed in."
+    echo
+    echo "### What produced these"
+    echo
+    printf 'The build manifest — **[build/CHECKSUMS.txt](%s/blob/main/build/CHECKSUMS.txt)** —\n' "$REPO"
+    echo "records the compiler and its version, the exact command line that was"
+    echo "run, and every source file with its git blob SHA. It is written for a"
+    echo "reader rather than a checking tool; the sidecars above are the ones to"
+    echo "point \`shasum\` and \`md5sum\` at."
+    echo
+    echo "### Which commit built these"
     echo
     echo "| File | Git blob SHA-1 | Last changed by |"
     echo "|---|---|---|"
@@ -141,9 +264,6 @@ trap 'rm -rf "$tmp"' EXIT
     echo "cannot state its own: the SHA covers this README, so writing it in would"
     echo "change it. The history link resolves to the right commit instead, and"
     echo "cannot go stale."
-    echo
-    echo "Machine-readable, and checkable with \`shasum -a 256 -c\` or \`md5sum -c\`:"
-    echo "**[build/CHECKSUMS.txt]($REPO/blob/main/$STAMPFILE)**."
     echo
     echo "$END"
 } > "$tmp/table.md"
@@ -166,12 +286,19 @@ PY
 
 # ------------------------------------------------------------------ deliver
 stale=0
-cmp -s "$tmp/CHECKSUMS.txt" "$STAMPFILE" || stale=1
-cmp -s "$tmp/README.md"     "$README"    || stale=1
+for f in $FILES; do
+    b=$(basename "$f")
+    for a in $ALGOS; do
+        cmp -s "$tmp/$b.$a" "build/$b.$a" || stale=1
+    done
+done
+cmp -s "$tmp/CHECKSUMS.txt" build/CHECKSUMS.txt || stale=1
+cmp -s "$tmp/README.md" "$README" || stale=1
 
 if [ "$CHECK" = "1" ]; then
     if [ "$stale" = "1" ]; then
-        echo "checksums: $STAMPFILE or $README does not match the binaries." >&2
+        echo "checksums: the manifest, the sidecars or $README do not match" >&2
+        echo "           the binaries." >&2
         echo "           Run 'make checksums' and commit the result." >&2
         exit 1
     fi
@@ -179,11 +306,15 @@ if [ "$CHECK" = "1" ]; then
     exit 0
 fi
 
-cp "$tmp/CHECKSUMS.txt" "$STAMPFILE"
-cp "$tmp/README.md"     "$README"
+for f in $FILES; do
+    b=$(basename "$f")
+    for a in $ALGOS; do cp "$tmp/$b.$a" "build/$b.$a"; done
+done
+cp "$tmp/CHECKSUMS.txt" build/CHECKSUMS.txt
+cp "$tmp/README.md" "$README"
 
 if [ "$stale" = "1" ]; then
-    echo "checksums: $STAMPFILE and $README updated ($stamp)"
+    echo "checksums: manifest, sidecars and $README updated ($stamp)"
 else
     echo "checksums: unchanged ($stamp)"
 fi

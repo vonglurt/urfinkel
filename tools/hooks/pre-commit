@@ -79,7 +79,10 @@ git diff --quiet -- README.md || readme_clean=0
 echo "pre-commit: checksums..."
 tools/checksums.sh
 
-git add build/urfinkel.prg build/urfinkel.d64 build/CHECKSUMS.txt
+git add build/urfinkel.prg build/urfinkel.d64
+git add build/urfinkel.prg.sha256 build/urfinkel.prg.md5
+git add build/urfinkel.d64.sha256 build/urfinkel.d64.md5
+git add build/CHECKSUMS.txt
 
 if [ "$readme_clean" = "1" ]; then
     git add README.md

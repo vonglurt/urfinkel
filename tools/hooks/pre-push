@@ -40,8 +40,12 @@ fi
 # what is being pushed rather than about what the rebuild leaves behind. The
 # checksum verification at the end reads these two files, so it is only
 # meaningful if they are the committed ones.
-if ! git diff --quiet HEAD -- README.md build/CHECKSUMS.txt; then
-    echo "pre-push: README.md or build/CHECKSUMS.txt differs from HEAD, so the" >&2
+SIDECARS="build/urfinkel.prg.sha256 build/urfinkel.prg.md5 \
+          build/urfinkel.d64.sha256 build/urfinkel.d64.md5 \
+          build/CHECKSUMS.txt"
+
+if ! git diff --quiet HEAD -- README.md $SIDECARS; then
+    echo "pre-push: README.md or a sidecar checksum differs from HEAD, so the" >&2
     echo "          published hashes cannot be verified against what is pushed." >&2
     echo "          Commit or stash the change, then push again." >&2
     exit 1
@@ -93,14 +97,16 @@ fi
 # intact, so the same standard applies: a published number that does not
 # describe the published file is worse than no number at all.
 #
-# `make clean` above deleted build/CHECKSUMS.txt along with the rest of the
-# directory, so the committed one is put back before it is read. That is a
-# repair of a tracked file this hook itself removed, not a change to anyone's
-# work - it was already asserted identical to HEAD before the clean.
+# `make clean` above deleted the sidecar checksums along with the rest of the
+# directory, so the committed ones are put back before they are read. That is
+# a repair of tracked files this hook itself removed, not a change to anyone's
+# work - they were already asserted identical to HEAD before the clean.
 echo "pre-push: checksums..."
-if git cat-file -e HEAD:build/CHECKSUMS.txt 2>/dev/null; then
-    git checkout HEAD -- build/CHECKSUMS.txt
-fi
+for s in $SIDECARS; do
+    if git cat-file -e "HEAD:$s" 2>/dev/null; then
+        git checkout HEAD -- "$s"
+    fi
+done
 if ! tools/checksums.sh --check; then
     echo "pre-push: the published hashes do not describe the pushed binary." >&2
     echo "          Run 'make checksums', commit the result, then push again." >&2

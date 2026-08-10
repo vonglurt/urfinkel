@@ -28,6 +28,32 @@ Right-click → Save Link As. Either file works; the `.prg` starts faster.
 Built **2026-08-10** — the date the program stamps on its own menu, so a
 download can be identified from the machine without unpacking it.
 
+### Verifying a download
+
+Every hash above is also published as a sidecar file holding the single
+line its checking tool expects. Save one next to the file you downloaded,
+then run the command beside it:
+
+| Sidecar | Verify with |
+|---|---|
+| [urfinkel.prg.sha256](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg.sha256) | `shasum -a 256 -c urfinkel.prg.sha256` |
+| [urfinkel.prg.md5](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg.md5) | `md5sum -c urfinkel.prg.md5` |
+| [urfinkel.d64.sha256](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64.sha256) | `shasum -a 256 -c urfinkel.d64.sha256` |
+| [urfinkel.d64.md5](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64.md5) | `md5sum -c urfinkel.d64.md5` |
+
+Each prints one line ending `OK`. The filename inside is bare, so this
+works in whatever folder the download landed in.
+
+### What produced these
+
+The build manifest — **[build/CHECKSUMS.txt](https://github.com/vonglurt/urfinkel/blob/main/build/CHECKSUMS.txt)** —
+records the compiler and its version, the exact command line that was
+run, and every source file with its git blob SHA. It is written for a
+reader rather than a checking tool; the sidecars above are the ones to
+point `shasum` and `md5sum` at.
+
+### Which commit built these
+
 | File | Git blob SHA-1 | Last changed by |
 |---|---|---|
 | urfinkel.prg | `12994dcb599b35f6a428200c21909787bd4da25d` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.prg) |
@@ -39,9 +65,6 @@ the file from. It is used here in place of a commit SHA because a commit
 cannot state its own: the SHA covers this README, so writing it in would
 change it. The history link resolves to the right commit instead, and
 cannot go stale.
-
-Machine-readable, and checkable with `shasum -a 256 -c` or `md5sum -c`:
-**[build/CHECKSUMS.txt](https://github.com/vonglurt/urfinkel/blob/main/build/CHECKSUMS.txt)**.
 
 <!-- CHECKSUMS:END -->
 
