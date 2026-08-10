@@ -1,5 +1,8 @@
 # UR FINKEL — the Royal Game of Ur for the Commodore Plus/4, compiled
 
+**[▶ Watch it running](https://youtu.be/Cw-SaWI046o)** — a video
+demonstration of the game on a Commodore Plus/4.
+
 ## How to play
 
 Two builds. **Right-click → Save Link As** — a plain click may open the file
@@ -37,6 +40,12 @@ it stays as the rules specification, the conformance oracle, and the only
 edition that can be typed into the machine itself. This one is where
 development happens.
 
+![The title screen: a theatre proscenium with chasing lamps, the curtains
+open on the menu](docs/media/01-title.png)
+
+*Boot lands here. The curtains open on a fanfare; left alone for two
+minutes, the cabinet starts playing by itself.*
+
 ## Where it stands
 
 **It plays, inside a cabinet.** Boot lands on a theatre front — frieze
@@ -64,6 +73,12 @@ mover's. A square merely jumped over keeps its colour, because nothing
 about it changed hands; a capture goes red, white, red, black and then the
 winner's colour.
 
+![The board mid-match, pieces on the path, the chronicle narrating
+below](docs/media/03-play.png)
+
+*A match in progress. The side not to move recedes three luminance steps,
+and the chronicle below says what just happened and why.*
+
 **The two moments that stop the game take the whole bottom of the
 screen.** A capture and a win used to be a word cut into one row of the
 eleven below the board, for two seconds each — while the dice, which
@@ -80,12 +95,23 @@ each cell morphing through a speck, a lump of flame, a solid block and
 back out again, and the ignition climbs from the bottom row upward
 because that is where the fire is. Four seconds.
 
+![CAPTURED in block letters over a bed of flame across the bottom of the
+screen](docs/media/05-capture.png)
+
+*A capture takes rows 14–24 — the casting floor and the chronicle both.*
+
 A win gets the winner's name cut by the laser at the same size — eight
 letters at a five-column pitch is thirty-nine of the forty columns, and
 eight is the length of the name field, which is where the size came
 from — then the gold cup, then a firework display with three shells in
 the air at once and the border flashing each burst's own hue. Twelve
 seconds, and the only twelve seconds in the match nobody is in a hurry.
+
+![A gold trophy with the winner's name engraved in the bowl, fireworks
+behind it](docs/media/06-victory.png)
+
+*The winner's name is cut by the laser, then poured into the cup a row at
+a time.*
 
 The tiles are lit differently from the frozen edition on purpose. Its
 painter spends five of the machine's eight luminance steps on one 4×4
@@ -160,6 +186,10 @@ removes are in [`docs/lab-report.md`](docs/lab-report.md).
 - **A real dice tumble.** One to three frames became sixteen to
   twenty-one, the lots scattering across the whole casting floor and
   settling one at a time.
+
+  ![Four tetrahedral lots resting on the casting floor below the
+  board](docs/media/04-lots.png)
+
 - **Music during play.** The BASIC edition's own notes rule this out:
   steady playback "needs a machine-language IRQ player (`SYS`), which is
   out of scope for the pure-BASIC constraint". It now has one — a raster
@@ -263,6 +293,12 @@ Written up as a report in
 | space | after a win, and the rules screen | continue |
 
 Left alone for two minutes, the cabinet starts the URBOT demo by itself.
+
+![The rules screen: the numbered path across the board, with the Finkel
+ruleset written out beneath it](docs/media/02-rules.png)
+
+*`5` at the menu draws the path and the rules; space returns to the
+cabinet.*
 
 ## Two builds
 
