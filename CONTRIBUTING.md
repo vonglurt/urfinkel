@@ -70,6 +70,29 @@ rules are deliberately free of the machine so they can be tested without an
 emulator. `make conform` renders the opening board and compares it, byte for
 byte, against `test/golden-board.png`.
 
+## The pre-commit hook
+
+`build/urfinkel.prg` and `build/urfinkel.d64` are tracked, because the README
+offers them as downloads and the play page loads one of them. A stale binary
+is therefore a *visitor's* problem, not a developer's, so a hook rebuilds them
+from nothing before every commit:
+
+```sh
+git config core.hooksPath tools/hooks
+```
+
+It runs `make clean && make && make disk`, runs `make check`, and stages the
+result — about a second and a half. A failing test refuses the commit.
+`URFINKEL_CONFORM=1 git commit …` adds `make conform`, which is left out by
+default only because it drives an emulator. `git commit --no-verify` skips the
+lot, which is reasonable for a documentation change and nothing else.
+
+It **rebuilds and stages** rather than checking that the committed binary
+already matched, and that is deliberate: the Makefile stamps the program with
+`date +%Y-%m-%d` and draws it on the menu, so the same sources built on two
+different days are byte-different on purpose. A comparison would fail every
+morning for a reason that is not a defect.
+
 ## Two constraints that will surprise you
 
 **The machine is full, and the link fails rather than growing.** Song data

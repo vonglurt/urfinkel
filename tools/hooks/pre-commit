@@ -1,0 +1,73 @@
+#!/bin/sh
+#
+# Clean-rebuild the game before every commit, run the host tests, and stage
+# the rebuilt binaries.
+#
+# WHY REBUILD RATHER THAN COMPARE.  The Makefile stamps the program with
+# `date +%Y-%m-%d`, so the same sources built on two different days are
+# byte-different on purpose - the build date is drawn on the menu.  A hook
+# that checked "does the committed .prg match a fresh build" would therefore
+# fail every morning for a reason that is not a defect.  This one makes the
+# committed binary current instead of asserting that it already was.
+#
+# WHAT IT GUARANTEES.  Every commit contains a .prg and .d64 that were built
+# from the sources in that same commit, by a build that started from nothing,
+# with the host test suite passing.  That matters here because those two
+# binaries are what the README offers as downloads and what the play page
+# loads: a stale one is a visitor's problem, not a developer's.
+#
+# Install:  git config core.hooksPath tools/hooks
+# Bypass:   git commit --no-verify        (for a docs-only commit in a hurry)
+
+set -e
+
+# Hooks do not inherit an interactive shell's PATH, so Homebrew is put back.
+PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+export PATH
+
+root=$(git rev-parse --show-toplevel)
+cd "$root"
+
+if ! command -v cl65 >/dev/null 2>&1; then
+    echo "pre-commit: cl65 not found - install cc65 (brew install cc65)," >&2
+    echo "            or commit with --no-verify if this is a docs change." >&2
+    exit 1
+fi
+
+echo "pre-commit: clean rebuild..."
+make clean  >/dev/null
+make        >/dev/null
+make disk   >/dev/null
+
+echo "pre-commit: host tests..."
+if ! make check >/tmp/urfinkel-check.$$ 2>&1; then
+    echo "pre-commit: TESTS FAILED - commit refused" >&2
+    tail -30 /tmp/urfinkel-check.$$ >&2
+    rm -f /tmp/urfinkel-check.$$
+    exit 1
+fi
+rm -f /tmp/urfinkel-check.$$
+
+# `make conform` is the other half of the gate, but it drives VICE and takes
+# an emulator run to do it, which is too slow to sit in front of every
+# commit.  Set URFINKEL_CONFORM=1 to include it.
+if [ "${URFINKEL_CONFORM:-0}" = "1" ]; then
+    echo "pre-commit: conformance..."
+    if ! make conform >/tmp/urfinkel-conform.$$ 2>&1; then
+        echo "pre-commit: CONFORMANCE FAILED - commit refused" >&2
+        tail -20 /tmp/urfinkel-conform.$$ >&2
+        rm -f /tmp/urfinkel-conform.$$
+        exit 1
+    fi
+    rm -f /tmp/urfinkel-conform.$$
+fi
+
+git add build/urfinkel.prg build/urfinkel.d64
+
+if git diff --cached --quiet -- build/urfinkel.prg build/urfinkel.d64; then
+    echo "pre-commit: binaries unchanged"
+else
+    echo "pre-commit: binaries rebuilt and staged"
+fi
+
+exit 0
