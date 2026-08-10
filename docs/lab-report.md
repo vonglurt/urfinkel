@@ -21,7 +21,8 @@ result is **194× on the board draw, 290× on a single board square, 244× on
 the per-move status update and 577× on the legal-move generator**, with
 the renderer producing a **byte-identical screenshot** to the predecessor.
 The whole game was then converted — 25 137 bytes against the BASIC
-edition's 25 681 — and the recovered budget spent on three things the
+edition's 25 681, as measured for this report — and the recovered budget
+spent on three things the
 predecessor's own documentation had ruled out on performance grounds:
 character-cell motion tweening, a real dice tumble, and music during play
 from a raster interrupt. The report establishes the baseline profile, explains
@@ -417,6 +418,13 @@ waist plaques, the colour picker, the rules screen, the victory sequence,
 the theatre front it is all played inside and the gold trophy at the end
 of it.
 
+> **Superseded 2026-08-10.** That figure is the measurement taken for this
+> report. The program has since grown to **56 511 bytes** — 30 119 of code
+> and 26 106 of read-only data — almost all of the difference being the
+> transcribed music beds added afterwards, which are capped by `MIDBUDGET`
+> in the Makefile. The compiled edition is no longer smaller than the
+> BASIC one; it is more than twice its size.
+
 ### A. Motion tweening
 
 The frozen edition moves a piece **one board square per step**, because a
@@ -670,6 +678,7 @@ and add a row here.
 | 2026-08-06 | Baseline established; renderer and move generator ported; chain chosen | §III and §VI tables created; conformance and host checks both green |
 | 2026-08-07 | Binary size re-taken after the cabinet, the trophy, the music engine and the trace facility landed | §Abstract and §IX: 19 413 → **25 137 bytes**. The §VI speed table is unaffected — none of those additions is in a timed path. Tumble length corrected in §IX‑A to the 16–21 frames `dice.c` actually runs |
 | 2026-08-07 | Raster interrupt moved from the KERNAL's `$0314` to the processor's `$FFFE`, so it is entered with RAM rather than ROM switched in | §IX‑D gains bug 5. The interrupt now counts **199 frames in 200** raster frames and takes four entries a frame, both measured in the running game; before the change the counter never moved at all. `make check` 13/13 and `make conform` pixel-identical are unaffected |
+| 2026-08-10 | Binary size re-taken after the transcribed music beds landed | §Abstract and §IX: **25 137 → 56 511 bytes** (30 119 CODE, 26 106 RODATA, measured from the linker map). The compiled edition is no longer *smaller* than the BASIC one, and the §VI speed table is unaffected — none of the added data is in a timed path. The last link left 364 bytes free; song data is capped by `MIDBUDGET` |
 
 **Numbers that must be re-taken when touched:**
 

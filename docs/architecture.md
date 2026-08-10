@@ -117,13 +117,19 @@ back **in** before chaining to $0314, so anything reached that way sees
 BASIC ROM over its own variables. That cost this project weeks; see §8.3.
 
 The whole compiled game - renderer, rules, AI, dice, text, music engine,
-keyboard, controller, theatre front and trophy - is **29 374 bytes**,
-against 25 681 for the BASIC edition tokenised.  The compiled program is
-*larger*; what the speed bought was animation, a music engine and a
-keyboard driver, not size. There is no memory pressure: the
-budget is ~48 KB and the on-target self-test is the only substantial
-thing still to add. The traced build (`make debug`) costs 3 297 bytes
-more and is not shipped.
+keyboard, controller, theatre front and trophy - is **56 511 bytes** on
+disk: 30 119 of code and 26 106 of read-only data, most of that the
+transcribed songs.  Against 25 681 for the BASIC edition tokenised the
+compiled program is *larger*; what the speed bought was animation, a
+music engine and a keyboard driver, not size.
+
+There IS memory pressure, and it is now the governing constraint.  The
+last link left **364 bytes** free.  Song data is capped by `MIDBUDGET` so
+that the cost of a feature is paid in music rather than in an unexplained
+link failure: the Makefile records the ceiling coming down from 23 400 to
+22 200 on 2026-08-08, buying 1 525 bytes for the apron effects at the
+price of three pieces out of the rotation.  The traced build (`make
+debug`) wants about 1.6 KB more than exists and has not linked since.
 
 **The $0400 invariant.** The colour matrix sits exactly $0400 below the
 screen matrix. Every blitter leans on this — one pointer walks both

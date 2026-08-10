@@ -216,9 +216,11 @@ and the honest single number for "the recoding" is **311× on a turn**,
 with a per-primitive range of 194×–577×.
 
 Binary sizes: BASIC predecessor 25 681 bytes tokenised, compiled edition
-29 374 bytes — the compiled program is *larger*, and the recovered budget
-was spent on animation, a raster-interrupt music engine, and this keyboard
-driver.
+29 374 bytes as measured for this report — the compiled program is
+*larger*, and the recovered budget was spent on animation, a
+raster-interrupt music engine, and this keyboard driver. (As of
+2026-08-10 the program is 56 511 bytes; the music beds added since account
+for the growth.)
 
 ### B. Isolating stage 1 without pressing a key
 

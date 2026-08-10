@@ -55,9 +55,11 @@ two players with real lots, URBOT demo), a rules screen, the opening
 ceremony, tumbling tetrahedral lots, the full Finkel ruleset, URBOT
 narrating its doctrine turn by turn, the waist plaques, a colour picker
 with a live preview, and a victory that pours a gold trophy and engraves
-the winner's name into its bowl — in **29 374 bytes**, against 25 681 for
-the BASIC edition. The compiled program is *larger*; the speed bought
-animation, a music engine and a keyboard driver, not size.
+the winner's name into its bowl — in **56 511 bytes**, against 25 681 for
+the BASIC edition. Thirty thousand of those are code and twenty-six
+thousand read-only data, most of it transcribed music. The compiled
+program is more than twice the size; the speed bought animation, a music
+engine and a keyboard driver, not size.
 
 **It runs on the real machine.** Loaded from an SD2IEC onto a restored
 PAL Plus/4 on 2026‑08‑07: menu selection, music cycling, both prompts and

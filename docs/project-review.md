@@ -21,6 +21,10 @@ a design.
 | find the legal moves | 2 785 ms | 4.83 ms | **577×** |
 | binary size | 25 681 B | 25 137 B | 0.98× |
 
+The binary size is the one row that has not held: the compiled program was
+25 137 bytes when this was measured and is 56 511 bytes as of 2026-08-10,
+the difference being transcribed music added since.
+
 A turn's rendering and rule work goes from about ten seconds to about
 forty milliseconds. That is the whole project in one line, and it is worth
 being precise about what it bought, because the answer is not "the same
