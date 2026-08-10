@@ -19,7 +19,10 @@ from the repository.">
   main { max-width: 52rem; margin: 0 auto; }
   h1 { font-size: 1.4rem; letter-spacing: .1em; margin: 0 0 .2rem; }
   h2 { font-size: .95rem; letter-spacing: .08em; color: #d8a657;
-       margin: 2.5rem 0 .75rem; border-bottom: 1px solid #3a2f16; padding-bottom: .3rem; }
+       margin: 2.5rem 0 .75rem; border-bottom: 1px solid #3a2f16; padding-bottom: .3rem;
+       /* a card jumping here should not land the heading flush against the
+          top edge of the window */
+       scroll-margin-top: 1.5rem; }
   .sub { color: #b3a179; font-size: .85rem; margin: 0 0 1.5rem; }
   a { color: #d8a657; }
   a:hover { color: #f0c274; }
@@ -66,14 +69,52 @@ from the repository.">
   #box:hover .tap { opacity: 0; }
   /* After the first press it has done its job and does not come back. */
   .tap.done { display: none; }
-  .tap b {
-    font-size: .95rem; letter-spacing: .18em; text-transform: uppercase;
-    color: #f0c274; background: #241c0c; border: 1px solid #6b5726;
-    padding: .7rem 1.4rem;
-  }
-  .tap span { font-size: .72rem; color: #b3a179; max-width: 28rem;
-              text-align: center; padding: 0 1rem; }
   @media (prefers-reduced-motion: reduce) { .tap { transition: none; } }
+
+  /* THE DECK.  Four cards in one hand: three laid out in a row under the
+     board, and the fourth - Play now - face up in the middle of the board
+     itself, because the game is already there and a link to it would be a
+     link to the thing you are looking at.
+     They share every rule below; only where they sit differs. */
+  .card {
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; text-decoration: none;
+    background: #241c0c; border: 1px solid #6b5726;
+    padding: 1rem .9rem 1.1rem;
+    /* The clipped corner is the whole trick: it reads as a dealt card rather
+       than a box, and costs one line. */
+    clip-path: polygon(0 0, calc(100% - .8rem) 0, 100% .8rem, 100% 100%, 0 100%);
+  }
+  .card .pip {
+    font-size: 1.7rem; line-height: 1; margin-bottom: .55rem;
+    /* Some of these arrive as text glyphs rather than colour emoji, and take
+       this instead of the filter below. */
+    color: #f0c274;
+    /* Emoji arrive in their own colours. Draining them to the page's gold
+       keeps three cards from looking like three unrelated stickers. */
+    filter: grayscale(1) sepia(1) saturate(2.2) hue-rotate(-12deg) brightness(1.15);
+  }
+  .card b {
+    font-size: .8rem; letter-spacing: .12em; text-transform: uppercase;
+    color: #f0c274; margin-bottom: .4rem;
+  }
+  .card .say { font-size: .72rem; line-height: 1.45; color: #b3a179; }
+
+  .deck {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: .6rem; margin: 0 0 1.25rem;
+  }
+  .deck .card { transition: transform .12s ease, border-color .12s ease; }
+  .deck .card:hover {
+    border-color: #d8a657; background: #33270f; transform: translateY(-3px);
+  }
+  .deck .card:hover b { color: #ffd18a; }
+  @media (prefers-reduced-motion: reduce) { .deck .card { transition: none; } }
+
+  /* The Play card is inside the overlay, which is pointer-events: none, so
+     it cannot be hovered or clicked - by design. It is a sign, not a button:
+     the click it asks for goes to the board underneath it. */
+  .tap .card { max-width: 22rem; background: rgba(36, 28, 12, .96); }
 
   .bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
          gap: .5rem; margin: 0 0 1.25rem; }
@@ -120,6 +161,7 @@ from the repository.">
 
     background: var(--loam); border: 1px solid var(--bark);
     padding: 1.3rem 1.3rem .4rem; margin: 0 0 1.5rem;
+    scroll-margin-top: 1.5rem;
   }
   .downloads p.dl { margin-bottom: 1.4rem; font-size: .85rem; color: var(--moss-dim); }
   .downloads p.dl strong { color: var(--moss); letter-spacing: .06em; }
@@ -289,19 +331,42 @@ C and 6502 assembly for the Commodore Plus/4.</p>
 <div id="box">
   <div id="game"></div>
   <div id="tap" class="tap">
-    <b>▶ Click to play</b>
-    <span>A browser gives a page no sound and no keyboard until you have
-    clicked inside it, so the machine cannot hear you before that.</span>
+    <div class="card">
+      <span class="pip">🎲</span>
+      <b>Play now</b>
+      <span class="say">Click the board to wake the machine — a browser gives
+      a page no sound and no keyboard until you do.</span>
+    </div>
   </div>
 </div>
 
+<nav class="deck">
+  <a class="card" href="#downloads">
+    <span class="pip">💾</span>
+    <b>Take it with you</b>
+    <span class="say">The program, the disk image and the source, with
+    checksums — for VICE, a floppy emulator, or a real Plus/4.</span>
+  </a>
+  <a class="card" href="#controls">
+    <span class="pip">⌨</span>
+    <b>How to play</b>
+    <span class="say">The keys, the Finkel ruleset, and what URBOT is
+    thinking while it takes your piece.</span>
+  </a>
+  <a class="card" href="#project">
+    <span class="pip">🛠</span>
+    <b>The project</b>
+    <span class="say">Clone it, build it, fork it — the source, the reports
+    and how the port was measured.</span>
+  </a>
+</nav>
+
 <div class="bar">
   <button id="fit" type="button">▲ Fit the game to the top</button>
-  <button id="past" type="button">▼ Skip past — instructions</button>
   <button id="power" type="button">⏏ Unload the emulator</button>
 </div>
 
-<section class="downloads">
+<section class="downloads" id="downloads">
 <p class="dl"><strong>Downloads</strong> — clicking a binary saves it. The
 checksum files under each one open in the browser instead; save one next to
 the download to check it arrived whole.</p>
@@ -332,24 +397,24 @@ the download to check it arrived whole.</p>
     <a class="file zip" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>urfinkel.zip</span></a>
     <span class="tag">plays offline on a PC</span>
     <span class="tag">full source included</span>
-    <span class="what">the whole collection, zipped — 232 864 bytes — built <b>2026-08-10</b></span>
+    <span class="what">the whole collection, zipped — 233 690 bytes — built <b>2026-08-10</b></span>
     <span class="use">Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. Everything on this page except the emulator itself, which is why the browser copy still wants a connection and VICE with the <code>.prg</code> does not.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip</a>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>9deab792786a61101c432c97e0306f1f2e33e510f87ae1413701073303529af0</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
-      <dt>MD5</dt><dd><code>0d23a7644edbb26fc3459a0bdeb7d49a</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>38483ba0fe5033d79963067dc3d8818239bcdc9d65890792c49921bf508b3791</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
+      <dt>MD5</dt><dd><code>bda26568d8dd7c806c3b135a93d2de59</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
     </dl>
   </li>
   <li>
     <a class="file targz" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>urfinkel.tar.gz</span></a>
     <span class="tag">plays offline on a PC</span>
     <span class="tag">full source included</span>
-    <span class="what">the same collection as a gzipped tar, for Linux and macOS — 214 089 bytes — built <b>2026-08-10</b></span>
+    <span class="what">the same collection as a gzipped tar, for Linux and macOS — 215 140 bytes — built <b>2026-08-10</b></span>
     <span class="use">Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. Everything on this page except the emulator itself, which is why the browser copy still wants a connection and VICE with the <code>.prg</code> does not.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz</a>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>660bc2fbfc11cd5ad8d23be68ff9b0b368aeb202898525420c248aceb9c2baa3</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.sha256">urfinkel.tar.gz.sha256</a></dd>
-      <dt>MD5</dt><dd><code>02df65008b4eab84ae74f84888120082</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.md5">urfinkel.tar.gz.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>c6ed63ff8d6ddfa6bf42a7eb38c19c1a64cb32573ed2b0cd535afa2b284ee010</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.sha256">urfinkel.tar.gz.sha256</a></dd>
+      <dt>MD5</dt><dd><code>21c1f97ee46a7d98ec9f3f01eb3d3905</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.md5">urfinkel.tar.gz.md5</a></dd>
     </dl>
   </li>
 </ul>
@@ -493,7 +558,7 @@ hardware, loaded from an SD2IEC.</p>
     <figcaption>The winner's name, poured into the cup.</figcaption></figure>
 </div>
 
-<h2>THE PROJECT</h2>
+<h2 id="project">THE PROJECT</h2>
 <p>Everything below points at the <code>main</code> branch on GitHub.</p>
 <ul>
   <li><a href="https://github.com/vonglurt/urfinkel/tree/main">Repository</a> — the whole project</li>
@@ -658,7 +723,6 @@ Contact: paulr@sdf.org
     window.scrollTo({ top: y, behavior: "smooth" });
   }
   document.getElementById("fit").addEventListener("click", function () { snapTo("box"); });
-  document.getElementById("past").addEventListener("click", function () { snapTo("controls"); });
 </script>
 
 </body>
