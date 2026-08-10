@@ -1,0 +1,239 @@
+; UR FINKEL - the songs, as text.
+;
+; Compile with `make music`, which writes src/song.h.  A tick is one PAL
+; frame (1/50 s), so :50 is one second.
+;
+; TED has two tone voices, so every song here is exactly two lines of
+; melody and harmony.  The harmony rule inherited from the BASIC edition
+; is thirds and sixths below the melody within the scale - the intervals
+; that give standard, pleasing colour - with fifths only at a cadence,
+; and no seconds or sevenths anywhere.
+
+; ---------------------------------------------------------------------------
+; theme - the one the BASIC edition plays at victory, note for note.
+; A-A-B-A' in D Dorian, with the B phrase borrowing the Hijaz tetrachord
+; (a-bb-c#-d) for the Egyptian inflection, and a raised third under the
+; final D for a warm Mediterranean close.
+; ---------------------------------------------------------------------------
+song theme
+  tempo 48
+  grid  4
+  meter 4
+  bar
+    1    d5    f4
+    1&   e5    g4
+    1a   f5    a4
+    2e   e5    c5
+    2&   d5    b4
+    3    c5    a4
+    3e   a4    f4
+    3&   d5    f4
+    4e   d5    f4
+    4a   e5    g4
+  bar
+    1    f5    a4
+    1&   e5    c5
+    1a   d5    b4
+    2e   c5    a4
+    2&   a4    f4
+    2a   d5    f4
+    3&   a4    f4
+    4    a#4   d4
+    4e   c#5   a4
+    4a   d5    f4
+  bar
+    1    c#5   a4
+    1&   a#4   g4
+    1a   a4    f4
+    2    a4    d4
+    2a   d5    f4
+    3e   c5    e4
+    3&   b4    g4
+    4    a4    f4
+    4e   g4    e4
+    4a   f4    d4
+  bar
+    1    e4    c4
+    1e   d5    f#4
+    end  2e
+
+; ---------------------------------------------------------------------------
+; fanfare - six harmony pairs, one per curtain step: a rising D major call
+; resolving through the dominant to a held tonic. Quarter notes, with the
+; finish held for a full second.
+; ---------------------------------------------------------------------------
+song fanfare
+  v1
+    f#4:25 a4:25 d5:25 e5:25 e5:12 d5:60
+  v2
+    d4:25 f#4:25 f#4:25 c#5:25 c#5:12 f#4:60
+
+; ---------------------------------------------------------------------------
+; cheer_a / cheer_b - six notes each, sounded one per step of the
+; turn-transition colour sweep, so the ear knows whose turn begins without
+; reading anything.  A rising major call for player one, a modal minor
+; turn for player two.
+; ---------------------------------------------------------------------------
+song cheer_a
+  tempo 24
+  grid  4
+  meter 4
+  bar
+    1    d4    d3
+    1e   f#4   d3
+    1&   a4    d3
+    1a   c#5   a3
+    2    e5    a3
+    2e   c#5   a3
+    end  2&
+
+song cheer_b
+  tempo 24
+  grid  4
+  meter 4
+  bar
+    1    a4    a3
+    1e   c5    a3
+    1&   b4    e3
+    1a   e5    e3
+    2    d5    a3
+    2e   c5    a3
+    end  2&
+
+; ---------------------------------------------------------------------------
+; the bed - the generated ambient layer that plays under a match.
+;
+; Two instruments, because TED has two voices: a PRIMARY that arpeggiates
+; and a SECONDARY that sustains.  Each owns four banks, a to d.  The
+; primary walks a-b-c-d one bank per phrase; the secondary changes every
+; third phrase, and 4 against 3 is coprime, so the pairing takes twelve
+; phrases - about eight minutes - to come round again.
+;
+; Every step is a chord DEGREE, not a pitch: 1 root, 3 third, 5 fifth,
+; 8 octave, 9 ninth.  So a bank can only ever name notes that are in the
+; bar's chord, and no pairing of banks can be dissonant.  Quality is not
+; written here - the bed flips between major and minor thirds itself.
+; ---------------------------------------------------------------------------
+
+; the chord per bar, in D dorian: i bVII IV v, twice, landing home
+progression  i bVII IV v i bVII bIII v
+
+; primary: the arpeggio.  "up" adds semitones, "div" is ticks per step
+; before the phrase arch bends it - smaller is faster.
+bank primary a  1 3 5          up 0   div 7      ; the plain triad
+bank primary b  1 5 3 8        up 0   div 5      ; wider, and quicker
+bank primary c  1 3 5 8 5 3    up 0   div 3      ; an arch, in the same octave
+bank primary d  1 8            up 0   div 11     ; spare: root and octave
+
+; secondary: the sustained voice.  Two degrees, alternating bar by bar,
+; which is how a hurdy-gurdy's two drone strings are tuned.
+bank second a  1 1                                ; a root pedal
+bank second b  1 5                                ; root and fifth by turns
+bank second c  5 5                                ; a fifth pedal
+bank second d  3 1                                ; third, then root
+
+; how long each instrument holds a bank before the next one takes over.
+; Keep these coprime: four banks at 1 against four banks at 3 do not pair
+; up the same way twice for twelve phrases, and that long structure is the
+; only thing standing between an eight-minute match and a loop you notice.
+rate primary 1
+rate second  3
+
+; ---------------------------------------------------------------------------
+; hurrian - after the Hurrian Hymn No. 6, Ugarit, c. 1400 BCE: the oldest
+; complete composition we have.  The cuneiform names intervals rather than
+; pitches, so every modern rendering is an interpretation; this follows the
+; Dumbrill reading, in the two-voice form the tablet's interval names imply.
+;
+; The paired notes of that reading fall out well here for a reason worth
+; recording: the tablet notates INTERVALS - two notes at once - and TED has
+; exactly two voices.  So v2 takes the lower note of each dyad and holds it
+; until the next one rather than resting, which turns the pairs into a
+; sustained lower line under the melody.
+;
+; The two voices carry the same number of notes at the same lengths, which
+; is not decoration: the player loops each voice independently when it
+; reaches its own end, so voices of unequal total length would drift apart
+; a little more on every repeat.
+; ---------------------------------------------------------------------------
+song intro
+  ; THE WAY IN.  Five seconds of trumpets, and the only piece here written
+  ; for two voices as HARMONY rather than as melody-over-bass: v1 and v2
+  ; move together in thirds and fifths, which is what a pair of natural
+  ; trumpets does and what makes six notes sound like a fanfare rather than
+  ; a tune.
+  ;
+  ; Bars 1-2 are the call: a rising triad on the beat, the shape every
+  ; royal entrance has had since somebody first had two trumpets.  Bar 3
+  ; answers it a fourth higher.  Bar 4 is the CHIMES - the two voices an
+  ; octave apart, struck on the beat and left to ring, which on two square
+  ; waves with no envelope is as close to a bell as this machine gets.
+  ;
+  ; tempo 16 is 187 bpm, which is brisk for a fanfare and right for one
+  ; that has five seconds to be over in: four bars land at 248 frames, just
+  ; under five seconds.  The laser cuts UR underneath it and finishes
+  ; first, deliberately - the letters are standing before the last chime.
+  tempo 16
+  grid  2
+  meter 4
+  bar
+    1    d4    d3
+    2    f#4   d3
+    3    a4    d3
+    4    d5    a3
+  bar
+    1    a4    f#3
+    2    d5    f#3
+    3    f#5   a3
+    4    a5    d4
+    4&   =     =
+  bar
+    1    g4    g3
+    2    b4    g3
+    3    d5    b3
+    4    g5    d4
+    4&   =     =
+  bar
+    1    d5    d4
+    2    =     =
+    3    a5    a4
+    4    d6    d5
+    end  4&
+
+song select
+  ; THE CHIME that answers a keypress on the menu.  Two notes, struck
+  ; together a fifth apart and left to ring - the shortest thing in this
+  ; file, because it has to land before the player has finished taking
+  ; their finger off the key or it reads as a delay rather than an answer.
+  ;
+  ; tempo 12 is 250 bpm; six rows of a sixteenth is 18 frames, a third of
+  ; a second, which is about as long as an acknowledgement can be before
+  ; it becomes an event.
+  tempo 12
+  grid  4
+  meter 4
+  bar
+    1    d5    g4
+    1&   a5    d5
+    2&   =     =
+    end  3
+
+song rising
+  ; THE WAY IN to a mode: an ascending run under the closing curtain, both
+  ; voices climbing in parallel sixths so it opens out rather than merely
+  ; going up.  It ends unresolved, on the fifth, because what follows it is
+  ; the game starting - a rise that lands would be a full stop.
+  tempo 20
+  grid  4
+  meter 4
+  bar
+    1    d4    f#3
+    1e   f#4   a3
+    1&   a4    d4
+    1a   d5    f#4
+    2    f#5   a4
+    2e   a5    d5
+    2&   d6    f#5
+    3    a5    d5
+    3&   =     =
+    end  4
