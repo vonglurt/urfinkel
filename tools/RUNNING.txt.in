@@ -1,0 +1,98 @@
+UR FINKEL - the Royal Game of Ur for the Commodore Plus/4
+=========================================================
+
+Build @DATE@.  The date is also compiled into the program and drawn on its
+menu, so this collection can be identified from the machine itself.
+
+This archive holds:
+
+    urfinkel.prg    the program alone
+    urfinkel.d64    a disk image holding the same program
+    index.html      the play page, pointed at the .prg next to it
+    start-html.sh   serves this folder and opens that page
+    LICENCE         MIT
+    RUNNING.txt     this file
+
+Either binary plays the whole game.  Which one you want depends on what you
+are running it on.
+
+
+1.  A DESKTOP EMULATOR - use urfinkel.prg
+---------------------------------------------------------------------------
+
+VICE is the usual one.  Drag urfinkel.prg onto the xplus4 window, or from a
+terminal:
+
+    xplus4 urfinkel.prg
+
+YAPE and plus4emu take it the same way.  The .prg starts faster than the
+disk image because there is no directory to read first.
+
+
+2.  A FLOPPY EMULATOR, OR REAL HARDWARE - use urfinkel.d64
+---------------------------------------------------------------------------
+
+Put urfinkel.d64 on an SD2IEC, a Pi1541 or whatever stands in for the drive,
+mount it as you would any disk, and on the machine type:
+
+    dload"urfinkel"
+    run
+
+DLOAD"*" works too - the program is the first thing in the directory, which
+is the shortest thing to type.
+
+The image is a 1541 .d64 rather than a .d81 because every drive and every
+emulator reads one without being told anything about it.
+
+It has been run this way on a restored PAL Plus/4.
+
+
+3.  IN A BROWSER, FROM THIS FOLDER - use start-html.sh
+---------------------------------------------------------------------------
+
+    ./start-html.sh
+
+It serves this folder on a free local port and opens index.html in your
+browser.  That page boots a Plus/4 and loads the urfinkel.prg sitting next
+to it.  Press Ctrl-C in the terminal to stop the server.
+
+IT HAS TO BE SERVED, not opened by double-clicking.  A page opened as a
+file:// URL is not allowed to read urfinkel.prg off your disk, so the
+emulator would come up and then sit there with nothing to run.  Serving the
+folder over http://localhost is what makes that read legal, and it is the
+only thing the script is for.  It needs python3, which macOS and every
+Linux already have.
+
+ONE THING STILL COMES FROM THE INTERNET.  The emulator itself - EmulatorJS,
+which is not part of this project and carries its own licence - is fetched
+from its CDN when the page loads.  The game is local; the machine it runs
+on is not.  With no connection, use VICE and the .prg instead, which needs
+nothing but the two files in front of you.
+
+The same page is hosted, if you would rather not run anything:
+
+    https://vonglurt.github.io/urfinkel/
+
+
+CHECKING THIS ARCHIVE
+---------------------------------------------------------------------------
+
+Every file published, with its size, its MD5 and its SHA-256, and the exact
+compiler and command line that produced the binaries:
+
+    https://github.com/vonglurt/urfinkel/blob/main/build/CHECKSUMS.txt
+
+Each hash is also published on its own, in the form the checking tools
+expect - urfinkel.prg.sha256, urfinkel.d64.md5 and so on.  Save one beside
+the file it names and run:
+
+    shasum -a 256 -c urfinkel.prg.sha256
+    md5sum -c urfinkel.prg.md5
+
+
+THE SOURCE
+---------------------------------------------------------------------------
+
+    https://github.com/vonglurt/urfinkel
+
+Written in C and 6502 assembly.  MIT licensed; see LICENCE.

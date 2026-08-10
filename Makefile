@@ -505,15 +505,22 @@ buildinfo:
 	@printf 'sources\t%s %s\n' '$(SRC)/game.c' '$(CORE)'
 	@printf 'headers\t%s\n' '$(HDRS)'
 
-checksums: $(GAME) $(DISK)
+# The downloadable collection: the program, the disk image, an offline copy of
+# the play page, a script to serve it, the licence and a page of notes.  Both
+# archives are built to be byte-reproducible, because their hashes are
+# committed and pre-push checks them - see the header of tools/dist.sh.
+dist: $(GAME) $(DISK)
+	@$(TOOLS)/dist.sh
+
+checksums: $(GAME) $(DISK) dist
 	@$(TOOLS)/checksums.sh
 
-checksums-check: $(GAME) $(DISK)
+checksums-check: $(GAME) $(DISK) dist
 	@$(TOOLS)/checksums.sh --check
 
 clean:
 	rm -rf $(BUILD)
 
 .PHONY: all debug debug-shot kbtest card-probe music check run run200 test \
-        anim anim-run buildinfo checksums checksums-check \
+        anim anim-run buildinfo dist checksums checksums-check \
         bench conform disk card card-eject clean kbdiag kbdiag-shot

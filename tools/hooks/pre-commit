@@ -38,6 +38,7 @@ echo "pre-commit: clean rebuild..."
 make clean  >/dev/null
 make        >/dev/null
 make disk   >/dev/null
+make dist   >/dev/null
 
 echo "pre-commit: host tests..."
 if ! make check >/tmp/urfinkel-check.$$ 2>&1; then
@@ -83,6 +84,7 @@ git add build/urfinkel.prg build/urfinkel.d64
 git add build/urfinkel.prg.sha256 build/urfinkel.prg.md5
 git add build/urfinkel.d64.sha256 build/urfinkel.d64.md5
 git add build/CHECKSUMS.txt
+git add build/urfinkel.zip build/urfinkel.tar.gz
 
 if [ "$readme_clean" = "1" ]; then
     git add README.md

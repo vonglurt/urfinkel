@@ -72,7 +72,7 @@ BEGIN='<!-- CHECKSUMS:START -->'
 END='<!-- CHECKSUMS:END -->'
 REPO=https://github.com/vonglurt/urfinkel
 
-FILES="build/urfinkel.prg build/urfinkel.d64"
+FILES="build/urfinkel.prg build/urfinkel.d64 build/urfinkel.zip build/urfinkel.tar.gz"
 ALGOS="sha256 md5"
 
 # What each artefact is, in the words the play page already used for it.  The
@@ -82,8 +82,19 @@ ALGOS="sha256 md5"
 # a second one is ever added rather than quietly describing the wrong machine.
 what() {
     case "$1" in
-        *.prg) echo "the program alone, for the $2" ;;
-        *.d64) echo "a disk image, for the $2" ;;
+        *.prg)    echo "the program alone, for the $2" ;;
+        *.d64)    echo "a disk image, for the $2" ;;
+        *.zip)    echo "everything, zipped — both of the above, the play page, a script to serve it, and notes" ;;
+        *.tar.gz) echo "the same collection as a gzipped tar" ;;
+    esac
+}
+
+# The class the stylesheet hangs a gradient on.  Taken from the whole suffix
+# rather than the last dot, because "tar.gz" would otherwise arrive as "gz".
+kind() {
+    case "$1" in
+        *.tar.gz) echo targz ;;
+        *)        echo "${1##*.}" ;;
     esac
 }
 
@@ -101,6 +112,7 @@ what() {
 icon() {
     case "$1" in
         *.prg) echo '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 1.5h6l3 3v10h-9z"/><path d="M9.5 1.5v3h3"/><path d="M5.5 8.5 7 10l-1.5 1.5M8.5 11.5h2"/></svg>' ;;
+        *.zip|*.tar.gz) echo '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg>' ;;
         *.d64) echo '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 1.5h10l3 3v10h-13z"/><path d="M4.5 1.5h6v4h-6zM4.5 9.5h7v5h-7z"/></svg>' ;;
     esac
 }
@@ -325,7 +337,7 @@ machine=$(field target | sed -e 's/^[^(]*(//' -e 's/)$//')
         # The kind is emitted as a class so the stylesheet can give the two
         # buttons gradients running opposite ways without counting children.
         printf '    <a class="file %s" href="%s/raw/main/%s" download>%s<span>%s</span></a>\n' \
-            "${b##*.}" "$REPO" "$f" "$(icon "$b")" "$b"
+            "$(kind "$b")" "$REPO" "$f" "$(icon "$b")" "$b"
         printf '    <span class="what">%s — %s bytes — built <b>%s</b></span>\n' \
             "$(what "$b" "$machine")" "$(group "$(size_of "$f")")" "$stamp"
         # The address the button goes to, spelled out.  A button hides where it

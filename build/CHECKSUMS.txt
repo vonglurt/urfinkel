@@ -75,6 +75,18 @@ urfinkel.d64
   sha256       513048d68076f25403553b874c4dd4a1fc9502636b00a14253e08d93310030cd
   git blob     7c83ffc43e1349b94dfa5199c669e849c94719ce
 
+urfinkel.zip
+  size         78 565 bytes
+  md5          95f1df8d9192df17efada8df17fdb820
+  sha256       1a96f79746c2d37de28c029b653a2caeb142a8d542edb92badd8dc9f5f23043c
+  git blob     6fbf102d79728f28fbfbeda8de76b5639376aac3
+
+urfinkel.tar.gz
+  size         76 906 bytes
+  md5          d8b080973cc1aa497c739a3033b14940
+  sha256       30131f83fdbd89f9143f15d2d12bb7d8997cb95515096a3f2c1000f64f85ce1c
+  git blob     0a345ec67190e3fc3a9278e7769b113e6ddf9f1b
+
 VERIFYING A DOWNLOAD
 --------------------
 Each hash above is also published on its own, as the single line the
@@ -84,6 +96,10 @@ checking tool expects. Save one next to the file you downloaded:
     md5sum -c urfinkel.prg.md5
     shasum -a 256 -c urfinkel.d64.sha256
     md5sum -c urfinkel.d64.md5
+    shasum -a 256 -c urfinkel.zip.sha256
+    md5sum -c urfinkel.zip.md5
+    shasum -a 256 -c urfinkel.tar.gz.sha256
+    md5sum -c urfinkel.tar.gz.md5
 
 Do not point those tools at this file - it is prose, and they would
 have nothing to read in it.

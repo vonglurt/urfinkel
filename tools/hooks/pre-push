@@ -42,6 +42,8 @@ fi
 # meaningful if they are the committed ones.
 SIDECARS="build/urfinkel.prg.sha256 build/urfinkel.prg.md5 \
           build/urfinkel.d64.sha256 build/urfinkel.d64.md5 \
+          build/urfinkel.zip.sha256 build/urfinkel.zip.md5 \
+          build/urfinkel.tar.gz.sha256 build/urfinkel.tar.gz.md5 \
           build/CHECKSUMS.txt"
 
 if ! git diff --quiet HEAD -- README.md $SIDECARS; then
@@ -73,6 +75,7 @@ echo "pre-push: rebuilding clean at the pushed stamp ($stamp)..."
 make clean >/dev/null
 make      BUILD_DATE="$stamp" >/dev/null
 make disk BUILD_DATE="$stamp" >/dev/null
+make dist BUILD_DATE="$stamp" >/dev/null
 
 fail=0
 cmp -s build/urfinkel.prg "$tmp/pushed.prg" || { echo "pre-push: .prg DIFFERS from a clean build" >&2; fail=1; }
