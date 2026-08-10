@@ -29,7 +29,9 @@ from the repository.">
     background: #241c0c; padding: .7rem 1rem; margin: 0 0 1.25rem; font-size: .85rem;
   }
   .note strong { color: #e8dcc0; }
-  #box { width: 100%; aspect-ratio: 4 / 3; background: #000; margin-bottom: .5rem; scroll-margin-top: 0; }
+  /* position: relative so the click prompt below can be laid over it. */
+  #box { position: relative; width: 100%; aspect-ratio: 4 / 3; background: #000;
+         margin-bottom: .5rem; scroll-margin-top: 0; }
   /* Unloaded, the box stops pretending to be a screen: no 4:3 black void, just
      enough room for the message and the button that brings it back. */
   #box.off {
@@ -44,14 +46,34 @@ from the repository.">
   }
   #box.off button:hover { background: #33270f; color: #f0c274; }
 
-  .clickme {
-    font-size: .8rem; color: #b3a179; margin: 0 0 .75rem;
-    border-left: 3px solid #6b5726; padding-left: .7rem;
+  /* THE CLICK PROMPT, laid over the screen.
+     A browser gives a page no sound and no keyboard until it has been clicked
+     inside, so the prompt belongs on the thing you have to click rather than
+     in a line underneath it.
+     IT NEVER TAKES THE CLICK.  pointer-events: none means every press goes
+     straight through to the emulator's canvas as though this were not here -
+     the prompt cannot swallow the one interaction it is asking for. Fading it
+     on hover is then only about getting out of the way of your eyes, not out
+     of the way of the pointer. */
+  .tap {
+    position: absolute; inset: 0; z-index: 5;
+    display: flex; flex-direction: column; gap: .5rem;
+    align-items: center; justify-content: center;
+    pointer-events: none;
+    background: rgba(12, 9, 3, .55);
+    transition: opacity .18s ease;
   }
-  .clickme strong { color: #e8dcc0; }
-  /* Once you have clicked, the instruction has served its purpose and stops
-     taking up room above the controls. */
-  .clickme.done { display: none; }
+  #box:hover .tap { opacity: 0; }
+  /* After the first press it has done its job and does not come back. */
+  .tap.done { display: none; }
+  .tap b {
+    font-size: .95rem; letter-spacing: .18em; text-transform: uppercase;
+    color: #f0c274; background: #241c0c; border: 1px solid #6b5726;
+    padding: .7rem 1.4rem;
+  }
+  .tap span { font-size: .72rem; color: #b3a179; max-width: 28rem;
+              text-align: center; padding: 0 1rem; }
+  @media (prefers-reduced-motion: reduce) { .tap { transition: none; } }
 
   .bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
          gap: .5rem; margin: 0 0 1.25rem; }
@@ -217,11 +239,14 @@ from the repository.">
 <p class="sub">The Royal Game of Ur — a ~4,600-year-old board game — written in
 C and 6502 assembly for the Commodore Plus/4.</p>
 
-<div id="box"><div id="game"></div></div>
-
-<p id="clickme" class="clickme">↑ <strong>Click the screen once</strong> to wake
-it up — a browser gives a page no sound and no keyboard until you have clicked
-inside it, so the machine cannot hear you before that.</p>
+<div id="box">
+  <div id="game"></div>
+  <div id="tap" class="tap">
+    <b>▶ Click to play</b>
+    <span>A browser gives a page no sound and no keyboard until you have
+    clicked inside it, so the machine cannot hear you before that.</span>
+  </div>
+</div>
 
 <div class="bar">
   <button id="fit" type="button">▲ Fit the game to the top</button>
@@ -260,24 +285,24 @@ the download to check it arrived whole.</p>
     <a class="file zip" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>urfinkel.zip</span></a>
     <span class="tag">plays offline on a PC</span>
     <span class="tag">full source included</span>
-    <span class="what">the whole collection, zipped — 228 598 bytes — built <b>2026-08-10</b></span>
+    <span class="what">the whole collection, zipped — 229 077 bytes — built <b>2026-08-10</b></span>
     <span class="use">Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. Everything on this page except the emulator itself, which is why the browser copy still wants a connection and VICE with the <code>.prg</code> does not.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip</a>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>c97f02ef42b63463a253dadc7079cfc48766b7a28dde7d1c9d2c9a869055bfe3</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
-      <dt>MD5</dt><dd><code>318869a572cfe4e29d0271fe02ce963a</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>4b020152e2661d5d4a8e73c8b3d19eb8399aa8798db00c692c96dcef871ba541</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
+      <dt>MD5</dt><dd><code>7844f95c2a7f26ab8c579f3171bb52d0</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
     </dl>
   </li>
   <li>
     <a class="file targz" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>urfinkel.tar.gz</span></a>
     <span class="tag">plays offline on a PC</span>
     <span class="tag">full source included</span>
-    <span class="what">the same collection as a gzipped tar, for Linux and macOS — 208 961 bytes — built <b>2026-08-10</b></span>
+    <span class="what">the same collection as a gzipped tar, for Linux and macOS — 209 395 bytes — built <b>2026-08-10</b></span>
     <span class="use">Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. Everything on this page except the emulator itself, which is why the browser copy still wants a connection and VICE with the <code>.prg</code> does not.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz</a>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>65804251926d3812d4de4504e6e2034f20f0ab1b037b341e1b0653fc1c702644</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.sha256">urfinkel.tar.gz.sha256</a></dd>
-      <dt>MD5</dt><dd><code>5f1f127c74edbb7db73e7732347b8bfa</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.md5">urfinkel.tar.gz.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>a4eaa0b0da170637a1db73238b25aa009d4d433deecc835176ebb6b3bea3ca88</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.sha256">urfinkel.tar.gz.sha256</a></dd>
+      <dt>MD5</dt><dd><code>61785f3eb308b210a46a89bf08d37e93</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.md5">urfinkel.tar.gz.md5</a></dd>
     </dl>
   </li>
 </ul>
@@ -488,7 +513,7 @@ Contact: paulr@sdf.org
 
   var box   = document.getElementById("box");
   var power = document.getElementById("power");
-  var note  = document.getElementById("clickme");
+  var tap   = document.getElementById("tap");
 
   function loadEmulator() {
     var s = document.createElement("script");
@@ -511,7 +536,8 @@ Contact: paulr@sdf.org
     });
     power.disabled = true;
     power.textContent = "⏏ Emulator unloaded";
-    if (note) note.parentNode.removeChild(note);
+    // The prompt lived inside #box and went with the innerHTML above; there is
+    // nothing left to click on, so nothing left to ask for.
   }
 
   if (location.hash === OFF_HASH) {
@@ -522,11 +548,14 @@ Contact: paulr@sdf.org
       location.hash = OFF_HASH;
       location.reload();
     });
-    // The instruction to click is only true until you have clicked. Capture
-    // phase, because the emulator's own canvas stops the event on its way
-    // back up and the listener would otherwise never run.
+    // The prompt is only true until you have clicked, and hover alone must not
+    // retire it - a touch screen has no hover, and a pointer crossing the box
+    // on its way somewhere else has not woken anything up.
+    //
+    // Capture phase, because the emulator's canvas stops the event on its way
+    // back up and this listener would otherwise never run.
     box.addEventListener("pointerdown", function () {
-      if (note) note.className = "clickme done";
+      if (tap) tap.className = "tap done";
     }, true);
   }
 </script>
