@@ -84,6 +84,24 @@ what() {
     esac
 }
 
+# A glyph for each kind, so the two downloads are told apart before the
+# extension is read: a page of code for the loose program, a floppy for the
+# disk image.  Drawn inline as strokes in currentColor rather than fetched,
+# because this page must keep working with nothing but itself, and so the
+# icon takes the link's colour on hover without a second rule.
+#
+# The `download` attribute on the link is inert - browsers ignore it across
+# origins, and these point at github.com.  What actually saves the file rather
+# than displaying it is GitHub serving both binaries as
+# application/octet-stream; the .sha256 and .md5 come back as text/plain and
+# open in the browser, which is why the page tells you to save those yourself.
+icon() {
+    case "$1" in
+        *.prg) echo '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 1.5h6l3 3v10h-9z"/><path d="M9.5 1.5v3h3"/><path d="M5.5 8.5 7 10l-1.5 1.5M8.5 11.5h2"/></svg>' ;;
+        *.d64) echo '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 1.5h10l3 3v10h-13z"/><path d="M4.5 1.5h6v4h-6zM4.5 9.5h7v5h-7z"/></svg>' ;;
+    esac
+}
+
 for f in $FILES; do
     if [ ! -f "$f" ]; then
         echo "checksums: $f is missing - run 'make && make disk' first" >&2
@@ -292,7 +310,8 @@ field() { printf '%s\n' "$info" | awk -F'\t' -v k="$1" '$1==k{print $2; exit}'; 
     for f in $FILES; do
         b=$(basename "$f")
         echo '  <li>'
-        printf '    <a class="file" href="%s/raw/main/%s">%s</a>\n' "$REPO" "$f" "$b"
+        printf '    <a class="file" href="%s/raw/main/%s" download>%s<span>%s</span></a>\n' \
+            "$REPO" "$f" "$(icon "$b")" "$b"
         printf '    <span class="what">%s — %s bytes</span>\n' "$(what "$b")" "$(group "$(size_of "$f")")"
         echo '    <dl class="sums">'
         printf '      <dt>SHA-256</dt><dd><code>%s</code> — <a href="%s/raw/main/%s.sha256">%s.sha256</a></dd>\n' \
