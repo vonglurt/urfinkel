@@ -62,7 +62,32 @@ if [ "${URFINKEL_CONFORM:-0}" = "1" ]; then
     rm -f /tmp/urfinkel-conform.$$
 fi
 
-git add build/urfinkel.prg build/urfinkel.d64
+# The README quotes the size and the hashes of both binaries, so a rebuild
+# that changed them has just made the README wrong.  Regenerating here keeps
+# the claim and the file it describes in the same commit, which is the only
+# arrangement in which the claim is worth anything.
+#
+# Whether the result may be staged is decided BEFORE the script runs. If the
+# README already had unstaged edits, they are someone's work in progress -
+# a `git add -p` session, most likely - and staging the file wholesale would
+# sweep all of it into this commit. In that case the edit is made on disk and
+# left unstaged, with a notice; pre-push is the gate that stops a stale one
+# from ever reaching the remote.
+readme_clean=1
+git diff --quiet -- README.md || readme_clean=0
+
+echo "pre-commit: checksums..."
+tools/checksums.sh
+
+git add build/urfinkel.prg build/urfinkel.d64 build/CHECKSUMS.txt
+
+if [ "$readme_clean" = "1" ]; then
+    git add README.md
+elif ! git diff --quiet -- README.md; then
+    echo "pre-commit: README.md had unstaged edits, so the checksum table was"
+    echo "            written but NOT staged. Stage it yourself if it belongs"
+    echo "            in this commit."
+fi
 
 if git diff --cached --quiet -- build/urfinkel.prg build/urfinkel.d64; then
     echo "pre-commit: binaries unchanged"

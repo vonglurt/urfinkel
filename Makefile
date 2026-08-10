@@ -463,9 +463,21 @@ card-eject:
 	sync
 	diskutil eject "$(CARD)"
 
+# The published binaries are offered as downloads, so their sizes and hashes
+# are quoted in the README.  Quoting them by hand is how they go stale, so
+# they are generated: `checksums` writes build/CHECKSUMS.txt and pastes the
+# table into README.md between its CHECKSUMS markers, and `checksums-check`
+# asserts both are current without touching either.  pre-commit runs the
+# first; pre-push runs the second.
+checksums: $(GAME) $(DISK)
+	@$(TOOLS)/checksums.sh
+
+checksums-check: $(GAME) $(DISK)
+	@$(TOOLS)/checksums.sh --check
+
 clean:
 	rm -rf $(BUILD)
 
 .PHONY: all debug debug-shot kbtest card-probe music check run run200 test \
-        anim anim-run \
+        anim anim-run checksums checksums-check \
         bench conform disk card card-eject clean kbdiag kbdiag-shot

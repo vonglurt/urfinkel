@@ -36,6 +36,17 @@ if ! command -v cl65 >/dev/null 2>&1; then
     exit 1
 fi
 
+# Asked here, before `make clean` removes build/, because the answer is about
+# what is being pushed rather than about what the rebuild leaves behind. The
+# checksum verification at the end reads these two files, so it is only
+# meaningful if they are the committed ones.
+if ! git diff --quiet HEAD -- README.md build/CHECKSUMS.txt; then
+    echo "pre-push: README.md or build/CHECKSUMS.txt differs from HEAD, so the" >&2
+    echo "          published hashes cannot be verified against what is pushed." >&2
+    echo "          Commit or stash the change, then push again." >&2
+    exit 1
+fi
+
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
@@ -74,6 +85,25 @@ echo "pre-push: host tests..."
 if ! make check >"$tmp/check.log" 2>&1; then
     echo "pre-push: TESTS FAILED - push refused" >&2
     tail -30 "$tmp/check.log" >&2
+    exit 1
+fi
+
+# The binary is now known to be what these sources build.  The README quotes
+# its size and hashes to a visitor deciding whether their download arrived
+# intact, so the same standard applies: a published number that does not
+# describe the published file is worse than no number at all.
+#
+# `make clean` above deleted build/CHECKSUMS.txt along with the rest of the
+# directory, so the committed one is put back before it is read. That is a
+# repair of a tracked file this hook itself removed, not a change to anyone's
+# work - it was already asserted identical to HEAD before the clean.
+echo "pre-push: checksums..."
+if git cat-file -e HEAD:build/CHECKSUMS.txt 2>/dev/null; then
+    git checkout HEAD -- build/CHECKSUMS.txt
+fi
+if ! tools/checksums.sh --check; then
+    echo "pre-push: the published hashes do not describe the pushed binary." >&2
+    echo "          Run 'make checksums', commit the result, then push again." >&2
     exit 1
 fi
 
