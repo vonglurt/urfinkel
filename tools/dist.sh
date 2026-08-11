@@ -1,8 +1,15 @@
 #!/bin/sh
 #
-# Pack the downloadable collection: build/urfinkel.zip and build/urfinkel.tar.gz,
-# each holding the program, the disk image, an offline copy of the play page,
-# a script to serve it, the licence and a page of notes.
+# Pack the downloadable collection: build/urfinkel.zip, holding the program,
+# the disk image, the source, an offline copy of the play page with the
+# emulator beside it, a script to serve it, the licence and a page of notes.
+#
+# ZIP ONLY.  There was a .tar.gz of exactly the same files.  Both are
+# committed, and at ~4.8 MB each every commit that touched the binaries or the
+# play page wrote nearly 10 MB into git history that can never be reclaimed -
+# 26 MB of a 35 MB repository, for one archive in two wrappers.  A zip opens
+# on every desktop this game is likely to be unpacked on, including the Macs
+# and PCs the offline copy is for, so it is the one that stayed.
 #
 # REPRODUCIBLE ON PURPOSE.  These two archives are hashed by
 # tools/checksums.sh, and those hashes are committed and then checked by
@@ -43,7 +50,6 @@ BUILD=build
 DIST=$BUILD/dist
 STAGE=$DIST/urfinkel
 ZIP=$BUILD/urfinkel.zip
-TGZ=$BUILD/urfinkel.tar.gz
 PAGE=docs/index.html
 
 BEGIN='<!-- CHECKSUMS:START -->'
@@ -459,25 +465,15 @@ MEMBERS="urfinkel/LICENCE urfinkel/RUNNING.txt urfinkel/index.html \
          urfinkel/urfinkel.d64 urfinkel/urfinkel.prg \
          $SRCMEMBERS $EJSMEMBERS $MEDIAMEMBERS"
 
-rm -f "$ZIP" "$TGZ"
+rm -f "$ZIP"
 
 # -X drops the uid/gid and extended attributes that would otherwise make the
 # archive differ between machines and between filesystems.
 ( cd "$DIST" && zip -X -q -9 "../urfinkel.zip" $MEMBERS )
 
-# bsdtar (macOS) and GNU tar (everywhere else) spell the same normalisation
-# differently, so each is asked in its own words.
-if tar --version 2>&1 | grep -qi bsdtar; then
-    ( cd "$DIST" && tar --format ustar --uid 0 --gid 0 --uname "" --gname "" \
-        -cf - $MEMBERS ) | gzip -n -9 > "$TGZ"
-else
-    ( cd "$DIST" && tar --format=ustar --owner=0 --group=0 --numeric-owner \
-        --mtime="$stamp 00:00:00Z" -cf - $MEMBERS ) | gzip -n -9 > "$TGZ"
-fi
 
 # The staging tree has served its purpose; leaving it would put a second copy
 # of both binaries in build/ for no reason.
 rm -rf "$DIST"
 
 echo "dist: $ZIP ($(wc -c < "$ZIP" | tr -d ' ') bytes)"
-echo "dist: $TGZ ($(wc -c < "$TGZ" | tr -d ' ') bytes)"

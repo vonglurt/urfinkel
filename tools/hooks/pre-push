@@ -43,7 +43,6 @@ fi
 SIDECARS="build/urfinkel.prg.sha256 build/urfinkel.prg.md5 \
           build/urfinkel.d64.sha256 build/urfinkel.d64.md5 \
           build/urfinkel.zip.sha256 build/urfinkel.zip.md5 \
-          build/urfinkel.tar.gz.sha256 build/urfinkel.tar.gz.md5 \
           build/CHECKSUMS.txt"
 
 # checksums.sh --check reads the play page as well, so it belongs in the same

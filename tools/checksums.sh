@@ -75,7 +75,7 @@ PRGBEGIN='<!-- PRGSIZE:START -->'
 PRGEND='<!-- PRGSIZE:END -->'
 REPO=https://github.com/vonglurt/urfinkel
 
-FILES="build/urfinkel.prg build/urfinkel.d64 build/urfinkel.zip build/urfinkel.tar.gz"
+FILES="build/urfinkel.prg build/urfinkel.d64 build/urfinkel.zip"
 ALGOS="sha256 md5"
 
 # What each artefact is, in the words the play page already used for it.  The
@@ -88,7 +88,6 @@ what() {
         *.prg)    echo "the program alone, for the $2" ;;
         *.d64)    echo "a disk image, for the $2" ;;
         *.zip)    echo "the whole collection, zipped" ;;
-        *.tar.gz) echo "the same collection as a gzipped tar, for Linux and macOS" ;;
     esac
 }
 
@@ -99,7 +98,7 @@ what() {
 # One label per line; the caller emits a span for each.
 tag() {
     case "$1" in
-        *.zip|*.tar.gz)
+        *.zip)
             echo 'plays offline on a PC'
             echo 'full source included' ;;
         *) ;;
@@ -113,7 +112,7 @@ use() {
     case "$1" in
         *.prg) echo 'Drag it onto VICE, YAPE or plus4emu. It starts faster than the disk image — there is no directory to read first.' ;;
         *.d64) echo 'Put it on an SD2IEC or a Pi1541, mount it as a disk, then <code>dload"urfinkel"</code>. Desktop emulators open it directly.' ;;
-        *.zip|*.tar.gz) echo 'Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. The emulator comes too, so the browser copy plays with nothing plugged in.' ;;
+        *.zip) echo 'Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. The emulator comes too, so the browser copy plays with nothing plugged in.' ;;
     esac
 }
 
@@ -124,20 +123,14 @@ use() {
 # they meet only after unpacking.
 fine() {
     case "$1" in
-        *.zip|*.tar.gz)
+        *.zip)
             echo 'Fully offline: the game, the emulator and the page all come out of the folder — nothing is fetched from anywhere. It has to be <b>served rather than opened directly</b>, because a <code>file://</code> page may not read the files beside it: run <code>./start-html.sh</code>. The emulator in <code>emulatorjs/</code> is EmulatorJS, GPL-3.0 and not part of UR FINKEL — see <code>emulatorjs/SOURCE.txt</code>. <code>index.html</code> beside it is the same page taking the emulator from its CDN instead, which is always the current version.' ;;
         *) ;;
     esac
 }
 
-# The class the stylesheet hangs a gradient on.  Taken from the whole suffix
-# rather than the last dot, because "tar.gz" would otherwise arrive as "gz".
-kind() {
-    case "$1" in
-        *.tar.gz) echo targz ;;
-        *)        echo "${1##*.}" ;;
-    esac
-}
+# The class the stylesheet hangs a gradient on.
+kind() { echo "${1##*.}"; }
 
 # A glyph for each kind, so the two downloads are told apart before the
 # extension is read: a page of code for the loose program, a floppy for the
@@ -153,7 +146,7 @@ kind() {
 icon() {
     case "$1" in
         *.prg) echo '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 1.5h6l3 3v10h-9z"/><path d="M9.5 1.5v3h3"/><path d="M5.5 8.5 7 10l-1.5 1.5M8.5 11.5h2"/></svg>' ;;
-        *.zip|*.tar.gz) echo '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg>' ;;
+        *.zip) echo '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg>' ;;
         *.d64) echo '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 1.5h10l3 3v10h-13z"/><path d="M4.5 1.5h6v4h-6zM4.5 9.5h7v5h-7z"/></svg>' ;;
     esac
 }

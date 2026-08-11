@@ -23,4 +23,3 @@ build/*
 !build/*.md5
 !build/CHECKSUMS.txt
 !build/urfinkel.zip
-!build/urfinkel.tar.gz

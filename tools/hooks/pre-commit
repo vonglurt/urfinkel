@@ -95,9 +95,8 @@ git add build/urfinkel.prg build/urfinkel.d64
 git add build/urfinkel.prg.sha256 build/urfinkel.prg.md5
 git add build/urfinkel.d64.sha256 build/urfinkel.d64.md5
 git add build/urfinkel.zip.sha256 build/urfinkel.zip.md5
-git add build/urfinkel.tar.gz.sha256 build/urfinkel.tar.gz.md5
 git add build/CHECKSUMS.txt
-git add build/urfinkel.zip build/urfinkel.tar.gz
+git add build/urfinkel.zip
 
 for f in $GENERATED; do
     case " $clean_before " in

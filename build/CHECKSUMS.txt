@@ -76,16 +76,10 @@ urfinkel.d64
   git blob     7c83ffc43e1349b94dfa5199c669e849c94719ce
 
 urfinkel.zip
-  size         4 934 604 bytes
-  md5          11e8143b4eea6aed04ad478ffc95a844
-  sha256       bedd56500bbe00f9334c5230c4b318cbd848541ffebc35d52e66d5bcb42242ea
-  git blob     7bc52b9c1bb67c350fae95e6f280f04bd8ebab8a
-
-urfinkel.tar.gz
-  size         4 914 726 bytes
-  md5          d53f75fb0f2bd0b1e78a658b9405c146
-  sha256       2a0fc8ede2073d26d0cddcce0fce7c6cf33de22b939ec71d5ca0789e18396f3e
-  git blob     59c4a379550a04680e2873bbedae9ee834c2c804
+  size         4 934 600 bytes
+  md5          7981c7f17eea067702c745c15a03e33d
+  sha256       eda3a62fe5ea97d6e5ed8d4aa75adf90d9a44821a6ad9f25b325d4e7da8a6627
+  git blob     ae9f21be81f23b086b0f692df29241ba7cb3647e
 
 VERIFYING A DOWNLOAD
 --------------------
@@ -98,8 +92,6 @@ checking tool expects. Save one next to the file you downloaded:
     md5sum -c urfinkel.d64.md5
     shasum -a 256 -c urfinkel.zip.sha256
     md5sum -c urfinkel.zip.md5
-    shasum -a 256 -c urfinkel.tar.gz.sha256
-    md5sum -c urfinkel.tar.gz.md5
 
 Do not point those tools at this file - it is prose, and they would
 have nothing to read in it.

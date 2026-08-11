@@ -24,8 +24,7 @@ Right-click → Save Link As. Either file works; the `.prg` starts faster.
 |---|---:|---|---|
 | [urfinkel.prg](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg) | 56 511 | `991db4f541b3ecd1e92ef86aae59ced0` | `075545a1cf34f7e6c615c3670e1d28158b51a78d3a090e41d5261c72a9f546b0` |
 | [urfinkel.d64](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64) | 174 848 | `35694f66c5dfd2578be5f81e1335c75f` | `513048d68076f25403553b874c4dd4a1fc9502636b00a14253e08d93310030cd` |
-| [urfinkel.zip](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip) | 4 934 604 | `11e8143b4eea6aed04ad478ffc95a844` | `bedd56500bbe00f9334c5230c4b318cbd848541ffebc35d52e66d5bcb42242ea` |
-| [urfinkel.tar.gz](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz) | 4 914 726 | `d53f75fb0f2bd0b1e78a658b9405c146` | `2a0fc8ede2073d26d0cddcce0fce7c6cf33de22b939ec71d5ca0789e18396f3e` |
+| [urfinkel.zip](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip) | 4 934 600 | `7981c7f17eea067702c745c15a03e33d` | `eda3a62fe5ea97d6e5ed8d4aa75adf90d9a44821a6ad9f25b325d4e7da8a6627` |
 
 Built **2026-08-10** — the date the program stamps on its own menu, so a
 download can be identified from the machine without unpacking it.
@@ -44,8 +43,6 @@ then run the command beside it:
 | [urfinkel.d64.md5](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64.md5) | `md5sum -c urfinkel.d64.md5` |
 | [urfinkel.zip.sha256](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256) | `shasum -a 256 -c urfinkel.zip.sha256` |
 | [urfinkel.zip.md5](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5) | `md5sum -c urfinkel.zip.md5` |
-| [urfinkel.tar.gz.sha256](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.sha256) | `shasum -a 256 -c urfinkel.tar.gz.sha256` |
-| [urfinkel.tar.gz.md5](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.tar.gz.md5) | `md5sum -c urfinkel.tar.gz.md5` |
 
 Each prints one line ending `OK`. The filename inside is bare, so this
 works in whatever folder the download landed in.
@@ -64,8 +61,7 @@ point `shasum` and `md5sum` at.
 |---|---|---|
 | urfinkel.prg | `12994dcb599b35f6a428200c21909787bd4da25d` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.prg) |
 | urfinkel.d64 | `7c83ffc43e1349b94dfa5199c669e849c94719ce` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.d64) |
-| urfinkel.zip | `7bc52b9c1bb67c350fae95e6f280f04bd8ebab8a` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.zip) |
-| urfinkel.tar.gz | `59c4a379550a04680e2873bbedae9ee834c2c804` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.tar.gz) |
+| urfinkel.zip | `ae9f21be81f23b086b0f692df29241ba7cb3647e` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.zip) |
 
 The blob SHA is git's own address for that content — reproduce it with
 `git hash-object build/urfinkel.prg`, and it is the object GitHub serves
