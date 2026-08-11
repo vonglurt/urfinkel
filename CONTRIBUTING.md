@@ -171,5 +171,6 @@ licensed under the same terms, and that you have the right to license it.
 
 ## Contributors
 
-- **Paul Richeson** ([vonglurt](https://github.com/vonglurt)) — the port, the
-  reports, and the restored Plus/4 it was measured on
+- **Paul Richeson** ([vonglurt](https://github.com/vonglurt)) — the concept,
+  the basic prototype, the port, the reports, and the restored Plus/4 it
+  was measured on
