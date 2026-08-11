@@ -462,13 +462,13 @@ check it arrived whole.</p>
     <a class="file zip" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>urfinkel.zip</span></a>
     <span class="tag">plays offline on a PC</span>
     <span class="tag">full source included</span>
-    <span class="what">the whole collection, zipped — 4 933 439 bytes — built <b>2026-08-10</b></span>
+    <span class="what">the whole collection, zipped — 4 934 115 bytes — built <b>2026-08-10</b></span>
     <span class="use">Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. The emulator comes too, so the browser copy plays with nothing plugged in.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip</a>
     <span class="fine">Fully offline: the game, the emulator and the page all come out of the folder — nothing is fetched from anywhere. It has to be <b>served rather than opened directly</b>, because a <code>file://</code> page may not read the files beside it: run <code>./start-html.sh</code>. The emulator in <code>emulatorjs/</code> is EmulatorJS, GPL-3.0 and not part of UR FINKEL — see <code>emulatorjs/SOURCE.txt</code>. <code>index.html</code> beside it is the same page taking the emulator from its CDN instead, which is always the current version.</span>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>2f010166a4ed7b1b30097b898a508e15e197a20aed7ec0231231aa8d02ad3a4a</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
-      <dt>MD5</dt><dd><code>c65607adadeea67009c35658868ba36f</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>e202c147bb9a4fcd8a2ab285003ca08aef0c456e062f5d4034717f4b9b23b6cd</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
+      <dt>MD5</dt><dd><code>37739183b4053198db477431bfaf32bd</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
     </dl>
   </li>
 </ul>
@@ -656,6 +656,9 @@ Contact: paulr@sdf.org
   // Nothing is lost by declining it: the machine needs a click before the
   // browser will give it sound or keys anyway, and that click is what the
   // prompt over the board asks for.
+  // It is given focus on the first click instead - see the pointerdown
+  // handler further down. Without that it never gets focus at all and the
+  // machine hears nothing, which is how this was broken.
   EJS_noAutoFocus = true;
   EJS_color         = "#d8a657";
   EJS_volume        = 0.5;
@@ -751,6 +754,20 @@ Contact: paulr@sdf.org
     // back up and this listener would otherwise never run.
     box.addEventListener("pointerdown", function () {
       if (tap) tap.className = "tap done";
+      // EJS_noAutoFocus stops the emulator taking focus the moment it loads,
+      // because focusing an element scrolls the page to it and that threw
+      // anyone who had followed a card downwards back to the top. It still
+      // needs focus to receive a keystroke, so the click the prompt asks for
+      // is what hands it over - preventScroll keeps the page where the reader
+      // put it, which was the whole point of declining the automatic focus.
+      //
+      // #game rather than the canvas inside it: that is the element
+      // EmulatorJS focuses when left to itself, checked in a browser.
+      var g = document.getElementById("game");
+      if (g) {
+        try { g.focus({ preventScroll: true }); }
+        catch (e) { g.focus(); }        /* older browsers: no options object */
+      }
     }, true);
   }
 </script>
