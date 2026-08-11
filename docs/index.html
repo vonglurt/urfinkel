@@ -462,13 +462,13 @@ check it arrived whole.</p>
     <a class="file zip" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>urfinkel.zip</span></a>
     <span class="tag">plays offline on a PC</span>
     <span class="tag">full source included</span>
-    <span class="what">the whole collection, zipped — 4 934 600 bytes — built <b>2026-08-10</b></span>
+    <span class="what">the whole collection, zipped — 4 933 439 bytes — built <b>2026-08-10</b></span>
     <span class="use">Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. The emulator comes too, so the browser copy plays with nothing plugged in.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip</a>
     <span class="fine">Fully offline: the game, the emulator and the page all come out of the folder — nothing is fetched from anywhere. It has to be <b>served rather than opened directly</b>, because a <code>file://</code> page may not read the files beside it: run <code>./start-html.sh</code>. The emulator in <code>emulatorjs/</code> is EmulatorJS, GPL-3.0 and not part of UR FINKEL — see <code>emulatorjs/SOURCE.txt</code>. <code>index.html</code> beside it is the same page taking the emulator from its CDN instead, which is always the current version.</span>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>eda3a62fe5ea97d6e5ed8d4aa75adf90d9a44821a6ad9f25b325d4e7da8a6627</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
-      <dt>MD5</dt><dd><code>7981c7f17eea067702c745c15a03e33d</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>2f010166a4ed7b1b30097b898a508e15e197a20aed7ec0231231aa8d02ad3a4a</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
+      <dt>MD5</dt><dd><code>c65607adadeea67009c35658868ba36f</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
     </dl>
   </li>
 </ul>
@@ -546,38 +546,16 @@ starts the URBOT demo by itself and plays against itself.</p>
 <h2>WHAT THIS IS</h2>
 <p><strong>The Royal Game of Ur, refereed by a Commodore Plus/4.</strong></p>
 
-<p>The game is about 4,600 years old. Its boards came out of the Royal
-Cemetery at Ur in the 1920s with no instructions attached, and the rules
-played here are the ones Irving Finkel reconstructed from a Babylonian
-cuneiform tablet — which is where this program gets its name.</p>
+<p>It is a race for seven pieces a side, it is about 4,600 years old, and it
+is a fun game. You do not need to read anything first — the machine holds the
+rules, casts the lots, and asks only which piece you want to move.</p>
 
-<p>It is a race. Seven pieces a side travel a fixed path and the first player
-to bring all seven home wins. Four tetrahedral lots are thrown for a count of
-<strong>0 to 4</strong>, so the distribution is not flat — 2 is common, 0 and 4
-are one in sixteen each — and a <strong>nil throw loses the turn</strong>. A
-piece enters on the square equal to the throw. Squares 5 to 12 are shared, and
-landing on a foe there <strong>sends it back to the start</strong>. The three
-rosettes are safe and grant another throw. Bearing off is
-<strong>exact</strong>: a piece on 14 needs a 1, not a 1-or-more.</p>
-
-<p>The machine is the referee, and it holds the whole ruleset — entry,
-blocking, compulsory moves, capture, the safe rosettes, the exact bear-off.
-It casts the lots for you too; the only thing it ever asks a human is which
-piece to move, and it lists every legal one with where it would land. If you
-would rather throw real lots across a real table, there is a mode for that:
-you type the tip count and the program referees.</p>
-
-<p>The opponent, <strong>URBOT</strong>, draws one of four doctrines at the
-start of a match — <em>one at a time</em>, <em>fill the board</em>, <em>run for
-it</em>, <em>hunt and hold</em> — re-draws once three of its pieces are home,
-and narrates every branch it takes into the chronicle at the foot of the
-screen, so you can read why it did what it did. Left alone for two minutes,
-the cabinet stops waiting and starts a match against itself.</p>
-
-<p>It was written for a Plus/4 that had just been restored, after an afternoon
-of ancient-world tabletop gaming at a Viking festival — which is a long way of
-saying it exists because someone wanted to keep playing the game after going
-home.</p>
+<p>The ruleset is the one Irving Finkel reconstructed from a Babylonian
+tablet, which is where the program gets its name. If you want the detail,
+Wikipedia has it: <a href="https://en.wikipedia.org/wiki/Royal_Game_of_Ur">the
+Royal Game of Ur</a> and <a href="https://en.wikipedia.org/wiki/Irving_Finkel">Irving
+Finkel</a>. Otherwise press <code>5</code> on the menu for the rules screen,
+or just start.</p>
 
 <h2>HOW IT GOT HERE</h2>
 <p>The port is not the point, but it is why the game looks the way it does.

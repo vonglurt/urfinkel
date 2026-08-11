@@ -24,7 +24,7 @@ Right-click → Save Link As. Either file works; the `.prg` starts faster.
 |---|---:|---|---|
 | [urfinkel.prg](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg) | 56 511 | `991db4f541b3ecd1e92ef86aae59ced0` | `075545a1cf34f7e6c615c3670e1d28158b51a78d3a090e41d5261c72a9f546b0` |
 | [urfinkel.d64](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64) | 174 848 | `35694f66c5dfd2578be5f81e1335c75f` | `513048d68076f25403553b874c4dd4a1fc9502636b00a14253e08d93310030cd` |
-| [urfinkel.zip](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip) | 4 934 600 | `7981c7f17eea067702c745c15a03e33d` | `eda3a62fe5ea97d6e5ed8d4aa75adf90d9a44821a6ad9f25b325d4e7da8a6627` |
+| [urfinkel.zip](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip) | 4 933 439 | `c65607adadeea67009c35658868ba36f` | `2f010166a4ed7b1b30097b898a508e15e197a20aed7ec0231231aa8d02ad3a4a` |
 
 Built **2026-08-10** — the date the program stamps on its own menu, so a
 download can be identified from the machine without unpacking it.
@@ -61,7 +61,7 @@ point `shasum` and `md5sum` at.
 |---|---|---|
 | urfinkel.prg | `12994dcb599b35f6a428200c21909787bd4da25d` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.prg) |
 | urfinkel.d64 | `7c83ffc43e1349b94dfa5199c669e849c94719ce` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.d64) |
-| urfinkel.zip | `ae9f21be81f23b086b0f692df29241ba7cb3647e` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.zip) |
+| urfinkel.zip | `d2dacd68811d13295d2b768af1cbe6733555e890` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.zip) |
 
 The blob SHA is git's own address for that content — reproduce it with
 `git hash-object build/urfinkel.prg`, and it is the object GitHub serves
@@ -91,29 +91,21 @@ minutes, the cabinet starts playing by itself.*
 
 ## The game
 
-The Royal Game of Ur is a race. Seven pieces a side travel a fixed path —
-**a walks 1 to 14 and b mirrors it** — and the first player to bring all seven
-home wins.
+The Royal Game of Ur is a race for seven pieces a side, and it is about
+4,600 years old. It is a fun game, and it is not complicated: you can be
+playing in a minute.
 
-You throw **four tetrahedral lots**, each with two tipped corners. Count the
-tips that land up: **0 to 4 steps**, and because it is four coins rather than a
-die, the distribution is not flat — 2 is common, 0 and 4 are one in sixteen
-each. A **nil throw loses the turn**, and there are no doubles to fall back on.
+The rules here are the ones Irving Finkel reconstructed from a Babylonian
+tablet, which is where this program gets its name. Wikipedia explains both
+better than a README should:
 
-A piece **enters on the square equal to the throw**, so a 4 enters directly
-onto rosette 4. Squares **5 to 12 are the shared middle**, and that is where
-the game is won and lost: land on a foe there and it is **sent back to the
-start**, losing everything it had walked. The three **rosettes — 4, 8 and 14 —
-are safe from capture and grant another throw**, which is what turns a good
-throw into a run of them.
+- [The Royal Game of Ur](https://en.wikipedia.org/wiki/Royal_Game_of_Ur) —
+  the board, the path, the lots and the rules
+- [Irving Finkel](https://en.wikipedia.org/wiki/Irving_Finkel) — who worked
+  them out, and from what
 
-**Bearing off is exact**: a piece on 14 needs a 1, not a 1-or-more. A match
-ends when one side has all seven home.
-
-Five things sit on the menu: **vs URBOT** (the machine, with four doctrines it
-narrates as it plays), **two players**, **two players with real lots** — where
-you throw physical dice and type the count in — the **URBOT demo**, and the
-rules screen. See [Controls](#controls) for the keys.
+The machine referees, so none of that has to be learned first. Press `5` on
+the menu for the rules screen; [Controls](#controls) has the keys.
 
 ## Where it stands
 
