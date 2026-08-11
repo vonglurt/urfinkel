@@ -462,13 +462,13 @@ check it arrived whole.</p>
     <a class="file zip" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>urfinkel.zip</span></a>
     <span class="tag">plays offline on a PC</span>
     <span class="tag">full source included</span>
-    <span class="what">the whole collection, zipped — 4 934 115 bytes — built <b>2026-08-10</b></span>
+    <span class="what">the whole collection, zipped — 4 935 057 bytes — built <b>2026-08-10</b></span>
     <span class="use">Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. The emulator comes too, so the browser copy plays with nothing plugged in.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip</a>
     <span class="fine">Fully offline: the game, the emulator and the page all come out of the folder — nothing is fetched from anywhere. It has to be <b>served rather than opened directly</b>, because a <code>file://</code> page may not read the files beside it: run <code>./start-html.sh</code>. The emulator in <code>emulatorjs/</code> is EmulatorJS, GPL-3.0 and not part of UR FINKEL — see <code>emulatorjs/SOURCE.txt</code>. <code>index.html</code> beside it is the same page taking the emulator from its CDN instead, which is always the current version.</span>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>e202c147bb9a4fcd8a2ab285003ca08aef0c456e062f5d4034717f4b9b23b6cd</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
-      <dt>MD5</dt><dd><code>37739183b4053198db477431bfaf32bd</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>6a6861fbf5f8e9993c4ae4f65bdb7072f60cee68c14e585ea6f8d4a6c73c7895</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
+      <dt>MD5</dt><dd><code>5084733cc27525c62a65410b1036365a</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
     </dl>
   </li>
 </ul>
@@ -663,15 +663,42 @@ Contact: paulr@sdf.org
   EJS_color         = "#d8a657";
   EJS_volume        = 0.5;
 
-  // Direct Keyboard Input hands raw key presses to the emulated machine
-  // instead of routing them through the virtual gamepad. It ships DISABLED
-  // for this core, and a Plus/4 is a computer you type at, so it is turned
-  // on here rather than left for the player to find under Input Options.
+  // DIRECT KEYBOARD INPUT IS OFF, and that is the opposite of what this page
+  // used to do.  It was turned on here on the reasoning that a Plus/4 is a
+  // computer you type at, so raw keys ought to go straight to it - and on the
+  // real machine it does not work: turning it off is what makes the game
+  // answer the keyboard.
   //
-  // Note this is a DEFAULT: a browser that already has a saved setting for
-  // this page keeps its own. Set EJS_disableLocalStorage = true to force it
-  // every time, at the cost of remembering anything else.
-  EJS_defaultOptions = { keyboardInput: "enabled" };
+  // The emulator's own code says why.  With this "enabled" it takes the
+  // keydown, calls preventDefault and returns BEFORE the controls mapping
+  // runs, handing the key to its own path instead - and that path is not the
+  // one reaching this core.  Disabled, the key goes through the mapping,
+  // which is why the binding clearing below matters and why it works.
+  EJS_defaultOptions = { keyboardInput: "disabled" };
+
+  // A DEFAULT ONLY APPLIES TO A BROWSER THAT HAS NO OPINION YET.  EmulatorJS
+  // stores what it is given under "ejs-settings", so anyone who loaded this
+  // page while the old default was in force is carrying "enabled" and would
+  // keep a keyboard that does nothing, no matter what is written above.
+  //
+  // That one stale value is cleared, once, and nothing else is touched -
+  // volume, shaders and the rest survive. The marker stops it running again,
+  // so a player who deliberately turns direct input back on keeps it.
+  (function () {
+    var MARK = "urfinkel:kbfix";
+    try {
+      if (localStorage.getItem(MARK)) return;
+      var raw = localStorage.getItem("ejs-settings");
+      if (raw) {
+        var o = JSON.parse(raw);
+        if (o && o.keyboardInput === "enabled") {
+          delete o.keyboardInput;
+          localStorage.setItem("ejs-settings", JSON.stringify(o));
+        }
+      }
+      localStorage.setItem(MARK, "1");
+    } catch (e) { /* storage blocked or unparsable: the default still stands */ }
+  })();
 
   // EmulatorJS maps the keyboard onto a virtual gamepad by default, and
   // binds buttons 24, 25 and 26 to "1", "2" and "3" - the save-state slot
