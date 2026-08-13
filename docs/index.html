@@ -32,50 +32,118 @@ from the repository.">
     background: #241c0c; padding: .7rem 1rem; margin: 0 0 1.25rem; font-size: .85rem;
   }
   .note strong { color: #e8dcc0; }
-  /* position: relative so the click prompt below can be laid over it. */
+  /* position: relative so the play button below can be laid over it.
+     The 4:3 box is declared in both states - idle and running - so pressing
+     play does not resize anything and the page never jumps under the finger. */
   #box { position: relative; width: 100%; aspect-ratio: 4 / 3; background: #000;
          margin-bottom: .5rem; scroll-margin-top: 0; }
-  /* Unloaded, the box stops pretending to be a screen: no 4:3 black void, just
-     enough room for the message and the button that brings it back. */
-  #box.off {
-    aspect-ratio: auto; background: #150f06; border: 1px dashed #4a3c1e;
-    padding: 2rem 1rem; text-align: center;
-  }
-  #box.off p { color: #b3a179; font-size: .85rem; margin: 0 0 1rem; }
-  #box.off button {
-    font: inherit; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase;
-    background: #241c0c; color: #d8a657; border: 1px solid #6b5726;
-    padding: .5rem 1.1rem; cursor: pointer;
-  }
-  #box.off button:hover { background: #33270f; color: #f0c274; }
+  /* Idle, the box is not a screen yet: no emulator has been fetched, so it
+     says so rather than showing a black void that looks like a failure. */
+  #box.idle { background: #150f06; border: 1px dashed #4a3c1e; }
 
-  /* THE CLICK PROMPT, laid over the screen.
-     A browser gives a page no sound and no keyboard until it has been clicked
-     inside, so the prompt belongs on the thing you have to click rather than
-     in a line underneath it.
-     IT NEVER TAKES THE CLICK.  pointer-events: none means every press goes
-     straight through to the emulator's canvas as though this were not here -
-     the prompt cannot swallow the one interaction it is asking for. Fading it
-     on hover is then only about getting out of the way of your eyes, not out
-     of the way of the pointer. */
+  /* THE PLAY BUTTON, laid over the screen.
+     NOTHING FROM THE EMULATOR IS FETCHED UNTIL THIS IS PRESSED - see the note
+     on the loader further down. It is a real button rather than the sign this
+     used to be, because it now has a job: that press is the user gesture a
+     browser wants before it will give a page sound, and it is what starts the
+     download. It therefore has to take the click rather than pass it through. */
   .tap {
     position: absolute; inset: 0; z-index: 5;
-    display: flex; flex-direction: column; gap: .5rem;
+    display: flex; flex-direction: column; gap: .6rem;
     align-items: center; justify-content: center;
-    pointer-events: none;
+    padding: 1rem; text-align: center;
     background: rgba(12, 9, 3, .55);
-    transition: opacity .18s ease;
   }
-  #box:hover .tap { opacity: 0; }
-  /* After the first press it has done its job and does not come back. */
+  /* Once the machine is up it has done its job and does not come back. */
   .tap.done { display: none; }
-  @media (prefers-reduced-motion: reduce) { .tap { transition: none; } }
 
-  /* THE DECK.  Four cards in one hand: three laid out in a row under the
-     board, and the fourth - Play now - face up in the middle of the board
-     itself, because the game is already there and a link to it would be a
-     link to the thing you are looking at.
-     They share every rule below; only where they sit differs. */
+  /* Sized for a thumb before anything else: 44px is the smallest target a
+     phone should be asked to hit, and this is comfortably past it. */
+  .bigplay {
+    font: inherit; display: flex; flex-direction: column; align-items: center;
+    gap: .45rem; max-width: 22rem; width: 100%;
+    padding: 1.1rem 1.4rem; cursor: pointer;
+    background: linear-gradient(135deg, #4a3a12, #241c0c);
+    color: #f0c274; border: 1px solid #6b5726;
+    box-shadow: 0 2px 0 #0b0904, inset 0 1px 0 rgba(255,255,255,.10);
+    clip-path: polygon(0 0, calc(100% - .8rem) 0, 100% .8rem, 100% 100%, 0 100%);
+    /* No double-tap zoom, and no text selection from a press held a moment
+       too long - both of which read as the button not working. */
+    touch-action: manipulation; -webkit-user-select: none; user-select: none;
+  }
+  .bigplay:hover { border-color: #d8a657; color: #ffd18a; }
+  .bigplay:active { transform: translateY(2px); box-shadow: none; }
+  .bigplay .pip { font-size: 2.2rem; line-height: 1; }
+  .bigplay b { font-size: 1rem; letter-spacing: .1em; text-transform: uppercase; }
+  .bigplay .say { font-size: .7rem; line-height: 1.45; color: #b3a179;
+                  text-wrap: balance; }
+  /* What an iPhone needs to know before it presses. Kept to the idle state:
+     once the machine is running the warning has been overtaken by events. */
+  .tap .warn { font-size: .65rem; line-height: 1.45; color: #9c8c66;
+               max-width: 24rem; margin: 0; text-wrap: balance; }
+
+  /* THE KEYPAD.  UR FINKEL is played on the number keys, and a phone has no
+     number keys - the emulator's own on-screen control is a joystick, which
+     this game does not read. Without these there is no way to answer "which
+     piece?" on a touch screen at all, and the game stops at the menu.
+     Hidden until the machine is running, because until then they do nothing. */
+  .pad { margin: 0 0 1rem; }
+  .pad[hidden] { display: none; }
+  /* IN FULLSCREEN THE PAGE IS GONE, AND THE KEYS WITH IT.  The emulator's own
+     fullscreen button shows the canvas and nothing else - which on a phone is
+     the obvious thing to press and the one that leaves you unable to answer
+     "which piece?". The keys are moved into the fullscreen element and laid
+     along the bottom of it instead; see the fullscreenchange handler. */
+  .pad.over {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 2147483000;
+    margin: 0; padding: .4rem; background: rgba(12, 9, 3, .82);
+  }
+  .pad.over .padsay { display: none; }
+  .pad.over .key { min-height: 2.4rem; font-size: .95rem; }
+  .pad.over .key small { display: none; }
+  .padsay { font-size: .72rem; color: #b3a179; margin: 0 0 .5rem; }
+  .padrow { display: grid; gap: .4rem; margin-bottom: .4rem;
+            grid-template-columns: repeat(7, minmax(0, 1fr)); }
+  .padrow.wide { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .key {
+    font: inherit; font-size: 1.1rem; font-weight: bold; letter-spacing: .06em;
+    min-height: 3rem; padding: .5rem .2rem; cursor: pointer;
+    background: #241c0c; color: #f0c274; border: 1px solid #6b5726;
+    /* A key press must not scroll, zoom, select or summon the software
+       keyboard - all of which a touch screen will otherwise try. */
+    touch-action: manipulation; -webkit-user-select: none; user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .padrow.wide .key { font-size: .8rem; letter-spacing: .12em; }
+  .key:hover { background: #33270f; color: #ffd18a; }
+  .key:active, .key.lit { background: #6b5726; color: #1a1408; }
+  .key small { display: block; font-size: .55rem; font-weight: normal;
+               letter-spacing: .08em; color: #b3a179; margin-top: .15rem; }
+  .key:active small, .key.lit small { color: #241c0c; }
+  /* THE JOYSTICK OVERLAY IS NOT WANTED ON THIS PAGE, EVER.  In landscape on a
+     phone EmulatorJS lays a red thumbstick over the left of the board and a
+     Y/X/B/A diamond over the right, with Select, Start, Fast and Slow beneath
+     - and UR FINKEL reads no joystick, so not one of them does anything. They
+     sit on top of the board while the game waits for a number.
+     The switch thrown in EJS_onGameStart asks it politely; this makes it so
+     regardless of when the emulator decides to put the pad up, which it does
+     as part of starting without consulting its own setting. */
+  .ejs_virtualGamepad_parent { display: none !important; }
+
+  .typerow { display: flex; gap: .4rem; }
+  .typerow input {
+    font: inherit; font-size: 1rem; flex: 1 1 auto; min-width: 0;
+    padding: .5rem .7rem; color: #f0c274;
+    background: #150f06; border: 1px solid #6b5726;
+  }
+  .typerow input::placeholder { color: #8a7a52; font-size: .78rem; }
+  .typerow .key { flex: none; min-width: 7rem; font-size: .8rem;
+                  letter-spacing: .1em; }
+
+  /* THE DECK.  Four cards in one hand, laid out in a row under the board.
+     The play button above wears the same shape - the clipped corner and the
+     pip - so the thing you press first reads as one of them rather than as
+     furniture from somewhere else. */
   .card {
     display: flex; flex-direction: column; align-items: center;
     text-align: center; text-decoration: none;
@@ -120,11 +188,6 @@ from the repository.">
   }
   .deck .card:hover b { color: #ffd18a; }
   @media (prefers-reduced-motion: reduce) { .deck .card { transition: none; } }
-
-  /* The Play card is inside the overlay, which is pointer-events: none, so
-     it cannot be hovered or clicked - by design. It is a sign, not a button:
-     the click it asks for goes to the board underneath it. */
-  .tap .card { max-width: 22rem; background: rgba(36, 28, 12, .96); }
 
   .bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
          gap: .5rem; margin: 0 0 1.25rem; }
@@ -348,6 +411,23 @@ from the repository.">
   .tube { width: 100%; aspect-ratio: 16 / 9; border: 1px solid #3a2f16;
           background: #000; margin: 0 0 .5rem; }
   .tube iframe { display: block; width: 100%; height: 100%; border: 0; }
+  /* THE PLAYER IS NOT THERE UNTIL IT IS ASKED FOR.  An embed loads YouTube's
+     script, its cookies and a second video decoder on a page that is already
+     running an emulator - which on a phone is what the memory was needed for.
+     This button is what puts the iframe in, so until it is pressed nothing is
+     fetched from youtube.com or google at all. */
+  .tubeplay {
+    font: inherit; width: 100%; height: 100%; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: .4rem; padding: 1rem; text-align: center;
+    background: none; border: 0; color: #f0c274;
+    touch-action: manipulation;
+  }
+  .tubeplay:hover { background: #150f06; }
+  .tubeplay .pip { font-size: 2rem; line-height: 1; }
+  .tubeplay b { font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; }
+  .tubeplay .say { font-size: .68rem; color: #b3a179; max-width: 26rem;
+                   text-wrap: balance; }
   pre.licence {
     white-space: pre-wrap; font-size: .72rem; color: #9c8c66;
     background: #150f06; border: 1px solid #2e2512; padding: 1rem; margin: 0;
@@ -366,15 +446,71 @@ from the repository.">
 <p class="sub">The Royal Game of Ur — a ~4,600-year-old board game — written in
 C and 6502 assembly for the Commodore Plus/4.</p>
 
-<div id="box">
+<div id="box" class="idle">
   <div id="game"></div>
   <div id="tap" class="tap">
-    <div class="card">
+    <button id="play" type="button" class="bigplay">
       <span class="pip">🎲</span>
-      <b>Play now</b>
-      <span class="say">Click the board to wake the machine — a browser gives
-      a page no sound and no keyboard until you do.</span>
-    </div>
+      <b>Play UR FINKEL</b>
+      <span class="say">Press to fetch the emulator and boot the Plus/4.
+      Nothing is downloaded or run until you do.</span>
+    </button>
+    <p class="warn">On an iPhone or iPad the emulator is a large program in a
+    small memory: if the tab reloads itself, that is Safari running out, and
+    this page will come back here rather than trying again by itself.</p>
+  </div>
+</div>
+
+<!-- THE KEYPAD.  Written into the page rather than built by script so it is
+     one thing to read and one thing to change; the script only unhides it and
+     wires the presses. Every key here is one the game actually reads - see
+     CONTROLS below, which lists the same set. -->
+<div id="pad" class="pad" hidden>
+  <p class="padsay">On-screen keys — the game asks for these, and a phone has
+  no keyboard to answer with. Before the first match it wants a name and a
+  colour: send a name with the box at the bottom, or send nothing and it
+  names you itself.</p>
+  <!-- The row that gets used every turn, on its own and biggest: 1 to 7 pick
+       the piece to move, and 1 to 5 pick the mode on the menu. -->
+  <div class="padrow">
+    <button class="key" type="button" data-key="1">1</button>
+    <button class="key" type="button" data-key="2">2</button>
+    <button class="key" type="button" data-key="3">3</button>
+    <button class="key" type="button" data-key="4">4</button>
+    <button class="key" type="button" data-key="5">5</button>
+    <button class="key" type="button" data-key="6">6</button>
+    <button class="key" type="button" data-key="7">7</button>
+  </div>
+  <!-- What the setting-up screens ask for and the row above does not carry:
+       a colour is a number up to 16, so 8, 9 and 0 are needed; the preview
+       asks y or n; and every prompt that takes typing ends on return. -->
+  <div class="padrow">
+    <button class="key" type="button" data-key="8">8</button>
+    <button class="key" type="button" data-key="9">9</button>
+    <button class="key" type="button" data-key="0">0</button>
+    <button class="key" type="button" data-key="y">Y<small>yes</small></button>
+    <button class="key" type="button" data-key="n">N<small>no</small></button>
+    <button class="key" type="button" data-key="Backspace">DEL<small>rub out</small></button>
+    <button class="key" type="button" data-key="Enter">⏎<small>return</small></button>
+  </div>
+  <div class="padrow wide">
+    <button class="key" type="button" data-key=" ">SPACE<small>continue</small></button>
+    <button class="key" type="button" data-key="m">M<small>music</small></button>
+    <button class="key" type="button" data-key="s">S<small>effects</small></button>
+    <button class="key" type="button" data-key="x">X<small>×3 to leave</small></button>
+  </div>
+  <!-- TYPING A NAME.  The game asks for one before the first match and puts
+       it on the trophy at the end, and it is the one prompt a grid of keys
+       cannot answer without becoming a whole keyboard. So the phone's own
+       keyboard is used instead: type here, and the line is played into the
+       machine one keystroke at a time, ending on return - which is what a
+       person at a real Plus/4 would be doing, only faster. -->
+  <div class="typerow">
+    <input id="typebox" type="text" maxlength="8" enterkeyhint="send"
+           autocomplete="off" autocorrect="off" autocapitalize="off"
+           spellcheck="false" placeholder="type a name, then send"
+           aria-label="Type a name to send to the game">
+    <button id="typesend" class="key" type="button">SEND ⏎</button>
   </div>
 </div>
 
@@ -404,7 +540,8 @@ C and 6502 assembly for the Commodore Plus/4.</p>
 
 <div class="bar">
   <button id="fit" type="button">▲ Fit the game to the top</button>
-  <button id="power" type="button">⏏ Unload the emulator</button>
+  <button id="padtoggle" type="button" disabled>⌨ Hide the on-screen keys</button>
+  <button id="power" type="button" disabled>⏏ Unload the emulator</button>
 </div>
 
 <section class="downloads" id="downloads">
@@ -440,35 +577,35 @@ check it arrived whole.</p>
 <ul class="dl">
   <li id="dl-prg">
     <a class="file prg" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 1.5h6l3 3v10h-9z"/><path d="M9.5 1.5v3h3"/><path d="M5.5 8.5 7 10l-1.5 1.5M8.5 11.5h2"/></svg><span>urfinkel.prg</span></a>
-    <span class="what">the program alone, for the Commodore Plus/4 — 56 511 bytes — built <b>2026-08-10</b></span>
+    <span class="what">the program alone, for the Commodore Plus/4 — 56 511 bytes — built <b>2026-08-13</b></span>
     <span class="use">Drag it onto VICE, YAPE or plus4emu. It starts faster than the disk image — there is no directory to read first.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg</a>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>075545a1cf34f7e6c615c3670e1d28158b51a78d3a090e41d5261c72a9f546b0</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg.sha256">urfinkel.prg.sha256</a></dd>
-      <dt>MD5</dt><dd><code>991db4f541b3ecd1e92ef86aae59ced0</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg.md5">urfinkel.prg.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>1fb3da50609ae2aad5d245f7f2509b7d75bcad30a4d0842ccbac62e12b52d611</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg.sha256">urfinkel.prg.sha256</a></dd>
+      <dt>MD5</dt><dd><code>cda335969d2bcc86656c2195bfcc7489</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg.md5">urfinkel.prg.md5</a></dd>
     </dl>
   </li>
   <li id="dl-d64">
     <a class="file d64" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 1.5h10l3 3v10h-13z"/><path d="M4.5 1.5h6v4h-6zM4.5 9.5h7v5h-7z"/></svg><span>urfinkel.d64</span></a>
-    <span class="what">a disk image, for the Commodore Plus/4 — 174 848 bytes — built <b>2026-08-10</b></span>
+    <span class="what">a disk image, for the Commodore Plus/4 — 174 848 bytes — built <b>2026-08-13</b></span>
     <span class="use">Put it on an SD2IEC or a Pi1541, mount it as a disk, then <code>dload"urfinkel"</code>. Desktop emulators open it directly.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64</a>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>513048d68076f25403553b874c4dd4a1fc9502636b00a14253e08d93310030cd</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64.sha256">urfinkel.d64.sha256</a></dd>
-      <dt>MD5</dt><dd><code>35694f66c5dfd2578be5f81e1335c75f</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64.md5">urfinkel.d64.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>dd30ae9e3459fee200c79caa054b5528a567d54641cc7b5d984e6583a775d744</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64.sha256">urfinkel.d64.sha256</a></dd>
+      <dt>MD5</dt><dd><code>0c7aebac80111cb3b9a5be16be5742d5</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64.md5">urfinkel.d64.md5</a></dd>
     </dl>
   </li>
   <li id="dl-zip">
     <a class="file zip" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>urfinkel.zip</span></a>
     <span class="tag">plays offline on a PC</span>
     <span class="tag">full source included</span>
-    <span class="what">the whole collection, zipped — 4 935 057 bytes — built <b>2026-08-10</b></span>
+    <span class="what">the whole collection, zipped — 4 949 625 bytes — built <b>2026-08-13</b></span>
     <span class="use">Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. The emulator comes too, so the browser copy plays with nothing plugged in.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip</a>
     <span class="fine">Fully offline: the game, the emulator and the page all come out of the folder — nothing is fetched from anywhere. It has to be <b>served rather than opened directly</b>, because a <code>file://</code> page may not read the files beside it: run <code>./start-html.sh</code>. The emulator in <code>emulatorjs/</code> is EmulatorJS, GPL-3.0 and not part of UR FINKEL — see <code>emulatorjs/SOURCE.txt</code>. <code>index.html</code> beside it is the same page taking the emulator from its CDN instead, which is always the current version.</span>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>6a6861fbf5f8e9993c4ae4f65bdb7072f60cee68c14e585ea6f8d4a6c73c7895</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
-      <dt>MD5</dt><dd><code>5084733cc27525c62a65410b1036365a</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>1a3b322cd92770cdeb2732f11a9ce5015ac3f03889b75bc70c2d05b24d302c70</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
+      <dt>MD5</dt><dd><code>9134e865c02f0aa773e9350e2acb15e4</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
     </dl>
   </li>
 </ul>
@@ -519,14 +656,16 @@ exact command — is in <a href="https://github.com/vonglurt/urfinkel/blob/main/
 </section>
 
 <h2 id="video">VIDEO</h2>
-<!-- loading="lazy" so YouTube's player does not compete with the emulator
-     for the network while the Plus/4 is still booting further up the page. -->
+<!-- The player arrives on the press, not on the visit: lazy loading only
+     delayed it until the section scrolled into view, which on a phone is
+     while the emulator is still running above. -->
 <div class="tube">
-  <iframe width="560" height="315"
-    src="https://www.youtube.com/embed/Cw-SaWI046o?si=jhzgdls7FoZEu1li"
-    title="YouTube video player" frameborder="0" loading="lazy"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+  <button id="playvid" type="button" class="tubeplay">
+    <span class="pip">🎬</span>
+    <b>Watch it run</b>
+    <span class="say">Loads YouTube's player. Until you press this, nothing is
+    fetched from youtube.com — which keeps the memory for the emulator.</span>
+  </button>
 </div>
 <p class="sub">A demonstration of the game running on a Commodore Plus/4 —
 also on <a href="https://youtu.be/Cw-SaWI046o">YouTube</a>.</p>
@@ -537,10 +676,17 @@ also on <a href="https://youtu.be/Cw-SaWI046o">YouTube</a>.</p>
   <tr><td><code>1</code>–<code>5</code></td><td>menu</td><td>choose a mode</td></tr>
   <tr><td><code>1</code>–<code>7</code></td><td>any turn</td><td>choose which piece to move</td></tr>
   <tr><td><code>m</code></td><td>menu and prompts</td><td>cycle the music</td></tr>
+  <tr><td><code>s</code></td><td>menu</td><td>turn the sound effects on and off</td></tr>
   <tr><td><code>space</code></td><td>after a win, rules screen</td><td>continue</td></tr>
+  <tr><td><code>return</code></td><td>name and colour prompts</td><td>accept what you typed — on its own, take what the game offers</td></tr>
+  <tr><td><code>del</code></td><td>name and colour prompts</td><td>rub out the last character</td></tr>
   <tr><td><code>x</code> <code>x</code> <code>x</code></td><td>any match</td><td>leave, and return to the cabinet</td></tr>
 </table>
-<p class="sub" style="margin-top:.75rem">Left alone for two minutes, the cabinet
+<p class="sub" style="margin-top:.75rem">On a phone or a tablet, the same keys
+appear as buttons under the screen once the game is running — there is no
+other way to answer <em>which piece?</em> without a keyboard. The emulator's
+own on-screen pad is a joystick, and this game does not read one.</p>
+<p class="sub">Left alone for two minutes, the cabinet
 starts the URBOT demo by itself and plays against itself.</p>
 
 <h2>WHAT THIS IS</h2>
@@ -580,13 +726,13 @@ hardware, loaded from an SD2IEC.</p>
 
 <h2>SCREENS</h2>
 <div class="shots">
-  <figure><img src="media/01-title.png" alt="The title screen: a theatre proscenium with chasing lamps">
+  <figure><img loading="lazy" decoding="async" src="media/01-title.png" alt="The title screen: a theatre proscenium with chasing lamps">
     <figcaption>The cabinet the game is played inside.</figcaption></figure>
-  <figure><img src="media/03-play.png" alt="The board mid-match with the chronicle below">
+  <figure><img loading="lazy" decoding="async" src="media/03-play.png" alt="The board mid-match with the chronicle below">
     <figcaption>A match in progress.</figcaption></figure>
-  <figure><img src="media/05-capture.png" alt="CAPTURED in block letters over a bed of flame">
+  <figure><img loading="lazy" decoding="async" src="media/05-capture.png" alt="CAPTURED in block letters over a bed of flame">
     <figcaption>A capture takes the bottom of the screen.</figcaption></figure>
-  <figure><img src="media/06-victory.png" alt="A gold trophy with the winner's name engraved in the bowl">
+  <figure><img loading="lazy" decoding="async" src="media/06-victory.png" alt="A gold trophy with the winner's name engraved in the bowl">
     <figcaption>The winner's name, poured into the cup.</figcaption></figure>
 </div>
 
@@ -625,7 +771,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.</pre>
 <p class="sub" style="margin-top:.75rem">The emulator on this page is
 <a href="https://emulatorjs.org/">EmulatorJS</a>, which carries its own licence
-and is loaded from its CDN. It is not part of this project.</p>
+and is fetched from its CDN — only when you press play, and not before. It is
+not part of this project.</p>
 
 <footer>
 Written by <strong>Paul Richeson</strong> —
@@ -653,45 +800,62 @@ Contact: paulr@sdf.org
   // moment the emulator finished loading - which looked like the anchors
   // being broken, and was not.
   //
-  // Nothing is lost by declining it: the machine needs a click before the
-  // browser will give it sound or keys anyway, and that click is what the
-  // prompt over the board asks for.
-  // It is given focus on the first click instead - see the pointerdown
-  // handler further down. Without that it never gets focus at all and the
-  // machine hears nothing, which is how this was broken.
+  // Nothing is lost by declining it: the play button below the board is
+  // pressed before any of this loads, and that press is the gesture the
+  // browser wanted before it would give the page sound.
+  // Focus is handed over when the machine starts instead - see the
+  // EJS_onGameStart hook further down. Without that it never gets focus at
+  // all and the machine hears nothing, which is how this was once broken.
   EJS_noAutoFocus = true;
   EJS_color         = "#d8a657";
   EJS_volume        = 0.5;
 
-  // DIRECT KEYBOARD INPUT IS OFF, and that is the opposite of what this page
-  // used to do.  It was turned on here on the reasoning that a Plus/4 is a
-  // computer you type at, so raw keys ought to go straight to it - and on the
-  // real machine it does not work: turning it off is what makes the game
-  // answer the keyboard.
+  // DIRECT KEYBOARD INPUT IS ON, AND THE GAME CANNOT BE PLAYED WITHOUT IT.
   //
-  // The emulator's own code says why.  With this "enabled" it takes the
-  // keydown, calls preventDefault and returns BEFORE the controls mapping
-  // runs, handing the key to its own path instead - and that path is not the
-  // one reaching this core.  Disabled, the key goes through the mapping,
-  // which is why the binding clearing below matters and why it works.
-  EJS_defaultOptions = { keyboardInput: "disabled" };
+  // This shipped as "disabled" on the belief that the keys then travelled
+  // through EmulatorJS's own control mapping. They do not. The setting is not
+  // about which of two paths a key takes: EmulatorJS passes it straight to
+  // the core as setKeyboardEnabled(0), and a core with its keyboard switched
+  // off is a Plus/4 with no keyboard plugged in. Checked in a clean browser
+  // profile with the page as it stood: a real, trusted "1" keydown arrived at
+  // the window and the menu did not move.
+  //
+  // The reason the fault was invisible while it was being made is worth
+  // writing down. EmulatorJS remembers this setting per browser under
+  // "ejs-settings", and a stored value beats the page's default. Anyone who
+  // had already loaded the page while it said "enabled" kept a working
+  // keyboard no matter what the page was later changed to - so the change
+  // that broke it could not break it here.
+  //
+  // With this on, EmulatorJS's key handler returns before its own mapping
+  // runs, which is also what stops it eating 1, 2 and 3 for save-state slots.
+  //
+  // The virtual gamepad goes with it, for the same reason from the other
+  // end: on a phone EmulatorJS lays a d-pad and four buttons over the board,
+  // and this game reads no joystick, so every one of them is a control that
+  // does nothing sitting on top of the one thing you need to see. The keys
+  // under the screen replace it - and unlike the d-pad, they are the keys
+  // the game is actually asking for.
+  EJS_defaultOptions = { keyboardInput: "enabled", "virtual-gamepad": "disabled" };
 
-  // A DEFAULT ONLY APPLIES TO A BROWSER THAT HAS NO OPINION YET.  EmulatorJS
-  // stores what it is given under "ejs-settings", so anyone who loaded this
-  // page while the old default was in force is carrying "enabled" and would
-  // keep a keyboard that does nothing, no matter what is written above.
+  // A DEFAULT ONLY APPLIES TO A BROWSER THAT HAS NO OPINION YET, which is why
+  // the stored "disabled" left behind by the version above is cleared here.
+  // Without this, everyone who visited while it shipped broken would keep a
+  // dead keyboard however this page is written.
   //
-  // That one stale value is cleared, once, and nothing else is touched -
-  // volume, shaders and the rest survive. The marker stops it running again,
-  // so a player who deliberately turns direct input back on keeps it.
+  // That one stale value goes; nothing else is touched - volume, shaders and
+  // the rest survive. The marker stops it running twice, so a player who
+  // deliberately turns direct input off in the emulator's own menu keeps it.
+  // The marker is versioned: the previous fix-up wrote its own, and a browser
+  // holding that one must still be let in to have this correction applied.
   (function () {
-    var MARK = "urfinkel:kbfix";
+    var MARK = "urfinkel:kbfix2";
     try {
       if (localStorage.getItem(MARK)) return;
       var raw = localStorage.getItem("ejs-settings");
       if (raw) {
         var o = JSON.parse(raw);
-        if (o && o.keyboardInput === "enabled") {
+        if (o && o.keyboardInput === "disabled") {
           delete o.keyboardInput;
           localStorage.setItem("ejs-settings", JSON.stringify(o));
         }
@@ -706,6 +870,11 @@ Contact: paulr@sdf.org
   // how you choose a piece, so those presses were being eaten before the
   // Plus/4 ever saw them. This game reads no joystick, so every binding is
   // cleared rather than only the three that collided.
+  //
+  // The setting above already stops that mapping from running at all. This
+  // stays because the setting is a menu item a player can turn off, and the
+  // save-state slots must not come back and eat the game's own keys when
+  // they do.
   EJS_defaultControls = (function () {
     var none = {};
     for (var i = 0; i < 30; i++) none[i] = {};
@@ -714,31 +883,54 @@ Contact: paulr@sdf.org
 </script>
 
 <script>
-  // LOADING, AND THE ONE HONEST WAY TO UNLOAD.
+  // NOTHING LOADS UNTIL PLAY IS PRESSED, AND A RELOAD ALWAYS COMES BACK HERE.
   //
-  // The loader used to be a plain <script src>, which meant EmulatorJS was
-  // fetched and run on every visit with no way back. It is injected here
-  // instead, so that "unloaded" can be a state the page starts in.
+  // This page used to fetch and run EmulatorJS on every visit. On an iPhone
+  // that is a reliable way to lose the tab: the emulator is a WebAssembly
+  // program with a heap far larger than anything else on the page, and when
+  // Safari decides it has had enough it does not report an error - it
+  // reloads the tab. The reload started the emulator again, which ran out
+  // again, five or six times, until the browser gave up on the page entirely.
+  // That is the "timeout every fifteen seconds" this was reported as.
   //
-  // Unloading is done by reloading the page with a flag set, NOT by tearing
-  // the emulator down in place. Removing the canvas and calling whatever
-  // stop method the build happens to expose would leave the module, its
-  // WebAssembly heap and its audio graph alive and running - the screen
-  // would go and the music would keep playing. A reload is the only thing
-  // that reliably ends all of it, and after it nothing from emulatorjs.org
-  // is fetched, parsed or executed at all.
+  // The loop is what mattered, and the loop is broken by refusing to start by
+  // ourselves: the emulator is loaded only from a press, and the pressed
+  // state is deliberately NOT remembered anywhere - not in the hash, not in
+  // storage. So however the page comes back - a crash, a reload, the back
+  // button - it comes back to a quiet page with a button on it, and the
+  // browser is never handed the same failure twice in a row.
   //
-  // The flag is carried in the URL hash rather than in storage. sessionStorage
-  // throws on write in Safari private browsing, and a silently dropped flag
-  // would mean the unload button reloads the page and brings the emulator
-  // straight back - the one failure a power switch must not have. A hash needs
-  // no permission, survives the reload, and is honest: the address bar says
-  // #unloaded, so the state is visible, bookmarkable and linkable.
-  var OFF_HASH = "#unloaded";
+  // It is also the honest way to unload. Removing the canvas and calling
+  // whatever stop method the build happens to expose would leave the module,
+  // its WebAssembly heap and its audio graph alive - the screen would go and
+  // the music would keep playing. A reload is the only thing that reliably
+  // ends all of it, and after it nothing from emulatorjs.org is fetched,
+  // parsed or executed at all.
+  var box       = document.getElementById("box");
+  var tap       = document.getElementById("tap");
+  var play      = document.getElementById("play");
+  var power     = document.getElementById("power");
+  var pad       = document.getElementById("pad");
+  var padtoggle = document.getElementById("padtoggle");
+  var started   = false;
 
-  var box   = document.getElementById("box");
-  var power = document.getElementById("power");
-  var tap   = document.getElementById("tap");
+  // KEEPING THE SCREEN ON.  A game played with long thinking pauses gets no
+  // touches for minutes at a time, and a phone dims and locks - which on iOS
+  // suspends the page and is one more way to come back to a dead emulator.
+  // The lock is dropped by the browser whenever the tab is hidden, so it is
+  // taken again on the way back. Absent (older Safari, Firefox) or refused:
+  // nothing happens, and nothing depends on it.
+  var awake = null;
+  function keepAwake() {
+    if (!navigator.wakeLock || awake) return;
+    navigator.wakeLock.request("screen").then(function (l) {
+      awake = l;
+      l.addEventListener("release", function () { awake = null; });
+    }, function () { /* refused, or not allowed in this context */ });
+  }
+  document.addEventListener("visibilitychange", function () {
+    if (started && document.visibilityState === "visible") keepAwake();
+  });
 
   function loadEmulator() {
     var s = document.createElement("script");
@@ -746,56 +938,297 @@ Contact: paulr@sdf.org
     document.body.appendChild(s);
   }
 
-  function showUnloaded() {
-    box.className = "off";
-    box.innerHTML =
-      '<p>The emulator is unloaded. Nothing from EmulatorJS is running, and ' +
-      'nothing more will be fetched from its CDN until you load it again.</p>' +
-      '<button id="reload" type="button">▶ Load the emulator</button>';
-    document.getElementById("reload").addEventListener("click", function () {
-      // Drop the hash without leaving a bare "#" behind, then reload into the
-      // ordinary state. replaceState rather than assignment so the unloaded
-      // URL does not pile up in the back button.
+  // Run once the machine is actually running. EmulatorJS calls it through the
+  // EJS_onGameStart hook it wires up in loader.js - and the watch set in the
+  // play handler calls it too, because the keys are not a nicety that can be
+  // allowed to depend on a third party's callback still being named that in
+  // the version its CDN is serving today. Whichever gets there first wins.
+  var ran = false;
+  function onStarted() {
+    if (ran) return;
+    ran = true;
+    // EJS_noAutoFocus stops the emulator taking focus the moment it loads,
+    // because focusing an element scrolls the page to it, and that threw
+    // anyone who had followed a card downwards back to the top. It still
+    // needs focus to receive a keystroke, so it is handed over here instead -
+    // preventScroll keeps the page where the reader put it, which was the
+    // whole point of declining the automatic focus.
+    //
+    // #game rather than the canvas inside it: that is the element EmulatorJS
+    // focuses when left to itself, checked in a browser.
+    var g = document.getElementById("game");
+    if (g) {
+      try { g.focus({ preventScroll: true }); }
+      catch (e) { g.focus(); }          /* older browsers: no options object */
+    }
+    // The setting above is not enough on its own: EmulatorJS puts the virtual
+    // gamepad up on any touch screen as part of starting, without consulting
+    // it. This is the same switch its own menu throws, thrown here - twice,
+    // because a resize during the first seconds puts the pad back briefly and
+    // the second call catches that.
+    var e = window.EJS_emulator;
+    if (e && typeof e.toggleVirtualGamepad === "function") {
+      e.toggleVirtualGamepad(false);
+      setTimeout(function () { e.toggleVirtualGamepad(false); }, 400);
+    }
+    if (pad) pad.hidden = false;
+    if (padtoggle) padtoggle.disabled = false;
+    keepAwake();
+  }
+  window.EJS_onGameStart = onStarted;
+
+  play.addEventListener("click", function () {
+    if (started) return;
+    started = true;
+    tap.className = "tap done";
+    box.className = "";                 /* it is a screen from here on */
+    power.disabled = false;
+    // Anyone arriving on an old #unloaded link is in that state already, and
+    // the hash would otherwise sit in the address bar contradicting the game
+    // now running under it. replaceState so it does not become a back step.
+    if (location.hash === "#unloaded") {
       history.replaceState(null, "", location.pathname + location.search);
-      location.reload();
-    });
-    power.disabled = true;
-    power.textContent = "⏏ Emulator unloaded";
-    // The prompt lived inside #box and went with the innerHTML above; there is
-    // nothing left to click on, so nothing left to ask for.
+    }
+    loadEmulator();
+
+    // The second way of noticing that the machine is up - see onStarted. It
+    // gives up after two minutes: by then either the emulator is running or
+    // it never will be, and a timer left going forever is its own small leak
+    // on a page whose whole complaint was memory.
+    var tries = 0;
+    var watch = setInterval(function () {
+      if (ran || ++tries > 120) { clearInterval(watch); return; }
+      if (window.EJS_emulator && window.EJS_emulator.started) {
+        clearInterval(watch);
+        onStarted();
+      }
+    }, 1000);
+  });
+
+  power.addEventListener("click", function () {
+    // No flag to set: the page does not start the emulator by itself, so a
+    // plain reload lands back on the play button with nothing running.
+    location.reload();
+  });
+
+  // SPACE IS A GAME KEY HERE, NOT A PAGE-DOWN.  With direct keyboard input on,
+  // EmulatorJS hands the key to the core without claiming it, so the browser's
+  // own meaning survives: space and the arrows scroll the page, and the board
+  // slides out from under the player who was pressing space to continue. Only
+  // while the emulator has focus, so the page still scrolls everywhere else.
+  var HOLD = { " ": 1, "ArrowUp": 1, "ArrowDown": 1, "ArrowLeft": 1, "ArrowRight": 1 };
+  window.addEventListener("keydown", function (e) {
+    if (!started || !HOLD[e.key]) return;
+    var g = document.getElementById("game");
+    if (g && (document.activeElement === g || g.contains(document.activeElement))) {
+      e.preventDefault();
+    }
+  });
+</script>
+
+<script>
+  // THE ON-SCREEN KEYS.
+  //
+  // UR FINKEL is played on the number keys - 1 to 7 choose the piece to move,
+  // and there is no other way to answer. A phone has no number keys, and the
+  // emulator's own on-screen control is a joystick this game never reads, so
+  // on a touch screen the game could be started and then not played at all.
+  //
+  // Each key here dispatches the keyboard event the emulator would have seen
+  // from a real keyboard. It is aimed at the emulator's canvas so it travels
+  // the same path a real press does: up through #game, where EmulatorJS
+  // listens, and on to the document and window, where the core's own handler
+  // is. Nothing here is emulator-specific - it is a keystroke, and everything
+  // that reads keystrokes sees it.
+  //
+  // keyCode is set as well as key and code, and is put back by hand if the
+  // constructor drops it: it is a deprecated property, but the layer that
+  // finally turns this into a Plus/4 scan code still reads it, and without it
+  // the press arrives as a key with no identity.
+  // A key is its DOM code and the old keyCode number, which for a letter is
+  // its capital's ASCII and for a digit is the digit's. Both are sent - see
+  // sendKey. Everything typable is derived rather than listed: specFor below
+  // builds the same shape for any letter or digit, which is what lets a name
+  // be played in without an entry here per letter of the alphabet.
+  function specFor(ch) {
+    if (ch === " ") return { code: "Space", which: 32 };
+    if (ch >= "0" && ch <= "9") return { code: "Digit" + ch, which: ch.charCodeAt(0) };
+    var l = ch.toLowerCase();
+    if (l >= "a" && l <= "z") return { code: "Key" + l.toUpperCase(),
+                                       which: l.toUpperCase().charCodeAt(0) };
+    return null;                        /* punctuation: the game reads none */
   }
 
-  if (location.hash === OFF_HASH) {
-    showUnloaded();
-  } else {
-    loadEmulator();
-    power.addEventListener("click", function () {
-      location.hash = OFF_HASH;
-      location.reload();
+  var PADKEYS = {
+    "Enter":     { code: "Enter",     which: 13 },
+    // The Plus/4's key is DEL, and the game takes either code for it. A
+    // browser calls this one Backspace, so that is what is sent and the
+    // emulator's own map turns it into the machine's.
+    "Backspace": { code: "Backspace", which: 8 }
+  };
+  "0123456789abcdefghijklmnopqrstuvwxyz ".split("").forEach(function (ch) {
+    PADKEYS[ch] = specFor(ch);
+  });
+
+  function sendKey(type, key, spec) {
+    var ev;
+    var init = {
+      key: key, code: spec.code, location: 0,
+      keyCode: spec.which, charCode: 0, which: spec.which,
+      bubbles: true, cancelable: true, composed: true, view: window
+    };
+    try {
+      ev = new KeyboardEvent(type, init);
+    } catch (e) {
+      // Very old browsers without the constructor. If this fails too there is
+      // nothing left to try, and the physical keyboard still works.
+      try {
+        ev = document.createEvent("KeyboardEvent");
+        ev.initEvent(type, true, true);
+      } catch (e2) { return; }
+    }
+    if (ev.keyCode !== spec.which) {
+      try {
+        Object.defineProperty(ev, "keyCode", { get: function () { return spec.which; } });
+        Object.defineProperty(ev, "which",   { get: function () { return spec.which; } });
+      } catch (e3) { /* frozen: the code and key above are what is left */ }
+    }
+    var target = document.querySelector("#game canvas") ||
+                 document.getElementById("game") || document.body;
+    target.dispatchEvent(ev);
+  }
+
+  // DOWN NOW, UP SHORTLY AFTER, rather than up on the release. A finger that
+  // slides off the button, or a touch the browser cancels mid-gesture, does
+  // not always deliver a pointerup - and a keyup that never arrives is a key
+  // held down forever, which on this machine means a menu scrolling away by
+  // itself. A fixed 120 ms is well past the few frames the emulated keyboard
+  // scan needs, and short enough that taps do not run into each other.
+  function tapKey(el) {
+    var key  = el.getAttribute("data-key");
+    var spec = PADKEYS[key];
+    if (!spec) return;
+    sendKey("keydown", key, spec);
+    el.classList.add("lit");
+    setTimeout(function () {
+      sendKey("keyup", key, spec);
+      el.classList.remove("lit");
+    }, 120);
+  }
+
+  // [data-key], so the SEND button below - which is a .key for its looks only
+  // and sends a whole line rather than one press - is not wired up as one.
+  Array.prototype.forEach.call(document.querySelectorAll(".key[data-key]"), function (el) {
+    // pointerdown rather than click: the game should answer the moment the
+    // key goes down, as a keyboard does, and preventDefault stops the press
+    // moving focus off the emulator or being turned into a delayed click.
+    el.addEventListener("pointerdown", function (e) {
+      e.preventDefault();
+      tapKey(el);
     });
-    // The prompt is only true until you have clicked, and hover alone must not
-    // retire it - a touch screen has no hover, and a pointer crossing the box
-    // on its way somewhere else has not woken anything up.
-    //
-    // Capture phase, because the emulator's canvas stops the event on its way
-    // back up and this listener would otherwise never run.
-    box.addEventListener("pointerdown", function () {
-      if (tap) tap.className = "tap done";
-      // EJS_noAutoFocus stops the emulator taking focus the moment it loads,
-      // because focusing an element scrolls the page to it and that threw
-      // anyone who had followed a card downwards back to the top. It still
-      // needs focus to receive a keystroke, so the click the prompt asks for
-      // is what hands it over - preventScroll keeps the page where the reader
-      // put it, which was the whole point of declining the automatic focus.
-      //
-      // #game rather than the canvas inside it: that is the element
-      // EmulatorJS focuses when left to itself, checked in a browser.
-      var g = document.getElementById("game");
-      if (g) {
-        try { g.focus({ preventScroll: true }); }
-        catch (e) { g.focus(); }        /* older browsers: no options object */
+    // A pointer event covers touch, mouse and pen everywhere this page runs;
+    // this is only for a keyboard user tabbing onto the button, who gets no
+    // pointerdown at all.
+    el.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tapKey(el); }
+    });
+  });
+
+  // TYPING A LINE IN.  The characters are played one at a time rather than
+  // pushed in at once: the machine scans its keyboard matrix a few times a
+  // second and reads whatever is down at that moment, so a line delivered in
+  // one go would be read as one keypress, or none. 60 ms down, 60 ms up is
+  // slow enough for that scan and fast enough that an eight-letter name is in
+  // within a second - and the machine echoes each letter as it lands, so the
+  // typing is visible on the Plus/4's own screen where it belongs.
+  var typebox  = document.getElementById("typebox");
+  var typesend = document.getElementById("typesend");
+
+  function typeLine(str, done) {
+    var i = 0;
+    (function next() {
+      if (i >= str.length) { setTimeout(done, 80); return; }
+      var ch   = str.charAt(i++);
+      var spec = specFor(ch);
+      if (!spec) { next(); return; }    /* skip what the game cannot receive */
+      sendKey("keydown", ch.toLowerCase(), spec);
+      setTimeout(function () {
+        sendKey("keyup", ch.toLowerCase(), spec);
+        setTimeout(next, 60);
+      }, 60);
+    })();
+  }
+
+  function sendTyped() {
+    var text = (typebox.value || "").toLowerCase();
+    typebox.value = "";
+    // The line always ends on return, because every prompt that takes typing
+    // ends on return - and an empty box sends the return alone, which is how
+    // you take the name the game offers instead of giving one.
+    typeLine(text, function () {
+      sendKey("keydown", "Enter", PADKEYS["Enter"]);
+      setTimeout(function () { sendKey("keyup", "Enter", PADKEYS["Enter"]); }, 60);
+    });
+  }
+
+  if (typebox && typesend) {
+    typesend.addEventListener("click", sendTyped);
+    typebox.addEventListener("keydown", function (e) {
+      // The phone's own keyboard shows a Send key for this field; a desktop
+      // one shows Enter. Both mean the same thing here, and neither should
+      // reach the emulator as a keystroke of its own.
+      if (e.key === "Enter") { e.preventDefault(); e.stopPropagation(); sendTyped(); }
+    });
+  }
+
+  // THE KEYS FOLLOW THE GAME INTO FULLSCREEN.  A fullscreen element is drawn
+  // over everything else on the page, so a keypad left in the page below is
+  // not hidden - it does not exist as far as the screen is concerned. It is
+  // moved inside the fullscreen element for as long as that lasts, and put
+  // back exactly where it was afterwards, which is what the remembered parent
+  // and next sibling below are for.
+  if (pad) {
+    var padHome = pad.parentNode;
+    var padNext = pad.nextSibling;
+    var relocate = function () {
+      var fs = document.fullscreenElement || document.webkitFullscreenElement;
+      var g  = document.getElementById("game");
+      if (fs && g && (fs === g || fs.contains(g))) {
+        pad.classList.add("over");
+        fs.appendChild(pad);
+      } else if (pad.classList.contains("over")) {
+        pad.classList.remove("over");
+        padHome.insertBefore(pad, padNext);
       }
-    }, true);
+    };
+    document.addEventListener("fullscreenchange", relocate);
+    document.addEventListener("webkitfullscreenchange", relocate);
+  }
+
+  if (padtoggle) {
+    padtoggle.addEventListener("click", function () {
+      pad.hidden = !pad.hidden;
+      padtoggle.textContent = pad.hidden
+        ? "⌨ Show the on-screen keys"
+        : "⌨ Hide the on-screen keys";
+    });
+  }
+</script>
+
+<script>
+  // The YouTube player is not on the page until it is asked for - see the
+  // note by .tubeplay in the stylesheet. autoplay=1 because it arrives on a
+  // press, and that press was the request to watch it.
+  var playvid = document.getElementById("playvid");
+  if (playvid) {                        /* the offline copy has no embed */
+    playvid.addEventListener("click", function () {
+      playvid.parentNode.innerHTML =
+        '<iframe width="560" height="315" ' +
+        'src="https://www.youtube.com/embed/Cw-SaWI046o?si=jhzgdls7FoZEu1li&amp;autoplay=1" ' +
+        'title="YouTube video player" frameborder="0" ' +
+        'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" ' +
+        'referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>';
+    });
   }
 </script>
 
