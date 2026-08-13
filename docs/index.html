@@ -79,8 +79,8 @@ from the repository.">
                   text-wrap: balance; }
   /* What an iPhone needs to know before it presses. Kept to the idle state:
      once the machine is running the warning has been overtaken by events. */
-  .tap .warn { font-size: .65rem; line-height: 1.45; color: #9c8c66;
-               max-width: 24rem; margin: 0; text-wrap: balance; }
+  .tap .warn { font-size: .58rem; line-height: 1.4; color: #8a7a52;
+               max-width: 20rem; margin: 0; text-wrap: balance; }
 
   .stall {
     border: 1px solid #7a3b1e; border-left: 3px solid #d86a3a;
@@ -501,10 +501,9 @@ C and 6502 assembly for the Commodore Plus/4.</p>
       <span class="say">Press to fetch the emulator and boot the Plus/4.
       Nothing is downloaded or run until you do.</span>
     </button>
-    <p class="warn" id="warn">On an iPhone or iPad the emulator is a large
-    program in a small memory: if the tab reloads itself, that is Safari
-    running out, and this page will come back here rather than trying again by
-    itself.</p>
+    <p class="warn" id="warn">If the tab reloads itself, that is Safari
+    running out of memory — the page comes back here, not into another
+    attempt.</p>
   </div>
 </div>
 
@@ -685,13 +684,13 @@ check it arrived whole.</p>
     <a class="file zip" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>urfinkel.zip</span></a>
     <span class="tag">plays offline on a PC</span>
     <span class="tag">full source included</span>
-    <span class="what">the whole collection, zipped — 4 959 447 bytes — built <b>2026-08-13</b></span>
+    <span class="what">the whole collection, zipped — 4 960 134 bytes — built <b>2026-08-13</b></span>
     <span class="use">Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. The emulator comes too, so the browser copy plays with nothing plugged in.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip</a>
     <span class="fine">Fully offline: the game, the emulator and the page all come out of the folder — nothing is fetched from anywhere. It has to be <b>served rather than opened directly</b>, because a <code>file://</code> page may not read the files beside it: run <code>./start-html.sh</code>. The emulator in <code>emulatorjs/</code> is EmulatorJS, GPL-3.0 and not part of UR FINKEL — see <code>emulatorjs/SOURCE.txt</code>. <code>index.html</code> beside it is the same page taking the emulator from its CDN instead, which is always the current version.</span>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>99e6bc7651f0cf32d1f17686c94579caebe31937efa2e4f0dd7229e73811c470</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
-      <dt>MD5</dt><dd><code>3dba9a9d8a01b91bc862ae7b6005b362</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>3dcff64652b6c756e5903f4449745402a3789d1d5263c1e8a7ec5d9116daaed8</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
+      <dt>MD5</dt><dd><code>3f2ec2a1c8087823a033153ff36fb8b6</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
     </dl>
   </li>
 </ul>
@@ -939,7 +938,17 @@ Contact: paulr@sdf.org
     keyboardInput: "enabled",
     "virtual-gamepad": "disabled",
     "vice_drive_true_emulation": "disabled",
-    "vice_drive_sound_emulation": "disabled"
+    "vice_drive_sound_emulation": "disabled",
+    // AND THE SYSTEM SAVE STOPS, because there is nothing to save. Every five
+    // minutes EmulatorJS walks the emulated machine's filesystem and writes
+    // out whatever save files it finds - a sensible default for a console
+    // with a battery-backed cartridge, and nothing at all for a .prg with no
+    // disk behind it, which is what the drive setting above just made sure of.
+    //
+    // Five minutes is also close enough to "it crashes after a few minutes"
+    // to be worth removing before looking any further: a scheduled walk of a
+    // filesystem is exactly the shape of a fault that waits, then arrives.
+    "save-save-interval": "0"
   };
 
   // A DEFAULT ONLY APPLIES TO A BROWSER THAT HAS NO OPINION YET, which is why
@@ -1204,7 +1213,11 @@ Contact: paulr@sdf.org
     // Stamped every five seconds while the game runs, so a crash mid-match
     // records how long it survived rather than only that it started.
     mark("started");
-    setInterval(function () { mark("running"); }, 5000);
+    // Ten seconds rather than five: this is a synchronous write to disk on
+    // the thread the emulator is drawing on, and the question it answers -
+    // roughly how long did it last - does not need better resolution than
+    // that. The page should not be part of the load it is measuring.
+    setInterval(function () { mark("running"); }, 10000);
     watchFrames();
   }
 
