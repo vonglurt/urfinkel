@@ -24,7 +24,7 @@ Right-click → Save Link As. Either file works; the `.prg` starts faster.
 |---|---:|---|---|
 | [urfinkel.prg](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg) | 56 511 | `cda335969d2bcc86656c2195bfcc7489` | `1fb3da50609ae2aad5d245f7f2509b7d75bcad30a4d0842ccbac62e12b52d611` |
 | [urfinkel.d64](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64) | 174 848 | `0c7aebac80111cb3b9a5be16be5742d5` | `dd30ae9e3459fee200c79caa054b5528a567d54641cc7b5d984e6583a775d744` |
-| [urfinkel.zip](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip) | 4 955 191 | `4dbee731ed1c75aea094cbb331f353aa` | `b1db110580e1a58e07b77fcbf428d0268fe603fbe7485201281c6e95a5c91ffe` |
+| [urfinkel.zip](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip) | 4 959 447 | `3dba9a9d8a01b91bc862ae7b6005b362` | `99e6bc7651f0cf32d1f17686c94579caebe31937efa2e4f0dd7229e73811c470` |
 
 Built **2026-08-13** — the date the program stamps on its own menu, so a
 download can be identified from the machine without unpacking it.
@@ -61,7 +61,7 @@ point `shasum` and `md5sum` at.
 |---|---|---|
 | urfinkel.prg | `600cbceeb0b8e7e23d5387f202e1ce87de259407` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.prg) |
 | urfinkel.d64 | `dfe863cc0f8fe82e3953e78fe2d7c511670dda97` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.d64) |
-| urfinkel.zip | `96f36e22a07b12de7887c8c2523e2901a6088cfa` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.zip) |
+| urfinkel.zip | `93fc14acaa6edc845954e3942e507e64139cf318` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.zip) |
 
 The blob SHA is git's own address for that content — reproduce it with
 `git hash-object build/urfinkel.prg`, and it is the object GitHub serves

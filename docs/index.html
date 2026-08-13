@@ -82,6 +82,20 @@ from the repository.">
   .tap .warn { font-size: .65rem; line-height: 1.45; color: #9c8c66;
                max-width: 24rem; margin: 0; text-wrap: balance; }
 
+  .stall {
+    border: 1px solid #7a3b1e; border-left: 3px solid #d86a3a;
+    background: #2a1509; padding: .7rem 1rem; font-size: .8rem;
+    color: #e8dcc0; margin: 0 0 1rem;
+  }
+  .stall[hidden] { display: none; }
+  .stall b { color: #f0a274; }
+  .stall button {
+    font: inherit; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase;
+    display: block; margin-top: .6rem; padding: .35rem 1rem; cursor: pointer;
+    background: #3a1c0c; color: #f0c274; border: 1px solid #7a3b1e;
+  }
+  .stall button:hover { background: #4a2410; color: #ffd18a; }
+
   /* THE RESCUE PANEL.  Shut by default - it is about a failure most visitors
      will not have - and opened by the page itself when the last attempt on
      this device did not come back. */
@@ -494,6 +508,16 @@ C and 6502 assembly for the Commodore Plus/4.</p>
   </div>
 </div>
 
+<!-- Shown by the watchdog, and by nothing else. -->
+<p class="stall" id="stall" hidden>
+  <b>The machine has stopped.</b> It has drawn no frames for eight seconds
+  while you were watching it, which means the emulator has seized up rather
+  than the game being slow. Nothing here can revive it — an emulator that has
+  stopped keeps its memory and its audio either way — so the only real cure is
+  to put it down and start again.
+  <button id="stallgo" type="button">⏏ Put it down</button>
+</p>
+
 <!-- WHAT TO TRY WHEN IT WILL NOT RUN.  Both of these turn something off that
      an emulator wants and this game can do without, and both are remembered
      on this device. They are also a way of finding out WHICH thing the phone
@@ -508,10 +532,15 @@ C and 6502 assembly for the Commodore Plus/4.</p>
     <label><input type="checkbox" id="opt-simple">
       <b>Simple video</b> — the lighter build of the emulator, drawing without
       WebGL2. This core needs neither that nor threads.</label>
-    <p class="fineprint">Both take effect the next time you press play, and are
-    remembered on this device only. Turning them off again is the same two
-    taps. Whichever one lets the game run is also the answer to what went
-    wrong, which is worth telling me.</p>
+    <label><input type="checkbox" id="opt-fresh">
+      <b>Keep nothing</b> — do not store the emulator on this device. It is
+      fetched again every time, which is slower, but nothing is written to or
+      read back from the browser's database.</label>
+    <p class="fineprint">These take effect the next time you press play, and
+    are remembered on this device only. Whichever one lets the game run is
+    also the answer to what went wrong — the line below is that answer in a
+    form worth sending me.</p>
+    <p class="fineprint"><code id="lastraw" hidden></code></p>
   </div>
 </details>
 
@@ -656,13 +685,13 @@ check it arrived whole.</p>
     <a class="file zip" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>urfinkel.zip</span></a>
     <span class="tag">plays offline on a PC</span>
     <span class="tag">full source included</span>
-    <span class="what">the whole collection, zipped — 4 955 191 bytes — built <b>2026-08-13</b></span>
+    <span class="what">the whole collection, zipped — 4 959 447 bytes — built <b>2026-08-13</b></span>
     <span class="use">Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. The emulator comes too, so the browser copy plays with nothing plugged in.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip</a>
     <span class="fine">Fully offline: the game, the emulator and the page all come out of the folder — nothing is fetched from anywhere. It has to be <b>served rather than opened directly</b>, because a <code>file://</code> page may not read the files beside it: run <code>./start-html.sh</code>. The emulator in <code>emulatorjs/</code> is EmulatorJS, GPL-3.0 and not part of UR FINKEL — see <code>emulatorjs/SOURCE.txt</code>. <code>index.html</code> beside it is the same page taking the emulator from its CDN instead, which is always the current version.</span>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>b1db110580e1a58e07b77fcbf428d0268fe603fbe7485201281c6e95a5c91ffe</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
-      <dt>MD5</dt><dd><code>4dbee731ed1c75aea094cbb331f353aa</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>99e6bc7651f0cf32d1f17686c94579caebe31937efa2e4f0dd7229e73811c470</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
+      <dt>MD5</dt><dd><code>3dba9a9d8a01b91bc862ae7b6005b362</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
     </dl>
   </li>
 </ul>
@@ -893,7 +922,25 @@ Contact: paulr@sdf.org
   // does nothing sitting on top of the one thing you need to see. The keys
   // under the screen replace it - and unlike the d-pad, they are the keys
   // the game is actually asking for.
-  EJS_defaultOptions = { keyboardInput: "enabled", "virtual-gamepad": "disabled" };
+  //
+  // THE LAST TWO ARE THE CORE'S OWN OPTIONS, AND THEY ARE WORK NOT DONE.
+  // Asked the running core for its option list rather than guessed: VICE
+  // ships with true drive emulation on, which means it emulates the 1541's
+  // own 6502 alongside the Plus/4's - a second processor, running every
+  // frame, for a disk drive this page does not have. The game arrives as a
+  // .prg injected straight into memory; there is no disk, so there is
+  // nothing for that processor to do but cost. The drive's mechanical noise
+  // goes with it, for the same reason.
+  //
+  // This is the honest way to make the emulator cheaper: stop it emulating
+  // hardware that is not there. Turning the game's music off would not do
+  // it - the machine computes its sound whether or not anyone is listening.
+  EJS_defaultOptions = {
+    keyboardInput: "enabled",
+    "virtual-gamepad": "disabled",
+    "vice_drive_true_emulation": "disabled",
+    "vice_drive_sound_emulation": "disabled"
+  };
 
   // A DEFAULT ONLY APPLIES TO A BROWSER THAT HAS NO OPINION YET, which is why
   // the stored "disabled" left behind by the version above is cleared here.
@@ -974,33 +1021,62 @@ Contact: paulr@sdf.org
   var LOG = "urfinkel:lastrun";
   var t0  = new Date().getTime();
 
+  var store = "";                       /* filled in below, when it is known */
+
   function mark(stage) {
     try {
       localStorage.setItem(LOG, JSON.stringify({
         stage: stage,
         secs:  Math.round((new Date().getTime() - t0) / 100) / 10,
-        opts:  (lite.silent ? "silent " : "") + (lite.simple ? "simple" : ""),
+        opts:  (lite.silent ? "silent " : "") + (lite.simple ? "simple " : "") +
+               (lite.fresh ? "fresh" : ""),
+        store: store,
+        px:    screen.width + "x" + screen.height,
         at:    new Date().getTime()
       }));
     } catch (e) { /* private browsing: we simply learn nothing */ }
   }
 
+  // THE ONE MEMORY FIGURE SAFARI WILL GIVE UP, and it is about disk rather
+  // than about RAM: how much this origin has stored and how much it is
+  // allowed. It cannot see the memory that kills a tab - no browser API can,
+  // on this platform - but it does say whether the emulator's cached copy is
+  // sitting in the way, which is the one part of this the page controls.
+  if (navigator.storage && navigator.storage.estimate) {
+    navigator.storage.estimate().then(function (s) {
+      var mb = function (n) { return Math.round((n || 0) / 1048576); };
+      store = mb(s.usage) + "/" + mb(s.quota) + "MB";
+    }, function () { /* refused: the field stays empty, and says nothing */ });
+  }
+
   // THE TWO SWITCHES.  Read before anything is configured, because both have
   // to be in place before the loader runs - one of them decides which build
   // of the emulator is fetched.
-  var lite = { silent: false, simple: false };
+  var lite = { silent: false, simple: false, fresh: false };
   try {
     var saved = JSON.parse(localStorage.getItem("urfinkel:lite") || "{}");
     lite.silent = !!saved.silent;
     lite.simple = !!saved.simple;
-  } catch (e) { /* unreadable: both stay off, which is the ordinary page */ }
+    lite.fresh  = !!saved.fresh;
+  } catch (e) { /* unreadable: all stay off, which is the ordinary page */ }
 
-  if (lite.silent) EJS_volume = 0;
+  // Silence is also a cheaper machine, not only a quieter one: nobody is
+  // listening, so the core is told to generate half as many samples a second
+  // and resample half as much audio. 22050 is the lowest rate it offers.
+  if (lite.silent) {
+    EJS_volume = 0;
+    EJS_defaultOptions["vice_sound_sample_rate"] = "22050";
+  }
   // forceLegacyCores makes EmulatorJS treat the browser as having no WebGL2,
   // which is how it chooses the -legacy build of the core. vice_xplus4 is not
   // in its requiresWebGL2 list, so nothing here needs the version being
   // declined - checked in emulator.min.js rather than assumed.
   if (lite.simple) EJS_forceLegacyCores = true;
+  // Every store becomes EJS_DUMMYSTORAGE, so the core, the rom and the bios
+  // are neither written to IndexedDB nor read back from it - checked in
+  // emulator.min.js. The download is the cost; a database that is never
+  // opened is one fewer thing holding a copy of a megabyte-and-a-half blob.
+  if (lite.fresh) EJS_disableDatabases = true;
 
   var box       = document.getElementById("box");
   var tap       = document.getElementById("tap");
@@ -1021,20 +1097,31 @@ Contact: paulr@sdf.org
     if (!prev || prev.stage === "left") return;
 
     var el = document.getElementById("lastrun");
+    var raw = document.getElementById("lastraw");
     var rescue = document.getElementById("rescue");
     var how = {
       pressed: "while the emulator was still downloading",
       loading: "while the emulator was starting up",
       started: "just as the machine came up",
       running: "with the game running"
-    }[prev.stage] || "part way in";
+    }[prev.stage];
 
-    el.textContent = "Last time on this device, the page went away " + how +
-                     " — about " + prev.secs + " seconds after you pressed play" +
-                     (prev.opts ? " (with " + prev.opts.trim() + ")" : "") +
-                     ". That is the browser giving up on the tab, not the game. " +
-                     "One of these may get you past it.";
+    // A stall is a different animal from a disappearance and is not described
+    // as one: the page was still here to write it down, which is exactly what
+    // a tab the browser killed could never do.
+    el.textContent = prev.stage === "stalled"
+      ? "Last time on this device, the emulator seized up about " + prev.secs +
+        " seconds in" + (prev.opts ? " (with " + prev.opts.trim() + ")" : "") +
+        ". It stopped drawing while the page itself kept running — so this was " +
+        "the emulator, not the browser running out."
+      : "Last time on this device, the page went away " + (how || "part way in") +
+        " — about " + prev.secs + " seconds after you pressed play" +
+        (prev.opts ? " (with " + prev.opts.trim() + ")" : "") +
+        ". That is the browser giving up on the tab, not the game. " +
+        "One of these may get you past it.";
     el.hidden = false;
+    raw.textContent = JSON.stringify(prev);
+    raw.hidden = false;
     rescue.open = true;                 /* it has something to say, so it opens */
   })();
 
@@ -1118,6 +1205,42 @@ Contact: paulr@sdf.org
     // records how long it survived rather than only that it started.
     mark("started");
     setInterval(function () { mark("running"); }, 5000);
+    watchFrames();
+  }
+
+  // THE WATCHDOG.  There is nothing to ask a browser about memory, so this
+  // asks the machine about itself instead: the frame counter is the emulator's
+  // own pulse, and a Plus/4 that has stopped counting frames has stopped.
+  //
+  // IT DOES NOT RELOAD BY ITSELF.  A page that reacts to trouble by reloading
+  // is how this whole thing started, and a stall during a match is not worth
+  // throwing the match away over. It says what it found and offers the switch;
+  // pressing it is somebody's decision.
+  //
+  // Its reach is honest and small: a machine that seizes up is caught, and a
+  // tab the browser kills outright is not - there is no stall to notice, the
+  // page simply ends. That case is what the record above is for.
+  function watchFrames() {
+    var last = -1, still = 0, said = false;
+    var frame = function () {
+      try { return window.EJS_emulator.gameManager.functions.getFrameNum(); }
+      catch (e) { return null; }
+    };
+    setInterval(function () {
+      // A hidden tab stops being drawn, and its frame counter stops with it.
+      // That is the browser doing its job, not the emulator failing - counting
+      // it as a stall would report a fault every time you changed tabs.
+      if (document.visibilityState !== "visible") { still = 0; return; }
+      var n = frame();
+      if (n === null || said) return;
+      if (n === last) { still += 2; } else { still = 0; last = n; }
+      if (still >= 8) {
+        said = true;
+        mark("stalled");
+        var el = document.getElementById("stall");
+        if (el) el.hidden = false;
+      }
+    }, 2000);
   }
   window.EJS_onGameStart = onStarted;
 
@@ -1164,19 +1287,31 @@ Contact: paulr@sdf.org
   // the next run - which is what the panel says. Disabling them once the
   // machine is up says the same thing in the interface rather than in prose.
   (function () {
-    var silent = document.getElementById("opt-silent");
-    var simple = document.getElementById("opt-simple");
-    if (!silent || !simple) return;
-    silent.checked = lite.silent;
-    simple.checked = lite.simple;
+    var boxes = { silent: document.getElementById("opt-silent"),
+                  simple: document.getElementById("opt-simple"),
+                  fresh:  document.getElementById("opt-fresh") };
+    var k;
+    for (k in boxes) if (!boxes[k]) return;
     function save() {
-      lite.silent = silent.checked;
-      lite.simple = simple.checked;
+      for (var j in boxes) lite[j] = boxes[j].checked;
       try { localStorage.setItem("urfinkel:lite", JSON.stringify(lite)); }
       catch (e) { /* nothing to be done, and nothing depends on it */ }
     }
-    silent.addEventListener("change", save);
-    simple.addEventListener("change", save);
+    for (k in boxes) {
+      boxes[k].checked = lite[k];
+      boxes[k].addEventListener("change", save);
+    }
+  })();
+
+  // The watchdog's one button. It is the power switch by another name: a
+  // reload is the only thing that ends a wedged emulator, its heap and its
+  // audio graph together, and the page it reloads into is a quiet one.
+  (function () {
+    var go = document.getElementById("stallgo");
+    if (go) go.addEventListener("click", function () {
+      mark("left");
+      location.reload();
+    });
   })();
 
   // SPACE IS A GAME KEY HERE, NOT A PAGE-DOWN.  With direct keyboard input on,
