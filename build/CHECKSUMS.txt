@@ -76,10 +76,10 @@ urfinkel.d64
   git blob     dfe863cc0f8fe82e3953e78fe2d7c511670dda97
 
 urfinkel.zip
-  size         4 949 625 bytes
-  md5          9134e865c02f0aa773e9350e2acb15e4
-  sha256       1a3b322cd92770cdeb2732f11a9ce5015ac3f03889b75bc70c2d05b24d302c70
-  git blob     48ab63d66db78d21e7d60e3f0d541da1119d86c2
+  size         4 955 191 bytes
+  md5          4dbee731ed1c75aea094cbb331f353aa
+  sha256       b1db110580e1a58e07b77fcbf428d0268fe603fbe7485201281c6e95a5c91ffe
+  git blob     96f36e22a07b12de7887c8c2523e2901a6088cfa
 
 VERIFYING A DOWNLOAD
 --------------------

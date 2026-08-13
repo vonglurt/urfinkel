@@ -82,6 +82,34 @@ from the repository.">
   .tap .warn { font-size: .65rem; line-height: 1.45; color: #9c8c66;
                max-width: 24rem; margin: 0; text-wrap: balance; }
 
+  /* THE RESCUE PANEL.  Shut by default - it is about a failure most visitors
+     will not have - and opened by the page itself when the last attempt on
+     this device did not come back. */
+  .rescue { border: 1px solid #4a3c1e; background: #1d1609; margin: 0 0 1rem; }
+  .rescue > summary {
+    cursor: pointer; list-style: none; padding: .5rem .8rem;
+    font-size: .78rem; color: #d8a657;
+  }
+  .rescue > summary::-webkit-details-marker { display: none; }
+  .rescue:not([open]) > summary::after { content: " ▾"; }
+  .rescue[open] > summary::after { content: " ▴"; }
+  .rescue > summary:hover { color: #f0c274; }
+  .rescuebody { padding: 0 .8rem .8rem; }
+  .rescuebody label {
+    display: block; font-size: .75rem; line-height: 1.5; color: #b3a179;
+    margin-bottom: .6rem; cursor: pointer;
+  }
+  .rescuebody label b { color: #f0c274; font-weight: normal; }
+  /* Big enough to hit with a thumb, which a 13px default box is not. */
+  .rescuebody input { width: 1.15rem; height: 1.15rem; vertical-align: -.2rem;
+                      margin-right: .4rem; accent-color: #d8a657; }
+  .rescuebody .fineprint { font-size: .68rem; color: #8a7a52; margin: 0; }
+  /* The report on the last attempt: only ever shown when there is one. */
+  #lastrun {
+    font-size: .72rem; color: #e8dcc0; background: #2b1a0c;
+    border-left: 3px solid #d8a657; padding: .5rem .7rem; margin: 0 0 .8rem;
+  }
+
   /* THE KEYPAD.  UR FINKEL is played on the number keys, and a phone has no
      number keys - the emulator's own on-screen control is a joystick, which
      this game does not read. Without these there is no way to answer "which
@@ -98,16 +126,20 @@ from the repository.">
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 2147483000;
     margin: 0; padding: .4rem; background: rgba(12, 9, 3, .82);
   }
-  .pad.over .padsay { display: none; }
-  .pad.over .key { min-height: 2.4rem; font-size: .95rem; }
+  .pad.over .padsay, .pad.over .typerow { display: none; }
+  .pad.over .key { min-height: 1.4rem; font-size: .9rem; }
   .pad.over .key small { display: none; }
-  .padsay { font-size: .72rem; color: #b3a179; margin: 0 0 .5rem; }
+  .padsay { font-size: .72rem; color: #b3a179; margin: .6rem 0 0; }
   .padrow { display: grid; gap: .4rem; margin-bottom: .4rem;
             grid-template-columns: repeat(7, minmax(0, 1fr)); }
   .padrow.wide { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  /* HALF THE HEIGHT THEY WERE.  A key wide enough for a thumb does not also
+     need to be tall - the finger lands on a horizontal band - and the height
+     was costing the board its room on a phone in landscape, where the screen
+     and the keys have to share about 400 pixels. */
   .key {
-    font: inherit; font-size: 1.1rem; font-weight: bold; letter-spacing: .06em;
-    min-height: 3rem; padding: .5rem .2rem; cursor: pointer;
+    font: inherit; font-size: .95rem; font-weight: bold; letter-spacing: .06em;
+    min-height: 1.6rem; padding: .2rem; cursor: pointer;
     background: #241c0c; color: #f0c274; border: 1px solid #6b5726;
     /* A key press must not scroll, zoom, select or summon the software
        keyboard - all of which a touch screen will otherwise try. */
@@ -117,8 +149,8 @@ from the repository.">
   .padrow.wide .key { font-size: .8rem; letter-spacing: .12em; }
   .key:hover { background: #33270f; color: #ffd18a; }
   .key:active, .key.lit { background: #6b5726; color: #1a1408; }
-  .key small { display: block; font-size: .55rem; font-weight: normal;
-               letter-spacing: .08em; color: #b3a179; margin-top: .15rem; }
+  .key small { display: block; font-size: .5rem; font-weight: normal;
+               line-height: 1.1; letter-spacing: .06em; color: #b3a179; }
   .key:active small, .key.lit small { color: #241c0c; }
   /* THE JOYSTICK OVERLAY IS NOT WANTED ON THIS PAGE, EVER.  In landscape on a
      phone EmulatorJS lays a red thumbstick over the left of the board and a
@@ -132,8 +164,8 @@ from the repository.">
 
   .typerow { display: flex; gap: .4rem; }
   .typerow input {
-    font: inherit; font-size: 1rem; flex: 1 1 auto; min-width: 0;
-    padding: .5rem .7rem; color: #f0c274;
+    font: inherit; font-size: .9rem; flex: 1 1 auto; min-width: 0;
+    padding: .25rem .7rem; color: #f0c274;
     background: #150f06; border: 1px solid #6b5726;
   }
   .typerow input::placeholder { color: #8a7a52; font-size: .78rem; }
@@ -194,7 +226,7 @@ from the repository.">
   .bar button {
     font: inherit; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase;
     background: #241c0c; color: #d8a657; border: 1px solid #4a3c1e;
-    padding: .5rem .6rem; cursor: pointer; width: 100%;
+    padding: .25rem .6rem; cursor: pointer; width: 100%;
   }
   .bar button:hover { background: #33270f; color: #f0c274; border-color: #6b5726; }
   .bar button:active { background: #3d2f13; }
@@ -455,21 +487,39 @@ C and 6502 assembly for the Commodore Plus/4.</p>
       <span class="say">Press to fetch the emulator and boot the Plus/4.
       Nothing is downloaded or run until you do.</span>
     </button>
-    <p class="warn">On an iPhone or iPad the emulator is a large program in a
-    small memory: if the tab reloads itself, that is Safari running out, and
-    this page will come back here rather than trying again by itself.</p>
+    <p class="warn" id="warn">On an iPhone or iPad the emulator is a large
+    program in a small memory: if the tab reloads itself, that is Safari
+    running out, and this page will come back here rather than trying again by
+    itself.</p>
   </div>
 </div>
+
+<!-- WHAT TO TRY WHEN IT WILL NOT RUN.  Both of these turn something off that
+     an emulator wants and this game can do without, and both are remembered
+     on this device. They are also a way of finding out WHICH thing the phone
+     could not do: if it survives with the sound off, it was the sound. -->
+<details class="rescue" id="rescue">
+  <summary>If it crashes or reloads on your phone</summary>
+  <div class="rescuebody">
+    <p id="lastrun" hidden></p>
+    <label><input type="checkbox" id="opt-silent">
+      <b>Silent</b> — start with the sound off. The music runs from a raster
+      interrupt and is the busiest thing on the machine.</label>
+    <label><input type="checkbox" id="opt-simple">
+      <b>Simple video</b> — the lighter build of the emulator, drawing without
+      WebGL2. This core needs neither that nor threads.</label>
+    <p class="fineprint">Both take effect the next time you press play, and are
+    remembered on this device only. Turning them off again is the same two
+    taps. Whichever one lets the game run is also the answer to what went
+    wrong, which is worth telling me.</p>
+  </div>
+</details>
 
 <!-- THE KEYPAD.  Written into the page rather than built by script so it is
      one thing to read and one thing to change; the script only unhides it and
      wires the presses. Every key here is one the game actually reads - see
      CONTROLS below, which lists the same set. -->
 <div id="pad" class="pad" hidden>
-  <p class="padsay">On-screen keys — the game asks for these, and a phone has
-  no keyboard to answer with. Before the first match it wants a name and a
-  colour: send a name with the box at the bottom, or send nothing and it
-  names you itself.</p>
   <!-- The row that gets used every turn, on its own and biggest: 1 to 7 pick
        the piece to move, and 1 to 5 pick the mode on the menu. -->
   <div class="padrow">
@@ -512,6 +562,13 @@ C and 6502 assembly for the Commodore Plus/4.</p>
            aria-label="Type a name to send to the game">
     <button id="typesend" class="key" type="button">SEND ⏎</button>
   </div>
+  <!-- Under the keys rather than over them: the keys explain themselves at a
+       glance, and anything above them pushes the row that matters further
+       from the board it belongs to - which on a phone is the difference
+       between seeing both at once and not. -->
+  <p class="padsay">The game asks for these, and a phone has no keyboard to
+  answer with. Before the first match it wants a name and a colour: send a
+  name with the box above, or send nothing and it names you itself.</p>
 </div>
 
 <nav class="deck">
@@ -599,13 +656,13 @@ check it arrived whole.</p>
     <a class="file zip" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>urfinkel.zip</span></a>
     <span class="tag">plays offline on a PC</span>
     <span class="tag">full source included</span>
-    <span class="what">the whole collection, zipped — 4 949 625 bytes — built <b>2026-08-13</b></span>
+    <span class="what">the whole collection, zipped — 4 955 191 bytes — built <b>2026-08-13</b></span>
     <span class="use">Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. The emulator comes too, so the browser copy plays with nothing plugged in.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip</a>
     <span class="fine">Fully offline: the game, the emulator and the page all come out of the folder — nothing is fetched from anywhere. It has to be <b>served rather than opened directly</b>, because a <code>file://</code> page may not read the files beside it: run <code>./start-html.sh</code>. The emulator in <code>emulatorjs/</code> is EmulatorJS, GPL-3.0 and not part of UR FINKEL — see <code>emulatorjs/SOURCE.txt</code>. <code>index.html</code> beside it is the same page taking the emulator from its CDN instead, which is always the current version.</span>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>1a3b322cd92770cdeb2732f11a9ce5015ac3f03889b75bc70c2d05b24d302c70</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
-      <dt>MD5</dt><dd><code>9134e865c02f0aa773e9350e2acb15e4</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>b1db110580e1a58e07b77fcbf428d0268fe603fbe7485201281c6e95a5c91ffe</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
+      <dt>MD5</dt><dd><code>4dbee731ed1c75aea094cbb331f353aa</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
     </dl>
   </li>
 </ul>
@@ -906,6 +963,45 @@ Contact: paulr@sdf.org
   // the music would keep playing. A reload is the only thing that reliably
   // ends all of it, and after it nothing from emulatorjs.org is fetched,
   // parsed or executed at all.
+  // A NOTE OF HOW FAR THE LAST ATTEMPT GOT, because when a phone gives up on
+  // a tab it does not say so: it reloads, and everything the page knew is
+  // gone with it. So the milestones are written down as they pass, and read
+  // back on the next visit - and a run that reached "running" without ever
+  // reaching "left" is a run the browser ended on its own.
+  //
+  // Four keys of storage, no identifiers, no network: it is a note this page
+  // leaves for itself on this device, and it is what the panel above reports.
+  var LOG = "urfinkel:lastrun";
+  var t0  = new Date().getTime();
+
+  function mark(stage) {
+    try {
+      localStorage.setItem(LOG, JSON.stringify({
+        stage: stage,
+        secs:  Math.round((new Date().getTime() - t0) / 100) / 10,
+        opts:  (lite.silent ? "silent " : "") + (lite.simple ? "simple" : ""),
+        at:    new Date().getTime()
+      }));
+    } catch (e) { /* private browsing: we simply learn nothing */ }
+  }
+
+  // THE TWO SWITCHES.  Read before anything is configured, because both have
+  // to be in place before the loader runs - one of them decides which build
+  // of the emulator is fetched.
+  var lite = { silent: false, simple: false };
+  try {
+    var saved = JSON.parse(localStorage.getItem("urfinkel:lite") || "{}");
+    lite.silent = !!saved.silent;
+    lite.simple = !!saved.simple;
+  } catch (e) { /* unreadable: both stay off, which is the ordinary page */ }
+
+  if (lite.silent) EJS_volume = 0;
+  // forceLegacyCores makes EmulatorJS treat the browser as having no WebGL2,
+  // which is how it chooses the -legacy build of the core. vice_xplus4 is not
+  // in its requiresWebGL2 list, so nothing here needs the version being
+  // declined - checked in emulator.min.js rather than assumed.
+  if (lite.simple) EJS_forceLegacyCores = true;
+
   var box       = document.getElementById("box");
   var tap       = document.getElementById("tap");
   var play      = document.getElementById("play");
@@ -913,6 +1009,40 @@ Contact: paulr@sdf.org
   var pad       = document.getElementById("pad");
   var padtoggle = document.getElementById("padtoggle");
   var started   = false;
+
+  // WHAT HAPPENED LAST TIME, read before this run overwrites it. A record
+  // that stops at "pressed" or "loading" means the tab went away while the
+  // emulator was still arriving; one that stops at "running" means it went
+  // away mid-game. Either way the visitor is told, because a page that
+  // silently reloads itself looks broken and this at least says what broke.
+  (function () {
+    var prev;
+    try { prev = JSON.parse(localStorage.getItem(LOG) || "null"); } catch (e) { return; }
+    if (!prev || prev.stage === "left") return;
+
+    var el = document.getElementById("lastrun");
+    var rescue = document.getElementById("rescue");
+    var how = {
+      pressed: "while the emulator was still downloading",
+      loading: "while the emulator was starting up",
+      started: "just as the machine came up",
+      running: "with the game running"
+    }[prev.stage] || "part way in";
+
+    el.textContent = "Last time on this device, the page went away " + how +
+                     " — about " + prev.secs + " seconds after you pressed play" +
+                     (prev.opts ? " (with " + prev.opts.trim() + ")" : "") +
+                     ". That is the browser giving up on the tab, not the game. " +
+                     "One of these may get you past it.";
+    el.hidden = false;
+    rescue.open = true;                 /* it has something to say, so it opens */
+  })();
+
+  // From here the record is this run's. "left" is written the moment the page
+  // is hidden or unloaded in the ordinary way, which is what tells the next
+  // visit that nothing went wrong - pagehide rather than beforeunload,
+  // because iOS does not reliably fire the latter.
+  window.addEventListener("pagehide", function () { if (started) mark("left"); });
 
   // KEEPING THE SCREEN ON.  A game played with long thinking pauses gets no
   // touches for minutes at a time, and a phone dims and locks - which on iOS
@@ -971,9 +1101,23 @@ Contact: paulr@sdf.org
       e.toggleVirtualGamepad(false);
       setTimeout(function () { e.toggleVirtualGamepad(false); }, 400);
     }
+    // SILENCE IS APPLIED TO THE RUNNING MACHINE, not to the configuration.
+    // EJS_volume is only a default, and EmulatorJS restores a stored volume
+    // over the top of it on start - the same trap the keyboard setting was
+    // in. Setting it here is after that has happened, so nothing is left
+    // carrying an older opinion. Verified in a browser: the config alone left
+    // the volume at 0.5.
+    if (lite.silent && e && typeof e.setVolume === "function") {
+      try { e.muted = true; e.setVolume(0); } catch (err) { /* older build */ }
+    }
     if (pad) pad.hidden = false;
     if (padtoggle) padtoggle.disabled = false;
     keepAwake();
+
+    // Stamped every five seconds while the game runs, so a crash mid-match
+    // records how long it survived rather than only that it started.
+    mark("started");
+    setInterval(function () { mark("running"); }, 5000);
   }
   window.EJS_onGameStart = onStarted;
 
@@ -989,7 +1133,10 @@ Contact: paulr@sdf.org
     if (location.hash === "#unloaded") {
       history.replaceState(null, "", location.pathname + location.search);
     }
+    t0 = new Date().getTime();          /* the clock starts at the press */
+    mark("pressed");
     loadEmulator();
+    setTimeout(function () { if (!ran) mark("loading"); }, 1500);
 
     // The second way of noticing that the machine is up - see onStarted. It
     // gives up after two minutes: by then either the emulator is running or
@@ -1008,8 +1155,29 @@ Contact: paulr@sdf.org
   power.addEventListener("click", function () {
     // No flag to set: the page does not start the emulator by itself, so a
     // plain reload lands back on the play button with nothing running.
+    mark("left");
     location.reload();
   });
+
+  // THE SWITCHES, WRITTEN DOWN ON CHANGE.  They are read at the top of this
+  // script, before anything is configured, so a change here is a change to
+  // the next run - which is what the panel says. Disabling them once the
+  // machine is up says the same thing in the interface rather than in prose.
+  (function () {
+    var silent = document.getElementById("opt-silent");
+    var simple = document.getElementById("opt-simple");
+    if (!silent || !simple) return;
+    silent.checked = lite.silent;
+    simple.checked = lite.simple;
+    function save() {
+      lite.silent = silent.checked;
+      lite.simple = simple.checked;
+      try { localStorage.setItem("urfinkel:lite", JSON.stringify(lite)); }
+      catch (e) { /* nothing to be done, and nothing depends on it */ }
+    }
+    silent.addEventListener("change", save);
+    simple.addEventListener("change", save);
+  })();
 
   // SPACE IS A GAME KEY HERE, NOT A PAGE-DOWN.  With direct keyboard input on,
   // EmulatorJS hands the key to the core without claiming it, so the browser's
