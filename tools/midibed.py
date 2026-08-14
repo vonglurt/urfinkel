@@ -36,6 +36,11 @@ puts the last bar in the wrong place.
 
 WHAT IT EMITS is free-duration MML, which tools/mml.py already parses, so
 this adds a front end and changes no back end.
+
+THE ORDER OF THE SOURCES IS HONOURED, and --order=tools/bed-order.txt is
+how it is decided.  It is the rotation order the player hears, and its
+first entry is what the game opens on, so it is not something to leave to
+however the filenames happen to sort.
 """
 
 import struct
@@ -293,6 +298,43 @@ def songname(path):
     return out.strip("_")
 
 
+def apply_order(args, path):
+    """Put the sources in the order tools/bed-order.txt asks for.
+
+    THE ROTATION ORDER IS A DECISION, and it used to be an accident: the
+    Makefile passed `$(wildcard assets/midi/*.mid)`, so what the player
+    heard first was whatever the filenames sorted to, and any deliberate
+    ordering was undone by the next `make music`.  The list is kept beside
+    this tool instead, because it must survive a filename that changes and
+    it has to be reviewable without the assets, which are not published.
+
+    Sources the list does not name keep their given order behind the ones
+    it does, and both mismatches are reported: a new .mid silently landing
+    at the end of the rotation is the failure this is guarding against, and
+    the build log is where it can be seen.
+    """
+    want = []
+    for line in open(path, encoding="utf-8"):
+        line = line.split("#", 1)[0].strip()
+        if line and line not in want:
+            want.append(line)
+
+    rank = {n: i for i, n in enumerate(want)}
+    named = set(songname(p) for p in args)
+    extra = [songname(p) for p in args if songname(p) not in rank]
+    missing = [n for n in want if n not in named]
+
+    if extra:
+        print("bed order: %d source(s) not in %s, playing last in filename "
+              "order: %s" % (len(extra), path, ", ".join(extra)))
+    if missing:
+        print("bed order: %d name(s) in %s with no source: %s"
+              % (len(missing), path, ", ".join(missing)))
+
+    # Stable, so the unnamed tail stays in the order the caller gave it.
+    return sorted(args, key=lambda p: rank.get(songname(p), len(rank)))
+
+
 # The menu line is "m  music: " plus the name inside a 28-column stage, so
 # a name has 18 characters and the ordinal eats two or three of them.
 NAME_MAX = 18
@@ -364,14 +406,24 @@ def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     budget = None
     out = None
+    order = None
     for a in sys.argv[1:]:
         if a.startswith("--budget="):
             budget = int(a.split("=", 1)[1])
         elif a.startswith("--out="):
             out = a.split("=", 1)[1]
+        elif a.startswith("--order="):
+            order = a.split("=", 1)[1]
     if not args:
         print(__doc__)
         return 2
+
+    # BEFORE ANYTHING MEASURES THEM.  The packer walks the sources in the
+    # order it is given and the labels are numbered by position, so putting
+    # them in rotation order here is all it takes: nothing downstream has a
+    # second opinion about what comes first.
+    if order:
+        args = apply_order(args, order)
 
     print("%-40s %6s %6s %5s %5s %6s %s"
           % ("piece", "secs", "bpm", "v1", "v2", "bytes", "sig"))

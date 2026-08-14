@@ -13,23 +13,23 @@
 #define BED_SONG_COUNT 19
 
 #define BED_SONG_LIST \
-    X(SONG_AUBER_MASANIELLO_MARKET_CHORUS_DUET, "1 auber masaniello") \
+    X(SONG_HOLST_12_DIVERTIMENTOS_NO1,  "1 holst 12 no1") \
     X(SONG_BACH_POLONAISE_IN_G_MINOR_BWV_ANH125, "2 bach polonaise") \
-    X(SONG_BEETHOVEN_FLUTE_DUO_IN_G_MAJOR_ALLEGRO_CON_BRIO, "3 beethoven allegr") \
-    X(SONG_BERBIGUIER_OP46_NO1_RONDO,   "4 berbiguier rondo") \
-    X(SONG_BLAVET_OP1_SONATA_NO2_II_ALLEGRO, "5 blavet allegro") \
-    X(SONG_BOIELDIEU_LE_PETIT_CHAPERON_ROUGE_LAURETTE_DUET, "6 boieldieu petit") \
-    X(SONG_CHOPIN_MAZURKA_OP7_NO1,      "7 chopin mazurka") \
-    X(SONG_DEVIENNE_24_DUOS_FACILES_NO20_ADAGIO, "8 devienne adagio") \
-    X(SONG_DEVIENNE_24_DUOS_FACILES_NO24_ALLEGRO, "9 devienne allegro") \
-    X(SONG_GARIBOLDI_ETUDES_MIGNONNES_NO3, "10 gariboldi no3") \
-    X(SONG_HOLST_12_DIVERTIMENTOS_NO1,  "11 holst 12 no1") \
-    X(SONG_HUGUES_SCHOOL_OF_FLUTE_GRADE1_NO7, "12 hugues grade1") \
-    X(SONG_HUGUES_SCHOOL_OF_FLUTE_GRADE2_NO20, "13 hugues grade2") \
-    X(SONG_HURRIAN_DG,                  "14 hurrian dg") \
-    X(SONG_HURRIAN_WEST,                "15 hurrian west") \
-    X(SONG_KILMER,                      "16 kilmer") \
-    X(SONG_KOHLER_OP93_NO2_DUET_NO10_IN_F_SHARP_MINOR, "17 kohler op93 no2") \
+    X(SONG_KOHLER_OP93_NO2_DUET_NO10_IN_F_SHARP_MINOR, "3 kohler op93 no2") \
+    X(SONG_AUBER_MASANIELLO_MARKET_CHORUS_DUET, "4 auber masaniello") \
+    X(SONG_BEETHOVEN_FLUTE_DUO_IN_G_MAJOR_ALLEGRO_CON_BRIO, "5 beethoven allegr") \
+    X(SONG_BERBIGUIER_OP46_NO1_RONDO,   "6 berbiguier rondo") \
+    X(SONG_BLAVET_OP1_SONATA_NO2_II_ALLEGRO, "7 blavet allegro") \
+    X(SONG_BOIELDIEU_LE_PETIT_CHAPERON_ROUGE_LAURETTE_DUET, "8 boieldieu petit") \
+    X(SONG_CHOPIN_MAZURKA_OP7_NO1,      "9 chopin mazurka") \
+    X(SONG_DEVIENNE_24_DUOS_FACILES_NO20_ADAGIO, "10 devienne adagio") \
+    X(SONG_DEVIENNE_24_DUOS_FACILES_NO24_ALLEGRO, "11 devienne allegr") \
+    X(SONG_GARIBOLDI_ETUDES_MIGNONNES_NO3, "12 gariboldi no3") \
+    X(SONG_HUGUES_SCHOOL_OF_FLUTE_GRADE1_NO7, "13 hugues grade1") \
+    X(SONG_HUGUES_SCHOOL_OF_FLUTE_GRADE2_NO20, "14 hugues grade2") \
+    X(SONG_HURRIAN_DG,                  "15 hurrian dg") \
+    X(SONG_HURRIAN_WEST,                "16 hurrian west") \
+    X(SONG_KILMER,                      "17 kilmer") \
     X(SONG_MATTHESON_FLUTE_SONATA_NO11_IV_CHACONNE, "18 mattheson chaco") \
     X(SONG_SEIKILOS_EPITAPH,            "19 seikilos") \
     /* end */

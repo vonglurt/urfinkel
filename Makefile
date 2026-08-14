@@ -187,6 +187,14 @@ MIDBUDGET ?= 22200
 MIDS  = $(wildcard assets/midi/*.mid)
 MIDMML = $(TOOLS)/songs-midi.mml
 
+# WHAT ORDER THE PLAYER HEARS THEM IN, which the wildcard above must not be
+# allowed to decide.  It expands in filename order, so the rotation - and
+# with it the song the game opens on, since music.c starts at
+# BED_FIRST_SONG - was alphabetical by accident, and a deliberate ordering
+# survived only until the next `make music`.  midibed.py honours the order
+# it is given; this is where that order is written down.
+MIDORDER = $(TOOLS)/bed-order.txt
+
 music: $(SRC)/song.h
 
 # THESE TWO ARE COMMITTED GENERATED ARTEFACTS WHOSE SOURCES ARE ABSENT.
@@ -194,15 +202,18 @@ music: $(SRC)/song.h
 # with no .mid files this rule cannot re-derive them - and must not run
 # midibed.py with an empty input list, which is how it errored the moment
 # anything depended on it.  It says so and leaves the committed files alone.
-$(MIDMML) $(SRC)/song_beds.h: $(TOOLS)/midibed.py $(TOOLS)/mml.py $(MIDS)
+$(MIDMML) $(SRC)/song_beds.h: $(TOOLS)/midibed.py $(TOOLS)/mml.py $(MIDORDER) $(MIDS)
 	@if [ -z "$(strip $(MIDS))" ]; then \
 		echo "music: assets/midi is not in this repository, so the beds cannot"; \
 		echo "       be re-transcribed.  $(MIDMML) and $(SRC)/song_beds.h are"; \
 		echo "       committed as generated artefacts and are left as they are."; \
+		echo "       $(MIDORDER) governs their order when the assets are present;"; \
+		echo "       reordering here means editing those two files by hand."; \
 		touch $(MIDMML) $(SRC)/song_beds.h; \
 	else \
 		PYTHONPATH=$(TOOLS) $(PYTHON) $(TOOLS)/midibed.py $(MIDS) \
-			--budget=$(MIDBUDGET) --out=$(MIDMML) --beds=$(SRC)/song_beds.h; \
+			--budget=$(MIDBUDGET) --order=$(MIDORDER) \
+			--out=$(MIDMML) --beds=$(SRC)/song_beds.h; \
 	fi
 
 $(SRC)/song.h: $(TOOLS)/mml.py $(TOOLS)/songs.mml $(MIDMML)

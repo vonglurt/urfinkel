@@ -417,8 +417,8 @@ development tree rather than published here.
 
 ```
    assets/midi/*.mid ── midibed.py ──┐
-                        transcribe   │
-                        + pack to    ├─► tools/songs-midi.mml ─┐
+   tools/bed-order.txt  transcribe   │
+     (rotation order)   + pack to    ├─► tools/songs-midi.mml ─┐
                         a budget     │                         │
    tools/songs.mml ───────────────────────── the cues ─────────┤
       (hand-written)                                           │
@@ -451,8 +451,9 @@ VICE.
 `assets/midi/*.mid` and packs in as many as `MIDBUDGET` allows, then
 compiles those together with the hand-written cues in `tools/songs.mml`.
 Anything that will not fit is **named in the build log with its size** —
-adding a `.mid` can never silently overflow the machine. See
-[`music.md`](music.md) §4.
+adding a `.mid` can never silently overflow the machine. The order they
+play in comes from `tools/bed-order.txt` and not from the filenames; its
+first line is what the game opens on. See [`music.md`](music.md) §4.
 
 **`make music-budget`** prints what the last link actually left free, which
 is the only honest input to `MIDBUDGET`. Raise the budget only after

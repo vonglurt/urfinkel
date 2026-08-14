@@ -59,27 +59,27 @@ src/front.h          40aefbee851dbe130fd2d8add4be005cbf6d1053
 src/kbd.h            a924aadbd4ef2310fac715407ca76e0595ea6de6
 src/etch.h           cd0ce028ccb171d269543419729d620b731c950c
 src/dbg.h            c9496763834a35d98fa1f30feac3f9d7bef7bba6
-src/song.h           d6f1ef6d5242426ef72a46ab228e8678853d7f5b
+src/song.h           50b31147d889f1dce1d3d7e592b3fb1c8e224727
 
 ARTEFACTS
 ---------
 urfinkel.prg
-  size         56 511 bytes
-  md5          cda335969d2bcc86656c2195bfcc7489
-  sha256       1fb3da50609ae2aad5d245f7f2509b7d75bcad30a4d0842ccbac62e12b52d611
-  git blob     600cbceeb0b8e7e23d5387f202e1ce87de259407
+  size         56 510 bytes
+  md5          cb08c8af4ebb222417fd332adcda0baf
+  sha256       3f868033a717e81af8cb86087bfdf023096614a76a11bb008cc0c9f3439bc191
+  git blob     d373d2bbee8434115ef5bac6d2819b00e77a2950
 
 urfinkel.d64
   size         174 848 bytes
-  md5          0c7aebac80111cb3b9a5be16be5742d5
-  sha256       dd30ae9e3459fee200c79caa054b5528a567d54641cc7b5d984e6583a775d744
-  git blob     dfe863cc0f8fe82e3953e78fe2d7c511670dda97
+  md5          47ffc4bbca5e844494f076fc5694990f
+  sha256       de09c8773c6191a843f51e43236b1798fbe44f778b1941e2f6822722440a5548
+  git blob     78a7c890e6be37fbbf4e009918fcc8044f98703a
 
 urfinkel.zip
-  size         4 960 134 bytes
-  md5          3f2ec2a1c8087823a033153ff36fb8b6
-  sha256       3dcff64652b6c756e5903f4449745402a3789d1d5263c1e8a7ec5d9116daaed8
-  git blob     aeab6392c95de4dea8b00812bfd52112be8fd76e
+  size         4 960 100 bytes
+  md5          3bdf5541b37c3cf58d6204b4f8e9a2e7
+  sha256       06ad03c7e8c157419b6586729e0fcacdbb72c2e312cc516e939ca2c93e2c1446
+  git blob     d89d6752e4543916c39cda47798f482a53cfc7dd
 
 VERIFYING A DOWNLOAD
 --------------------

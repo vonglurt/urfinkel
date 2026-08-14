@@ -22,9 +22,9 @@ Right-click → Save Link As. Either file works; the `.prg` starts faster.
 
 | File | Bytes | MD5 | SHA-256 |
 |---|---:|---|---|
-| [urfinkel.prg](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg) | 56 511 | `cda335969d2bcc86656c2195bfcc7489` | `1fb3da50609ae2aad5d245f7f2509b7d75bcad30a4d0842ccbac62e12b52d611` |
-| [urfinkel.d64](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64) | 174 848 | `0c7aebac80111cb3b9a5be16be5742d5` | `dd30ae9e3459fee200c79caa054b5528a567d54641cc7b5d984e6583a775d744` |
-| [urfinkel.zip](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip) | 4 960 134 | `3f2ec2a1c8087823a033153ff36fb8b6` | `3dcff64652b6c756e5903f4449745402a3789d1d5263c1e8a7ec5d9116daaed8` |
+| [urfinkel.prg](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg) | 56 510 | `cb08c8af4ebb222417fd332adcda0baf` | `3f868033a717e81af8cb86087bfdf023096614a76a11bb008cc0c9f3439bc191` |
+| [urfinkel.d64](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64) | 174 848 | `47ffc4bbca5e844494f076fc5694990f` | `de09c8773c6191a843f51e43236b1798fbe44f778b1941e2f6822722440a5548` |
+| [urfinkel.zip](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip) | 4 960 100 | `3bdf5541b37c3cf58d6204b4f8e9a2e7` | `06ad03c7e8c157419b6586729e0fcacdbb72c2e312cc516e939ca2c93e2c1446` |
 
 Built **2026-08-13** — the date the program stamps on its own menu, so a
 download can be identified from the machine without unpacking it.
@@ -59,9 +59,9 @@ point `shasum` and `md5sum` at.
 
 | File | Git blob SHA-1 | Last changed by |
 |---|---|---|
-| urfinkel.prg | `600cbceeb0b8e7e23d5387f202e1ce87de259407` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.prg) |
-| urfinkel.d64 | `dfe863cc0f8fe82e3953e78fe2d7c511670dda97` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.d64) |
-| urfinkel.zip | `aeab6392c95de4dea8b00812bfd52112be8fd76e` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.zip) |
+| urfinkel.prg | `d373d2bbee8434115ef5bac6d2819b00e77a2950` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.prg) |
+| urfinkel.d64 | `78a7c890e6be37fbbf4e009918fcc8044f98703a` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.d64) |
+| urfinkel.zip | `d89d6752e4543916c39cda47798f482a53cfc7dd` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.zip) |
 
 The blob SHA is git's own address for that content — reproduce it with
 `git hash-object build/urfinkel.prg`, and it is the object GitHub serves
@@ -116,7 +116,7 @@ two players with real lots, URBOT demo), a rules screen, the opening
 ceremony, tumbling tetrahedral lots, the full Finkel ruleset, URBOT
 narrating its doctrine turn by turn, the waist plaques, a colour picker
 with a live preview, and a victory that pours a gold trophy and engraves
-the winner's name into its bowl — in <!-- PRGSIZE:START -->**56 511 bytes**<!-- PRGSIZE:END -->, against 25 681 for
+the winner's name into its bowl — in <!-- PRGSIZE:START -->**56 510 bytes**<!-- PRGSIZE:END -->, against 25 681 for
 the BASIC edition. Thirty thousand of those are code and twenty-six
 thousand read-only data, most of it transcribed music. The compiled
 program is more than twice the size; the speed bought animation, a music
@@ -528,6 +528,7 @@ stopped rather than one that is merely wrong.
 | `tools/mml.py`, `tools/songs.mml` | the music notation and its compiler |
 | `tools/viceshot.py` | headless screenshots that verify the program actually ran |
 | `tools/midibed.py`, `tools/songs-midi.mml` | transcribes `assets/midi` into song data, capped by `MIDBUDGET` |
+| `tools/bed-order.txt` | the rotation order, first line first — what plays when the game opens |
 | `tools/bedtrim.py` | trims the beds for the traced build, so `make debug` fits without the game losing music |
 | `tools/mmlstat.py`, `tools/anim.py` | bench instruments: what the songs cost, and one animation in isolation |
 | `tools/checksums.sh` | the one place sizes and hashes are produced — writes the sidecars, `CHECKSUMS.txt`, and the generated blocks in this file, `INSTALL.md` and the play page |

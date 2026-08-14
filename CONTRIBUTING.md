@@ -153,7 +153,10 @@ the rebuilt binary with it.
 
 Note that `assets/midi/` is not published here; `src/song.h` ships generated,
 so the game builds without it, but the transcribed songs cannot be
-regenerated from a clean checkout.
+regenerated from a clean checkout. `tools/bed-order.txt` sets the order the
+beds play in and is honoured whenever the assets *are* present — but with
+them absent, reordering means editing the committed `tools/songs-midi.mml`
+and `src/song_beds.h` by hand to match it, and rebuilding with `make music`.
 
 ## Style
 

@@ -312,6 +312,26 @@ The bed list is **generated** into `src/song_beds.h` as an X-macro, so
 `music.c` takes the song ids and `game.c` takes the menu labels from one
 list and neither keeps a copy to forget to update.
 
+### 4.0c The rotation order, which is a decision
+
+`tools/bed-order.txt` is one song name per line, in the order the player
+hears them, and `midibed.py` sorts its sources by it before anything else
+happens. **The first line is the song the game opens on** — `music.c` starts
+at `BED_FIRST_SONG`, so the rotation is running from the first bar of the
+first match without anybody pressing `m`.
+
+It exists because the Makefile hands `midibed.py` a `$(wildcard)`, which
+expands in filename order. That made the rotation alphabetical *by accident*,
+and it undid any deliberate ordering on the next `make music`. The list is
+kept by song name rather than by filename so that renaming a source does not
+silently reshuffle the game, and it is reviewable without `assets/midi`,
+which is not published here.
+
+The list does not decide what is transcribed — every `.mid` is still
+converted and still measured against `MIDBUDGET`. A source it does not name
+plays after the ones it does, in filename order, and a name with no source is
+reported the same way; both go in the build log rather than passing quietly.
+
 ### 4.0 On the two Hurrian readings
 
 The tablet from Ugarit (c. 1400 BCE) is the oldest complete composition we

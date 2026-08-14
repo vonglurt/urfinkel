@@ -1,0 +1,41 @@
+# The rotation order, which is a decision and not a side effect.
+#
+# WHY THIS FILE EXISTS.  midibed.py honours the order it is given, and it
+# used to be given `$(wildcard assets/midi/*.mid)` - so the order the player
+# hears was whatever the filenames happened to sort to, and any deliberate
+# ordering was undone by the next `make music`.  The first entry matters
+# most: music.c opens on BED_FIRST_SONG, so line one below is what plays
+# from the first bar of the first match without anybody pressing a key.
+#
+# ONE SONG NAME PER LINE, in rotation order.  The name is what midibed.py
+# makes of the filename - lower case, every run of non-alphanumerics folded
+# to a single underscore - so `Holst 12 Divertimentos No1.mid` is
+# holst_12_divertimentos_no1.  Blank lines and # comments are ignored.
+#
+# THIS LIST DOES NOT DECIDE WHAT IS TRANSCRIBED, only what order it goes in.
+# Every .mid in assets/midi is still converted and still measured against
+# MIDBUDGET.  A source that is not named here plays after the ones that are,
+# in filename order, and `make music` says so rather than letting it slip
+# quietly onto the end.  A name here with no such source is reported the
+# same way; it is not an error, because this list outliving a .mid by a
+# commit or two is not worth failing a build over.
+
+holst_12_divertimentos_no1
+bach_polonaise_in_g_minor_bwv_anh125
+kohler_op93_no2_duet_no10_in_f_sharp_minor
+auber_masaniello_market_chorus_duet
+beethoven_flute_duo_in_g_major_allegro_con_brio
+berbiguier_op46_no1_rondo
+blavet_op1_sonata_no2_ii_allegro
+boieldieu_le_petit_chaperon_rouge_laurette_duet
+chopin_mazurka_op7_no1
+devienne_24_duos_faciles_no20_adagio
+devienne_24_duos_faciles_no24_allegro
+gariboldi_etudes_mignonnes_no3
+hugues_school_of_flute_grade1_no7
+hugues_school_of_flute_grade2_no20
+hurrian_dg
+hurrian_west
+kilmer
+mattheson_flute_sonata_no11_iv_chaconne
+seikilos_epitaph
