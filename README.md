@@ -562,5 +562,5 @@ document and is not published here; it stays in the development tree.
 MIT — see [LICENSE](LICENSE). Copyright (c) 2026 Paul Richeson.
 
 Written by **Paul Richeson** — [`vonglurt`](https://github.com/vonglurt) on
-GitHub. Contact: Paul Richeson. The handle is the publishing name; the
+GitHub, which is where to raise anything. The handle is the publishing name; the
 copyright holder is the person.
