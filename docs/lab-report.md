@@ -1,6 +1,6 @@
 # From Interpreter to Compiler: Migrating UR ROYAL from Commodore BASIC 3.5 to Compiled 6502 on a Restored Commodore Plus/4
 
-**Author:** Paul Richeson ([vonglurt](https://github.com/vonglurt)) — contact: paulr@sdf.org
+**Author:** Paul Richeson ([vonglurt](https://github.com/vonglurt))
 **Date:** August 2026
 **License:** MIT (see `LICENSE`)
 **Project:** `urfinkel` — the compiled edition of the Royal Game of Ur (Finkel ruleset)

@@ -1,6 +1,6 @@
 # The Keyboard Path in UR FINKEL: Trace, Hierarchy, and a Measured Fault
 
-**Author:** Paul Richeson ([vonglurt](https://github.com/vonglurt)) — contact: paulr@sdf.org
+**Author:** Paul Richeson ([vonglurt](https://github.com/vonglurt))
 **Date:** August 2026
 **License:** MIT (see `LICENSE`)
 **Project:** `urfinkel` — the compiled edition of the Royal Game of Ur
