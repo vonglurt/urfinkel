@@ -46,7 +46,7 @@ Save Link As. Either file works; the `.prg` starts faster.
 |---|---:|---|---|
 | [urfinkel.prg](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg) | 57 076 | `c920d3b3d3163ad26f3a83281bfba48c` | `90befdac8e33610d0a099d77d25161e0b7675ed6769becb90fce71d9e499716d` |
 | [urfinkel.d64](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64) | 174 848 | `4b05814e54be3dae5e940d7297e4d829` | `f3f64e899530804ceee193ef1abb3c4f6153d1af1cdfc35703844a34590f7d6b` |
-| [urfinkel.zip](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip) | 4 964 604 | `c02accc1fd0e885df2e43d13f3ef4f21` | `f7edf00eb230d1b1edc72f75cf9e5901b154bdd7987f0c3a2334aa3f19d766d4` |
+| [urfinkel.zip](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip) | 4 965 512 | `73e0d54c7e3057bc3da51dc295b62a45` | `448a7d4ef2d2ab1560aa0ce109be35eadb4f5ffd268e773b698f80de4399f70c` |
 
 Version **2026.09.2711** — the build stamp the program draws on its own menu, so a
 download can be identified from the machine without unpacking it.
@@ -83,7 +83,7 @@ point `shasum` and `md5sum` at.
 |---|---|---|
 | urfinkel.prg | `10fada121b48ea2dd5d2c0c613ed8d8aa7bc1284` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.prg) |
 | urfinkel.d64 | `a51beb35765e3c1f772f1c404d3ef0f692470cf5` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.d64) |
-| urfinkel.zip | `3caa38384268cd0e159ddb24ab5289ae15c68da7` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.zip) |
+| urfinkel.zip | `120e5e0749bcb2bdfc5f4a2b3752c6f0f19404dd` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.zip) |
 
 The blob SHA is git's own address for that content — reproduce it with
 `git hash-object build/urfinkel.prg`, and it is the object GitHub serves
