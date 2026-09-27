@@ -22,11 +22,11 @@ Right-click → Save Link As. Either file works; the `.prg` starts faster.
 
 | File | Bytes | MD5 | SHA-256 |
 |---|---:|---|---|
-| [urfinkel.prg](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg) | 56 510 | `cb08c8af4ebb222417fd332adcda0baf` | `3f868033a717e81af8cb86087bfdf023096614a76a11bb008cc0c9f3439bc191` |
-| [urfinkel.d64](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64) | 174 848 | `47ffc4bbca5e844494f076fc5694990f` | `de09c8773c6191a843f51e43236b1798fbe44f778b1941e2f6822722440a5548` |
-| [urfinkel.zip](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip) | 4 960 100 | `3bdf5541b37c3cf58d6204b4f8e9a2e7` | `06ad03c7e8c157419b6586729e0fcacdbb72c2e312cc516e939ca2c93e2c1446` |
+| [urfinkel.prg](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg) | 56 518 | `61de9debaa158e83dda53162316fc0cf` | `033e9cafbc0fcaa59eb51d3fdb864ed19e4506a0399c61309a044e03bdc2de8b` |
+| [urfinkel.d64](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64) | 174 848 | `cb96524101d034bf2e43fca9d9109488` | `c8ec6d9a825223e14d50ed24220a19354626f316b79f518be99e8bd63242fb97` |
+| [urfinkel.zip](https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip) | 4 960 398 | `d4a04ef066e3cb588888c390eb5ccba3` | `b711f5c1cee91643dc7d5809384b8c7b2369241bec9d7c613dac524af4f28f5b` |
 
-Built **2026-08-13** — the date the program stamps on its own menu, so a
+Built **2026-09-27** — the date the program stamps on its own menu, so a
 download can be identified from the machine without unpacking it.
 
 ### Verifying a download
@@ -59,9 +59,9 @@ point `shasum` and `md5sum` at.
 
 | File | Git blob SHA-1 | Last changed by |
 |---|---|---|
-| urfinkel.prg | `d373d2bbee8434115ef5bac6d2819b00e77a2950` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.prg) |
-| urfinkel.d64 | `78a7c890e6be37fbbf4e009918fcc8044f98703a` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.d64) |
-| urfinkel.zip | `d89d6752e4543916c39cda47798f482a53cfc7dd` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.zip) |
+| urfinkel.prg | `c8bc614cafb9a69549c82b6b3e9cfc436f985b80` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.prg) |
+| urfinkel.d64 | `a49712239de4ee05ce4ca8607c476dcdec99c065` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.d64) |
+| urfinkel.zip | `68c2a5293b3b6ad06f9a362b1729b9412c0cf5f1` | [commits touching this file](https://github.com/vonglurt/urfinkel/commits/main/build/urfinkel.zip) |
 
 The blob SHA is git's own address for that content — reproduce it with
 `git hash-object build/urfinkel.prg`, and it is the object GitHub serves
@@ -116,7 +116,7 @@ two players with real lots, URBOT demo), a rules screen, the opening
 ceremony, tumbling tetrahedral lots, the full Finkel ruleset, URBOT
 narrating its doctrine turn by turn, the waist plaques, a colour picker
 with a live preview, and a victory that pours a gold trophy and engraves
-the winner's name into its bowl — in <!-- PRGSIZE:START -->**56 510 bytes**<!-- PRGSIZE:END -->, against 25 681 for
+the winner's name into its bowl — in <!-- PRGSIZE:START -->**56 518 bytes**<!-- PRGSIZE:END -->, against 25 681 for
 the BASIC edition. Thirty thousand of those are code and twenty-six
 thousand read-only data, most of it transcribed music. The compiled
 program is more than twice the size; the speed bought animation, a music
