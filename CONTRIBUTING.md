@@ -162,6 +162,34 @@ beds play in and is honoured whenever the assets *are* present — but with
 them absent, reordering means editing the committed `tools/songs-midi.mml`
 and `src/song_beds.h` by hand to match it, and rebuilding with `make music`.
 
+## Making a release
+
+A release is the version stamped on the menu — `yyyy.mm.ddHH`, taken from the
+committed `build/urfinkel.prg` — and it is cut in three steps:
+
+1. **Write the notes** in `docs/releases/next.md` and commit it. `__VERSION__`
+   in them becomes the version, and the first line becomes the release's
+   title. Do not write hashes; they are added for you.
+2. **Push.** A release is of a commit that is on GitHub, and `make release`
+   refuses anything else.
+3. **Run `make release`, then `make publish`.**
+
+`make release` works from a fresh checkout of the pushed commit and writes
+nothing back into the repository: it rebuilds the `.prg` and `.d64` and
+requires them byte-identical to the committed ones, builds the offline zip
+twice and requires the two identical, hashes all three once into
+`SHA256SUMS` and `MD5SUMS`, writes the full notes, and signs and pushes the
+tag. The result is `build/release/<version>/`. `DRYRUN=1 make release` does
+all of that except the tag, to check a release before cutting it.
+
+`make publish` uploads that folder as the GitHub release and downloads every
+file back to check it against `SHA256SUMS`. It needs a GitHub token with
+**Contents: read and write** on this repository, in `$GH_TOKEN` or in
+`~/.config/urfinkel-gh-token`.
+
+Afterwards, keep the notes as `docs/releases/<version>.md` and empty
+`next.md` for the release after.
+
 ## Style
 
 Match the file you are editing. The comments in this codebase explain *why* a
