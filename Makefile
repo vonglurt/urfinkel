@@ -22,9 +22,22 @@ PYTHON ?= python3
 # see stage_floor in front.c.  Date only: a time would change every build
 # and make every .prg differ, which would defeat `make conform` telling you
 # whether anything actually changed.
-BUILD_DATE := $(shell date +%Y-%m-%d)
+# THE BUILD STAMP IS THE RELEASE VERSION: yyyy.mm.ddHH, the hour included,
+# so two releases on one day are two versions.  front.c draws it on the
+# menu, the release is tagged with it, and the tools read it back out of the
+# binary - accepting the older yyyy-mm-dd too, so a build published before
+# the change still verifies.
+BUILD_DATE := $(shell date +%Y.%m.%d%H)
 
-CC65FLAGS = -t plus4 -Osir -Cl -DBUILD_DATE='"$(BUILD_DATE)"'
+# THE C STACK IS 1.5 KB, NOT cc65's 2 KB.  The program is full: MIDBUDGET
+# packs the music until the ROM is, and its sources are not here to repack
+# (see MIDBUDGET below).  The bear-off display needed 338 bytes against 329
+# free.  The stack is the one reservation with room in it - sampled across
+# whole demo matches it never went twenty bytes below the top, and a soak
+# with a watch on everything past the top 256 bytes of it saw nothing
+# written there - so 512 bytes of it went to the game.  No heap: nothing
+# calls malloc, so nothing else lives between BSS and the stack.
+CC65FLAGS = -t plus4 -Osir -Cl -Wl -D,__STACKSIZE__=0x0600 -DBUILD_DATE='"$(BUILD_DATE)"'
 
 BUILD  = build
 SRC    = src
@@ -362,6 +375,24 @@ run: $(DISK)
 TSPEED ?= 200
 run200: $(DISK)
 	$(VICEENV) $(XPLUS4) -speed $(TSPEED) -autostart $(DISK)
+
+# --- the moving pictures -----------------------------------------------
+# `make media` records the game's big moments - the title, a throw, a move,
+# a capture, a piece borne off, the win, the fireworks - as GIFs in docs/media, and
+# writes the page's gallery of them between the MEDIA markers in
+# docs/index.html.  tools/record.py says how: breakpoints on the functions
+# that ARE those moments, then a screenshot a frame.  The build is the game
+# with a short attract timeout, so the URBOT demo starts at once, and with
+# labels, which is what the breakpoints are set from.  Not part of `all` or
+# of the hooks: it takes minutes, and the GIFs are artefacts to refresh when
+# a moment changes, not something every commit should redraw.
+MEDIAFLAGS ?= -DATTRACT_FRAMES=250
+
+media: $(BUILD)/media.prg
+	$(PYTHON) $(TOOLS)/record.py $(BUILD)/media.prg $(BUILD)/media.lbl docs/media docs/index.html README.md
+
+$(BUILD)/media.prg: $(SRC)/game.c $(CORE) $(HDRS) | $(BUILD)
+	$(CL65) $(CC65FLAGS) $(MEDIAFLAGS) -g -Ln $(BUILD)/media.lbl -o $@ $(SRC)/game.c $(CORE)
 
 # --- smoke test ----------------------------------------------------------
 # Boot the game, let the attract timeout start the URBOT demo on its own,

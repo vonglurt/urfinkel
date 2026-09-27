@@ -101,6 +101,16 @@ unsigned char count_at_home (unsigned char player)
     return n;
 }
 
+unsigned char pips_to_go (unsigned char player)
+{
+    unsigned char* mine = piece[player];
+    unsigned char  j, n = 0;
+
+    for (j = 1; j <= PIECES; ++j)
+        n = (unsigned char)(n + (SQ_HOME - mine[j]));
+    return n;
+}
+
 unsigned char count_in_pool (unsigned char player)
 {
     unsigned char* mine = piece[player];

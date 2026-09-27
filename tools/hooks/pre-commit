@@ -4,7 +4,7 @@
 # the rebuilt binaries.
 #
 # WHY REBUILD RATHER THAN COMPARE.  The Makefile stamps the program with
-# `date +%Y-%m-%d`, so the same sources built on two different days are
+# `date +%Y.%m.%d%H`, so the same sources built in two different hours are
 # byte-different on purpose - the build date is drawn on the menu.  A hook
 # that checked "does the committed .prg match a fresh build" would therefore
 # fail every morning for a reason that is not a defect.  This one makes the

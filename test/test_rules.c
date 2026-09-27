@@ -103,6 +103,30 @@ int main (void)
         if (c->mover) ++deferred;
     }
 
+    /* The race count shown on a goal.  Not a table row: it is a census,
+    ** not a move, so it is checked on three positions written out here. */
+    {
+        static const struct { const char* name; unsigned char a[PIECES]; unsigned char pips; }
+        pip[] = {
+            { "pips: all in the pool",      { 0, 0, 0, 0, 0, 0, 0 }, 105 },
+            { "pips: all home",             { 15,15,15,15,15,15,15 },  0 },
+            { "pips: a race under way",     { 15,15, 14, 8, 4, 1, 0 }, 0+0+1+7+11+14+15 },
+        };
+        unsigned int k, ok = 0;
+
+        for (k = 0; k < sizeof pip / sizeof pip[0]; ++k) {
+            unsigned char got;
+            for (j = 0; j < PIECES; ++j) piece[0][j + 1] = pip[k].a[j];
+            got = pips_to_go (0);
+            if (got == pip[k].pips) { ++ok; printf ("  pass %s\n", pip[k].name); }
+            else {
+                printf ("  FAIL %-30s pips %u, expected %u\n", pip[k].name, got, pip[k].pips);
+                ++failed;
+            }
+        }
+        printf ("\n%u of %zu pip-count checks passed\n", ok, sizeof pip / sizeof pip[0]);
+    }
+
     printf ("\n%u of %zu generator checks passed\n", passed, NCHECKS);
     printf ("%u executor assertions deferred until move.c lands\n", deferred);
 

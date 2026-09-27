@@ -34,6 +34,11 @@
 #define MODE_DEMO       4
 #define MODE_RULES      5
 
+/* Against the machine: URBOT is player one, on the top band, and the human
+** player two, on the bottom one - the far and near sides of the table. */
+#define BOT_SIDE        0
+#define HUMAN_SIDE      1
+
 /* Two minutes at 50 Hz.  Overridable at compile time so the smoke test can
 ** reach gameplay without waiting out the real thing:
 **     make test SMOKEFLAGS=-DATTRACT_FRAMES=250 */
@@ -59,16 +64,24 @@
 ** every turn - got the other ten rows and one and a half.  A capture and
 ** a win now take the whole apron (etch.h) and the clock to go with it.
 **
-** The one that did NOT grow is `home`. It happens up to fourteen times a
-** match and the reason to keep it small is the same reason to make the
-** other two large: a game where everything is an event has no events. */
+** AND THEN THE BALANCE WAS TURNED ROUND, on playing it.  A capture happens
+** several times a match and four seconds of fire each time was a wait, so
+** it is now as short as the burn will go.  A piece coming home is the
+** thing the whole race is for, so it got twice as long.  And the win - once
+** a match - gets fireworks for five minutes. */
 #define ETCH_ROW        17      /* mid casting floor, clear between throws */
 #define BIG_WIN_ROW     16      /* the winner's name, under its two lines  */
-#define ETCH_HOME       80      /* a bear-off: one row, and briefly        */
-#define BURN_CAPTURE    190     /* the apron alight, nearly four seconds   */
+#define BEAR_CUT        70      /* a bear-off: the laser writes the rule   */
+#define BEAR_CUT2       40      /* ...on two lines - it cuts 24 at a time  */
+#define BEAR_BIG        100     /* then "n home" in block letters          */
+#define BEAR_HOLD       90      /* and the race count, to be read          */
+#define BEAR_ROW        APRON_TOP       /* the laser's line                */
+#define BEAR_BIG_ROW    16      /* the block letters, rows 16-20           */
+#define BEAR_STAT_ROW   22      /* the two sides' counts, rows 22 and 23   */
+#define BURN_CAPTURE    60      /* the apron alight - burn_apron's floor  */
 #define ETCH_WIN        200     /* the name cut across the apron, four     */
 #define WIN_HOLD        60      /* and standing, before the cup covers it  */
-#define FIREWORK_LEN    250     /* five seconds, a shell every eleven frames*/
+#define FIREWORK_LEN    15000U  /* five MINUTES, a shell every eleven frames*/
 #define ETCH_INTRO      250     /* five, under the trumpets                */
 
 #define ETCH_MODE       80      /* cutting the chosen mode's name          */
@@ -77,8 +90,8 @@
 #define MODE_HOLD       45      /* a beat to read it before the curtain    */
 
 #define DEMO_CUP_HOLD   120     /* the unattended look at the cup - shorter
-                                ** than it was, because the five seconds of
-                                ** fireworks now come first                */
+                                ** than it was, because the fireworks now
+                                ** come first                              */
 #define SWEEP_PACE      6       /* a step of the turn flare, x6           */
 #define BEAT_READ       30      /* long enough to read a line that matters */
 #define BEAT_NOTE       25      /* a passing remark - a rosette, a tie     */
@@ -1002,15 +1015,37 @@ static void setup (unsigned char replay)
 
     TED_BGCOLOR = CBYTE (0, 0);
     screen_fill (CH_SPACE, 0);
+
+    /* URBOT IS PLAYER ONE, AND IT SITS ON TOP.  Against the machine the
+    ** human used to be player one on the top band, with URBOT under them.
+    ** It is the other way round now: the machine holds the far side of the
+    ** board and the person at the keyboard the near one, as across a real
+    ** table.  The only thing that knows which side is URBOT's is BOT_SIDE. */
+    if (mode == MODE_VS_BOT) {
+        names[BOT_SIDE][0] = 'u'; names[BOT_SIDE][1] = 'r';
+        names[BOT_SIDE][2] = 'b'; names[BOT_SIDE][3] = 'o';
+        names[BOT_SIDE][4] = 't'; names[BOT_SIDE][5] = 0;
+        text_put (2, 2, "player two, your name:", CBYTE (7, 1));
+        input_line (2, 4, names[HUMAN_SIDE], 8);
+        if (!names[HUMAN_SIDE][0]) { names[HUMAN_SIDE][0] = 'e'; names[HUMAN_SIDE][1] = 'n';
+                                     names[HUMAN_SIDE][2] = 'a'; names[HUMAN_SIDE][3] = 0; }
+        player_name[0] = names[0];
+        player_name[1] = names[1];
+
+        colour_pick (HUMAN_SIDE);
+        player_hue[BOT_SIDE] = (unsigned char)(player_hue[HUMAN_SIDE] + 7);
+        if (player_hue[BOT_SIDE] > 16) player_hue[BOT_SIDE] -= 15;
+        if (player_hue[BOT_SIDE] < 2)  player_hue[BOT_SIDE] = 2;
+        player_lum[BOT_SIDE] = LUM_PICK_MAX;    /* URBOT obeys the same band */
+        return;
+    }
+
     text_put (2, 2, "player one, your name:", CBYTE (7, 1));
     input_line (2, 4, names[0], 8);
     if (!names[0][0]) { names[0][0] = 'e'; names[0][1] = 'n';
                         names[0][2] = 'a'; names[0][3] = 0; }
 
-    if (mode == MODE_VS_BOT) {
-        names[1][0] = 'u'; names[1][1] = 'r'; names[1][2] = 'b';
-        names[1][3] = 'o'; names[1][4] = 't'; names[1][5] = 0;
-    } else {
+    {
         text_put (2, 6, "player two, your name:", CBYTE (7, 1));
         input_line (2, 8, names[1], 8);
         if (!names[1][0]) { names[1][0] = 'd'; names[1][1] = 'u';
@@ -1022,14 +1057,7 @@ static void setup (unsigned char replay)
     player_name[1] = names[1];
 
     colour_pick (0);
-    if (mode == MODE_VS_BOT) {
-        player_hue[1] = (unsigned char)(player_hue[0] + 7);
-        if (player_hue[1] > 16) player_hue[1] -= 15;
-        if (player_hue[1] < 2)  player_hue[1] = 2;
-        player_lum[1] = LUM_PICK_MAX;   /* URBOT obeys the same band */
-    } else {
-        colour_pick (1);
-    }
+    colour_pick (1);
 }
 
 /* The opening ceremony: four lots each, higher hand opens, ties re-thrown.
@@ -1066,6 +1094,46 @@ static void opening_throw (void)
     say_line ();
     wait_frames_live (BEAT_NOTE);
     floor_wipe ();
+}
+
+/* One side's line of the race count: name, pieces home, pips to go. */
+static void bear_stat (unsigned char cp, unsigned char y)
+{
+    ln_reset ();
+    ln_str (names[cp]);
+    ln_str ("  ");
+    ln_num (count_at_home (cp));
+    ln_str (" of 7 home  ");
+    ln_num (pips_to_go (cp));
+    ln_str (" pips to go");
+    text_centre (y, ln_buf, CBYTE (player_lum[cp], (unsigned char)(player_hue[cp] - 1)));
+}
+
+/* A PIECE IS BORNE OFF.  The laser writes what just happened in the words
+** of the rule - bear them off the board to your home - across the whole
+** line, and then the count is cut in block letters the size WINNER is cut
+** at: "1 home", "6 home", the number this piece has just made.  A piece
+** home is the thing the race is for, so it gets the machinery a win gets,
+** only shorter.
+**
+** Then the score of the race, both sides, so the moment says where it
+** stands: how many are home out of seven, and how far each side still has
+** to travel.  The mover's line comes first, in their colour. */
+static void bear_off (unsigned char cp)
+{
+    static char count[] = "0 home";
+
+    count[0] = (char)('0' + count_at_home (cp));
+    rows_fill (APRON_TOP, APRON_BOT, CH_SPACE, 0);
+    /* Two lines, because the laser cuts at most ETCH_CHS - 24 - characters
+    ** at a time, and the rule is 36.  Row 15 is free between the two. */
+    etch_text ("bear them off the board", BEAR_ROW, BEAR_CUT);
+    etch_text ("to your home", (unsigned char)(BEAR_ROW + 1), BEAR_CUT2);
+    etch_word (count, BEAR_BIG_ROW, BEAR_BIG);
+    bear_stat (cp, BEAR_STAT_ROW);
+    bear_stat ((unsigned char)(cp ^ 1), (unsigned char)(BEAR_STAT_ROW + 1));
+    wait_frames_live (BEAR_HOLD);
+    apron_clear ();
 }
 
 /* One match.  Returns 1 when the same players want another. */
@@ -1164,7 +1232,7 @@ static unsigned char play (unsigned char replay)
             continue;
         }
 
-        if (mode == MODE_DEMO || (mode == MODE_VS_BOT && turn == 1)) {
+        if (mode == MODE_DEMO || (mode == MODE_VS_BOT && turn == BOT_SIDE)) {
             DBG_ENTER (DBG_BOT, "think");
             pick = urbot_choose (turn);
             DBG_LEAVE ();
@@ -1194,16 +1262,21 @@ static unsigned char play (unsigned char replay)
             ** log can repaint itself from its own buffer, so the most
             ** violent thing in the game costs nothing except the time,
             ** which is the one thing it should cost. */
+            /* A QUARTER OF WHAT IT WAS.  190 frames of fire and a 25
+            ** frame hold came to 4.3 s for something that happens several
+            ** times a match; it is now burn_apron's own minimum and no
+            ** hold, 1.2 s.  Sixty is the floor because below it the
+            ** ignition and the cooling collide and the word never finishes
+            ** burning - so this is as short as the effect goes without
+            ** being a different effect. */
             burn_apron ("captured", BURN_CAPTURE);
-            wait_frames_live (BEAT_NOTE);       /* the word left standing  */
             apron_clear ();
             ln_reset (); ln_str (names[turn]); ln_str (" captures a foe on ");
             ln_num (to); say_line ();
         }
         if (to == SQ_HOME) {
             sfx (SFX_HOME);
-            etch_text ("home", ETCH_ROW, ETCH_HOME);
-            floor_wipe ();
+            bear_off (turn);
             ln_reset (); ln_str ("piece "); ln_num (pick); ln_str (" of ");
             ln_str (names[turn]); ln_str (" is home"); say_line ();
         }

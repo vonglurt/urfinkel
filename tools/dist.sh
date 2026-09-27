@@ -63,7 +63,7 @@ done
 stamp=$(python3 -c "
 import re,sys
 d=open('$BUILD/urfinkel.prg','rb').read()
-m=re.search(rb'20\d\d-\d\d-\d\d',d)
+m=re.search(rb'20\d\d\.\d\d\.\d{4}|20\d\d-\d\d-\d\d',d)
 sys.stdout.write(m.group().decode() if m else '')
 ")
 [ -n "$stamp" ] || { echo "dist: no build stamp in $BUILD/urfinkel.prg" >&2; exit 1; }
@@ -449,7 +449,16 @@ PY
 # --------------------------------------------------------------- reproduce
 # One mtime for everything, taken from the build rather than from the clock.
 # Run after the source and the index are staged, so those files are stamped too.
-find "$DIST" -exec touch -t "$(echo "$stamp" | tr -d '-')0000" {} +
+# touch -t wants YYYYMMDDhhmm.  The stamp is yyyy.mm.ddHH - ten digits once
+# the dots go, the hour included - or, for a build from before that, the
+# eight of yyyy-mm-dd; either is padded out to the minute.
+digits=$(echo "$stamp" | tr -dc '0-9')
+case ${#digits} in
+    10) digits="${digits}00" ;;
+    8)  digits="${digits}0000" ;;
+    *)  echo "dist: cannot read a date out of stamp '$stamp'" >&2; exit 1 ;;
+esac
+find "$DIST" -exec touch -t "$digits" {} +
 
 # LC_ALL=C so the sort is byte order rather than whatever the locale thinks,
 # which is what keeps the member order the same on someone else's machine.

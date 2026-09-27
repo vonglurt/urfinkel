@@ -8,7 +8,7 @@
 # what a clean build of the pushed sources emits.
 #
 # THE DATE STAMP IS HANDLED RATHER THAN IGNORED.  The Makefile stamps the
-# program with `date +%Y-%m-%d`, so a naive rebuild-and-compare would differ
+# program with `date +%Y.%m.%d%H` (once `+%Y-%m-%d`), so a naive rebuild-and-compare would differ
 # every day in ten bytes and prove nothing. The stamp is stored as plain ASCII
 # in the binary, so it is read back OUT of the commit's own .prg and fed to
 # make as BUILD_DATE. The comparison is then total: every byte must match,
@@ -67,7 +67,7 @@ git show HEAD:build/urfinkel.d64 > "$tmp/pushed.d64"
 stamp=$(python3 -c "
 import re,sys
 d=open('$tmp/pushed.prg','rb').read()
-m=re.search(rb'20\d\d-\d\d-\d\d',d)
+m=re.search(rb'20\d\d\.\d\d\.\d{4}|20\d\d-\d\d-\d\d',d)
 sys.stdout.write(m.group().decode() if m else '')
 ")
 

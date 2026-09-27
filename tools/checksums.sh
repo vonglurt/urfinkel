@@ -180,15 +180,16 @@ size_of() { wc -c < "$1" | tr -d ' '; }
 # 56511 -> "56 511", matching how every other byte count in the prose is set.
 group() { echo "$1" | sed -e :a -e 's/\(.*[0-9]\)\([0-9]\{3\}\)/\1 \2/;ta'; }
 
-# The Makefile compiles `date +%Y-%m-%d` into the program and front.c draws it
-# on the cabinet, so the binary carries its own build date as plain ASCII.
+# The Makefile compiles the version - `date +%Y.%m.%d%H`, and `%Y-%m-%d` before
+# that - into the program and the menu draws it, so the binary carries its own
+# version as plain ASCII.
 # Reading it back out is how pre-push identifies a build; the same trick names
 # the build here rather than trusting today's clock, which would be a lie for
 # any file that was not rebuilt just now.
 stamp=$(python3 -c "
 import re,sys
 d=open('build/urfinkel.prg','rb').read()
-m=re.search(rb'20\d\d-\d\d-\d\d',d)
+m=re.search(rb'20\d\d\.\d\d\.\d{4}|20\d\d-\d\d-\d\d',d)
 sys.stdout.write(m.group().decode() if m else '')
 ")
 [ -n "$stamp" ] || { echo "checksums: no build stamp in build/urfinkel.prg" >&2; exit 1; }
@@ -306,7 +307,7 @@ machine=$(field target | sed -e 's/^[^(]*(//' -e 's/)$//')
             "$(digest md5 "$f")" "$(digest sha256 "$f")"
     done
     echo
-    printf 'Built **%s** — the date the program stamps on its own menu, so a\n' "$stamp"
+    printf 'Version **%s** — the build stamp the program draws on its own menu, so a\n' "$stamp"
     echo "download can be identified from the machine without unpacking it."
     echo
     echo "### Verifying a download"
@@ -377,7 +378,7 @@ machine=$(field target | sed -e 's/^[^(]*(//' -e 's/)$//')
         tag "$b" | while IFS= read -r t; do
             [ -z "$t" ] || printf '    <span class="tag">%s</span>\n' "$t"
         done
-        printf '    <span class="what">%s — %s bytes — built <b>%s</b></span>\n' \
+        printf '    <span class="what">%s — %s bytes — version <b>%s</b></span>\n' \
             "$(what "$b" "$machine")" "$(group "$(size_of "$f")")" "$stamp"
         # The address the button goes to, spelled out.  A button hides where it
         # leads, and this is a file someone may want to fetch with curl or wget,

@@ -263,6 +263,9 @@ from the repository.">
   .shots img { width: 100%; aspect-ratio: 4 / 3; height: auto;
                image-rendering: pixelated; border: 1px solid #3a2f16; }
   .shots figcaption { font-size: .75rem; color: #b3a179; margin-top: .35rem; }
+  /* The recorded moments are the page's best argument for the game, so they
+     get more room than the stills: two to a row on a laptop, one on a phone. */
+  .shots.moving { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
   ul { padding-left: 1.2rem; }
   li { margin-bottom: .4rem; }
 
@@ -614,7 +617,8 @@ C and 6502 assembly for the Commodore Plus/4.</p>
   <a class="card" href="#video">
     <span class="pip">🎬</span>
     <b>Watch it run</b>
-    <span class="say">The game running on real hardware.</span>
+    <span class="say">The game running on real hardware, and its big
+    moments recorded.</span>
   </a>
   <a class="card" href="#project">
     <span class="pip">🛠</span>
@@ -662,35 +666,35 @@ check it arrived whole.</p>
 <ul class="dl">
   <li id="dl-prg">
     <a class="file prg" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 1.5h6l3 3v10h-9z"/><path d="M9.5 1.5v3h3"/><path d="M5.5 8.5 7 10l-1.5 1.5M8.5 11.5h2"/></svg><span>urfinkel.prg</span></a>
-    <span class="what">the program alone, for the Commodore Plus/4 — 56 518 bytes — built <b>2026-09-27</b></span>
+    <span class="what">the program alone, for the Commodore Plus/4 — 57 076 bytes — version <b>2026.09.2711</b></span>
     <span class="use">Drag it onto VICE, YAPE or plus4emu. It starts faster than the disk image — there is no directory to read first.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg</a>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>033e9cafbc0fcaa59eb51d3fdb864ed19e4506a0399c61309a044e03bdc2de8b</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg.sha256">urfinkel.prg.sha256</a></dd>
-      <dt>MD5</dt><dd><code>61de9debaa158e83dda53162316fc0cf</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg.md5">urfinkel.prg.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>90befdac8e33610d0a099d77d25161e0b7675ed6769becb90fce71d9e499716d</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg.sha256">urfinkel.prg.sha256</a></dd>
+      <dt>MD5</dt><dd><code>c920d3b3d3163ad26f3a83281bfba48c</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.prg.md5">urfinkel.prg.md5</a></dd>
     </dl>
   </li>
   <li id="dl-d64">
     <a class="file d64" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 1.5h10l3 3v10h-13z"/><path d="M4.5 1.5h6v4h-6zM4.5 9.5h7v5h-7z"/></svg><span>urfinkel.d64</span></a>
-    <span class="what">a disk image, for the Commodore Plus/4 — 174 848 bytes — built <b>2026-09-27</b></span>
+    <span class="what">a disk image, for the Commodore Plus/4 — 174 848 bytes — version <b>2026.09.2711</b></span>
     <span class="use">Put it on an SD2IEC or a Pi1541, mount it as a disk, then <code>dload"urfinkel"</code>. Desktop emulators open it directly.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64</a>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>c8ec6d9a825223e14d50ed24220a19354626f316b79f518be99e8bd63242fb97</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64.sha256">urfinkel.d64.sha256</a></dd>
-      <dt>MD5</dt><dd><code>cb96524101d034bf2e43fca9d9109488</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64.md5">urfinkel.d64.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>f3f64e899530804ceee193ef1abb3c4f6153d1af1cdfc35703844a34590f7d6b</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64.sha256">urfinkel.d64.sha256</a></dd>
+      <dt>MD5</dt><dd><code>4b05814e54be3dae5e940d7297e4d829</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.d64.md5">urfinkel.d64.md5</a></dd>
     </dl>
   </li>
   <li id="dl-zip">
     <a class="file zip" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip" download><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 4.8 8 1.7l6.5 3.1v6.4L8 14.3l-6.5-3.1z"/><path d="M1.5 4.8 8 8l6.5-3.2M8 8v6.3"/></svg><span>urfinkel.zip</span></a>
     <span class="tag">plays offline on a PC</span>
     <span class="tag">full source included</span>
-    <span class="what">the whole collection, zipped — 4 960 398 bytes — built <b>2026-09-27</b></span>
+    <span class="what">the whole collection, zipped — 4 964 604 bytes — version <b>2026.09.2711</b></span>
     <span class="use">Unpack it anywhere. Holds the program, the disk image, the whole C and 6502 source tree, this page with a script that serves it on your own machine, the licence, and notes — including the exact <code>cl65</code> command that rebuilds the binary byte-for-byte from the source beside it. The emulator comes too, so the browser copy plays with nothing plugged in.</span>
     <a class="path" href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip">https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip</a>
     <span class="fine">Fully offline: the game, the emulator and the page all come out of the folder — nothing is fetched from anywhere. It has to be <b>served rather than opened directly</b>, because a <code>file://</code> page may not read the files beside it: run <code>./start-html.sh</code>. The emulator in <code>emulatorjs/</code> is EmulatorJS, GPL-3.0 and not part of UR FINKEL — see <code>emulatorjs/SOURCE.txt</code>. <code>index.html</code> beside it is the same page taking the emulator from its CDN instead, which is always the current version.</span>
     <dl class="sums">
-      <dt>SHA-256</dt><dd><code>b711f5c1cee91643dc7d5809384b8c7b2369241bec9d7c613dac524af4f28f5b</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
-      <dt>MD5</dt><dd><code>d4a04ef066e3cb588888c390eb5ccba3</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
+      <dt>SHA-256</dt><dd><code>f7edf00eb230d1b1edc72f75cf9e5901b154bdd7987f0c3a2334aa3f19d766d4</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.sha256">urfinkel.zip.sha256</a></dd>
+      <dt>MD5</dt><dd><code>c02accc1fd0e885df2e43d13f3ef4f21</code> — <a href="https://github.com/vonglurt/urfinkel/raw/main/build/urfinkel.zip.md5">urfinkel.zip.md5</a></dd>
     </dl>
   </li>
 </ul>
@@ -754,6 +758,29 @@ exact command — is in <a href="https://github.com/vonglurt/urfinkel/blob/main/
 </div>
 <p class="sub">A demonstration of the game running on a Commodore Plus/4 —
 also on <a href="https://youtu.be/Cw-SaWI046o">YouTube</a>.</p>
+
+<h2 id="moments">IN MOTION</h2>
+<p class="sub">Recorded from the game itself, running its own URBOT demo in
+VICE - <code>make media</code> makes these and the gallery around them.</p>
+<!-- MEDIA:START -->
+<!-- Generated by tools/record.py (make media) - do not edit between these markers. -->
+<div class="shots moving">
+  <figure><img loading="lazy" decoding="async" src="media/01-curtain.gif" alt="Theatre curtains drawing back from the UR FINKEL menu">
+    <figcaption>The cabinet: the curtains open on the menu.</figcaption></figure>
+  <figure><img loading="lazy" decoding="async" src="media/02-throw.gif" alt="Four tetrahedral lots tumbling across the casting floor">
+    <figcaption>The four lots tumble and land.</figcaption></figure>
+  <figure><img loading="lazy" decoding="async" src="media/03-move.gif" alt="A piece gliding along the board">
+    <figcaption>A piece travels, one character cell at a time.</figcaption></figure>
+  <figure><img loading="lazy" decoding="async" src="media/04-capture.gif" alt="CAPTURED in block letters over a bed of flame">
+    <figcaption>A capture: CAPTURED burns in and goes out.</figcaption></figure>
+  <figure><img loading="lazy" decoding="async" src="media/05-home.gif" alt="The laser writing bear them off the board to your home, then 1 HOME in block letters, then both sides' pieces home and pips to go">
+    <figcaption>A piece borne off: the laser writes the rule, then the count in block letters, then the race.</figcaption></figure>
+  <figure><img loading="lazy" decoding="async" src="media/06-victory.gif" alt="The winner's name in block letters, then a gold trophy">
+    <figcaption>The win: the border flares and the winner's name is cut across the screen.</figcaption></figure>
+  <figure><img loading="lazy" decoding="async" src="media/07-fireworks.gif" alt="Fireworks bursting over the trophy, the border flashing">
+    <figcaption>Then fireworks, for five minutes, or until a key.</figcaption></figure>
+</div>
+<!-- MEDIA:END -->
 
 <h2 id="controls">CONTROLS</h2>
 <table>

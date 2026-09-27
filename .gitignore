@@ -23,3 +23,6 @@ build/*
 !build/*.md5
 !build/CHECKSUMS.txt
 !build/urfinkel.zip
+
+# Python bytecode, from tools/record.py being imported by a harness
+__pycache__/

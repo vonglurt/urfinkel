@@ -925,9 +925,21 @@ void glide (unsigned char x0, unsigned char y0,
     DBG_BOUND (DBG_BRD, "gl0y", y0, SCR_H);
     for (i = 1; i <= steps; ++i) {
         /* Integer interpolation, rounded - a straight line between the two
-        ** cells rather than an L-shaped hop. */
-        sx = (unsigned char)(x0 + (signed char)(((signed int)dx * i + (dx < 0 ? -(signed int)steps/2 : (signed int)steps/2)) / steps));
-        sy = (unsigned char)(y0 + (signed char)(((signed int)dy * i + (dy < 0 ? -(signed int)steps/2 : (signed int)steps/2)) / steps));
+        ** cells rather than an L-shaped hop.
+        **
+        ** EVERY OPERAND IS CAST TO signed int, AND THAT IS THE FIX FOR A
+        ** CRASH.  With `i` and `steps` left as unsigned char, cc65 2.18
+        ** compiles this with its UNSIGNED multiply and divide (tosumula0,
+        ** tosudiva0), so a move up or left - a negative dy or dx - divides
+        ** -27 as 65509 and lands 45 rows off the screen.  rowtab has 25
+        ** entries; the row past them is whatever follows it in BSS, and the
+        ** piece and its colour were written straight into the program's
+        ** own code.  Square 12 to 13 goes five rows straight up, which
+        ** is how it was caught.  Nothing noticed until the menu ran the code that
+        ** had been overwritten - stage_clear, then wait_frames - and the
+        ** machine JAMmed on the intro after a win or a loss.  Issue #2. */
+        sx = (unsigned char)(x0 + (signed char)(((signed int)dx * (signed int)i + (dx < 0 ? -(signed int)steps/2 : (signed int)steps/2)) / (signed int)steps));
+        sy = (unsigned char)(y0 + (signed char)(((signed int)dy * (signed int)i + (dy < 0 ? -(signed int)steps/2 : (signed int)steps/2)) / (signed int)steps));
 
         r       = rowtab[sy] + sx;
         keep_ch = *r;

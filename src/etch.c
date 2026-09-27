@@ -7,6 +7,7 @@
 #include "board.h"
 #include "text.h"
 #include "etch.h"
+#include "kbd.h"                        /* kbd_get: a key ends the fireworks */
 
 extern unsigned char scr_code (unsigned char c);
 
@@ -586,11 +587,18 @@ static void fw_draw (unsigned char site, unsigned char t)
     ** the burst instead of ten loose dots, which matters here more than
     ** usual: ten cells lit at once on a forty column screen is not a
     ** firework, and two rings of ten is. */
+    /* EVERY OPERAND signed int, including r.  Left as an unsigned char,
+    ** cc65 2.18 multiplies and divides unsigned (tosumula0, tosudiva0),
+    ** so a negative offset came out tens of thousands of cells away and
+    ** the bounds test below threw it out: the particles bound left and up
+    ** - half of every ring - were never drawn.  The same defect in glide
+    ** wrote into the program's code (board.c, issue #2); here the bounds
+    ** test kept it to a lopsided burst. */
     for (i = 0; i < FW_PARTS; ++i) {
-        x = (signed int)cx + ((signed int)fw_dx[i] * r) / 8;
+        x = (signed int)cx + ((signed int)fw_dx[i] * (signed int)r) / 8;
         /* Gravity: the fall accelerates, so the ring becomes a teardrop
         ** the way a real burst does. */
-        y = (signed int)ay + ((signed int)fw_dy[i] * r) / 8
+        y = (signed int)ay + ((signed int)fw_dy[i] * (signed int)r) / 8
             + (signed int)(((unsigned int)tb * tb) / 40);
         if (x >= 0 && x < SCR_W && y >= 0 && y < SCR_H)
             borrow ((unsigned char)x, (unsigned char)y,
@@ -598,8 +606,8 @@ static void fw_draw (unsigned char site, unsigned char t)
                     CBYTE (lum, hue));
 
         if (r < 6) continue;            /* nothing behind it yet           */
-        x = (signed int)cx + ((signed int)fw_dx[i] * (r - 3)) / 8;
-        y = (signed int)ay + ((signed int)fw_dy[i] * (r - 3)) / 8
+        x = (signed int)cx + ((signed int)fw_dx[i] * ((signed int)r - 3)) / 8;
+        y = (signed int)ay + ((signed int)fw_dy[i] * ((signed int)r - 3)) / 8
             + (signed int)(((unsigned int)tb * tb) / 40);
         if (x < 0 || x >= SCR_W || y < 0 || y >= SCR_H) continue;
         borrow ((unsigned char)x, (unsigned char)y, CH_SPARK,
@@ -607,9 +615,13 @@ static void fw_draw (unsigned char site, unsigned char t)
     }
 }
 
-void fireworks (unsigned char frames)
+/* The interrupt's frame counter (irq.s), bumped fifty times a second. */
+extern volatile unsigned char music_frames;
+
+void fireworks (unsigned int frames)
 {
-    unsigned char t, k, gap = 0, site = 0, flash = 0, keep;
+    unsigned int  gone = 0;             /* real frames, not loop passes   */
+    unsigned char k, live, gap = 0, site = 0, flash = 0, keep, was;
     unsigned char sh_t[FW_LIVE];        /* age, or 255 for an empty slot  */
     unsigned char sh_s[FW_LIVE];        /* which site it is going off at  */
 
@@ -618,11 +630,20 @@ void fireworks (unsigned char frames)
     keep = (unsigned char)(TED_BORDER & 0x7F);
     for (k = 0; k < FW_LIVE; ++k) sh_t[k] = 255;
 
-    for (t = 0; t < frames; ++t) {
-        /* Launch, unless there is no longer room for a whole shell inside
-        ** the budget - the display has to be OVER when the caller's time
-        ** is up, not cut off mid-burst. */
-        if (gap == 0 && (unsigned int)t + FW_LIFE <= (unsigned int)frames) {
+    /* TIMED BY THE CLOCK, NOT BY THE LOOP.  This counted passes of the loop
+    ** as frames, and a pass is not a frame: three shells of ten particles,
+    ** each a signed multiply and a divide or two, cost four to ten frames
+    ** once the sky is full.  So "250 frames, five seconds" ran for half a
+    ** minute, and the five minutes asked of it ran for thirty-two -
+    ** measured, 97 000 frames.  Now the interrupt's own frame counter is
+    ** the clock: shells launch until `frames` of real time have gone, and
+    ** the display ends when the last of them has burnt out, so it is never
+    ** cut off mid-burst.  The shells still age a step a pass, so a busy sky
+    ** slows down rather than skipping - which reads as a firework hanging,
+    ** and is kinder than a jump. */
+    was = music_frames;
+    for (;;) {
+        if (gap == 0 && gone < frames) {
             for (k = 0; k < FW_LIVE; ++k) {
                 if (sh_t[k] != 255) continue;
                 sh_t[k] = 0;
@@ -634,8 +655,10 @@ void fireworks (unsigned char frames)
         }
         if (gap) --gap;
 
+        live = 0;
         for (k = 0; k < FW_LIVE; ++k) {
             if (sh_t[k] == 255) continue;
+            ++live;
             /* THE ROOM LIGHTS UP.  A forty column screen cannot show the
             ** glow of a burst on everything around it; the border can. */
             if (sh_t[k] == FW_RISE) {
@@ -649,6 +672,19 @@ void fireworks (unsigned char frames)
 
         wait_frames_live (1);
         give_back ();
+
+        k = music_frames;
+        gone += (unsigned char)(k - was);
+        was = k;
+        if (gone >= frames && !live) break;
+
+        /* ANY KEY ENDS THEM.  Five minutes is a display to leave running,
+        ** not one to be held hostage by.  wait_frames_live has just scanned
+        ** the matrix and give_back has just restored every borrowed cell,
+        ** so stopping here leaves the screen exactly as a full run would.
+        ** The key is consumed, so it cannot also answer the prompt that
+        ** follows. */
+        if (kbd_get ()) break;
     }
     TED_BORDER = keep;
 }

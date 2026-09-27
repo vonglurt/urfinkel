@@ -60,6 +60,12 @@ unsigned char count_at_home (unsigned char player);
 unsigned char count_in_pool (unsigned char player);
 unsigned char count_afield (unsigned char player);
 
+/* The race count: how far that side's pieces still have to travel, summed.
+** A piece in the pool has all fifteen steps to go and one at home has none,
+** so a side starts on 105 and has won at 0.  It fits a char because seven
+** pieces times fifteen does. */
+unsigned char pips_to_go (unsigned char player);
+
 void reset_board (void);
 
 #endif

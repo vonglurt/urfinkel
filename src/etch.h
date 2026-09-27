@@ -177,7 +177,9 @@ void burn_apron (const char* s, unsigned char frames);
 ** can light the room up.
 **
 ** Runs for `frames` and leaves the screen, and the border, exactly as it
-** found them: every cell is borrowed and given back. */
-void fireworks (unsigned char frames);
+** found them: every cell is borrowed and given back.  `frames` is an int
+** because the victory runs them for five minutes, and a char stops at
+** five seconds.  Any key ends them early. */
+void fireworks (unsigned int frames);
 
 #endif
