@@ -291,6 +291,14 @@ from the repository.">
     scroll-margin-top: 1.5rem;
   }
   .downloads p.dl { margin-bottom: 1.4rem; font-size: .85rem; color: var(--moss-dim); }
+  /* The stable release comes first and stands apart from the build on main:
+     it is what most people should take, and the one a bug report can name. */
+  .downloads .stable { border: 1px solid var(--moss-mid); padding: 1rem 1rem .2rem;
+                       margin: 0 0 1.6rem; }
+  .downloads .stable p { font-size: .9rem; color: var(--moss-dim); margin: 0 0 .8rem; }
+  .downloads .stable strong { color: var(--moss); letter-spacing: .04em; }
+  .downloads .stable a { color: var(--moss); }
+  .downloads .stable .get { display: flex; flex-wrap: wrap; gap: .6rem; }
   .downloads p.dl strong { color: var(--moss); letter-spacing: .06em; }
   /* What to do with this one, under the button it belongs to. Ruled off on
      the left so it reads as instruction rather than as more description. */
@@ -634,7 +642,24 @@ C and 6502 assembly for the Commodore Plus/4.</p>
 </div>
 
 <section class="downloads" id="downloads">
-<p class="dl"><strong>Downloads</strong> — four ways to take it away. Each
+<div class="stable" id="stable">
+  <p><strong>Stable release: <a href="https://github.com/vonglurt/urfinkel/releases/tag/2026.09.2711">2026.09.2711</a></strong>
+  — the first release, after a round of bug fixes and play testing. The
+  silent second music voice (<a href="https://github.com/vonglurt/urfinkel/issues/1">#1</a>)
+  and the crash after a win or a loss (<a href="https://github.com/vonglurt/urfinkel/issues/2">#2</a>)
+  were found by players, and both are fixed. This is the version to download.</p>
+  <p class="get">
+    <a class="file prg" href="https://github.com/vonglurt/urfinkel/releases/latest/download/urfinkel.prg" download>urfinkel.prg</a>
+    <a class="file d64" href="https://github.com/vonglurt/urfinkel/releases/latest/download/urfinkel.d64" download>urfinkel.d64</a>
+    <a class="file zip" href="https://github.com/vonglurt/urfinkel/releases/latest/download/urfinkel.zip" download>urfinkel.zip</a>
+  </p>
+  <p class="sub">These always fetch the newest stable release. Every release, with
+  its notes and checksums, is on <a href="https://github.com/vonglurt/urfinkel/releases">the releases page</a>; the menu shows
+  the version, so you can tell which one you are running.</p>
+</div>
+
+<p class="dl"><strong>The build from main</strong> — the newest build, which
+can be ahead of the stable release. Four ways to take it away. Each
 card goes to the file it names; clicking a binary there saves it, while the
 checksum files open in the browser so you can save one beside the download and
 check it arrived whole.</p>
