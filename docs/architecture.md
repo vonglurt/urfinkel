@@ -97,8 +97,10 @@ $0C00-$0FFF   screen matrix        (40x25, screen codes)
 $1001-$6E90   program: STARTUP, LOWCODE, CODE
 $6E9F-$8260   RODATA              <-- crosses $8000
 $8261-$86E3   DATA, INIT, BSS     <-- entirely above $8000
-$86E4-$F500   free
-$F500-$FD00   2 KB software stack, growing down from __HIMEM__
+$86E4-$F700   free
+$F700-$FD00   1.5 KB software stack, growing down from __HIMEM__
+              (cc65's default is 2 KB; the Makefile gives 512 bytes of it
+              to the program, which is full - measured use never passes 256)
 $D000/$D400   character ROM: upper-case/graphics, lower-case
 $FF00-$FF1F   TED registers
 ```

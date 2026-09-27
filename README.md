@@ -151,8 +151,9 @@ same list.
 
 **It plays, inside a cabinet.** Boot lands on a theatre front — frieze
 bands, three rails of chasing lamps, a proscenium — and the curtains open
-on a royal fanfare to reveal the menu. Four modes (vs URBOT, two players,
-two players with real lots, URBOT demo), a rules screen, the opening
+on a royal fanfare to reveal the menu. Four modes (vs URBOT, where the
+machine is player one on the far side of the board and you play from the
+near side; two players; two players with real lots; URBOT demo), a rules screen, the opening
 ceremony, tumbling tetrahedral lots, the full Finkel ruleset, URBOT
 narrating its doctrine turn by turn, the waist plaques, a colour picker
 with a live preview, and a victory that pours a gold trophy and engraves
@@ -196,19 +197,28 @@ envelope, with `captured` standing over it in block letters four columns
 wide and five deep. The letters do not change colour — they *ignite*,
 each cell morphing through a speck, a lump of flame, a solid block and
 back out again, and the ignition climbs from the bottom row upward
-because that is where the fire is. Four seconds.
+because that is where the fire is. It is over in a little over a second:
+it happens several times a match, and at four seconds, as it first was,
+it was a wait.
 
 ![CAPTURED in block letters over a bed of flame across the bottom of the
 screen](docs/media/05-capture.png)
 
 *A capture takes rows 14–24 — the casting floor and the chronicle both.*
 
+A piece borne off gets the same stage. The laser writes the rule — *bear
+them off the board / to your home* — and then the count is cut in block
+letters, *1 home* up to *7 home*, the number that piece has just made.
+Under it, both sides' race: pieces home out of seven, and the pips each
+side still has to travel.
+
 A win gets the winner's name cut by the laser at the same size — eight
 letters at a five-column pitch is thirty-nine of the forty columns, and
 eight is the length of the name field, which is where the size came
 from — then the gold cup, then a firework display with three shells in
-the air at once and the border flashing each burst's own hue. Twelve
-seconds, and the only twelve seconds in the match nobody is in a hurry.
+the air at once and the border flashing each burst's own hue. The
+fireworks run for five minutes, timed by the clock, and any key ends
+them: it is the one moment in the match nobody is in a hurry.
 
 ![A gold trophy with the winner's name engraved in the bowl, fireworks
 behind it](docs/media/06-victory.png)

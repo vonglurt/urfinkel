@@ -107,14 +107,21 @@ git config core.hooksPath tools/hooks
 It runs `make clean && make && make disk`, runs `make check`, and stages the
 result — about a second and a half. A failing test refuses the commit.
 `URFINKEL_CONFORM=1 git commit …` adds `make conform`, which is left out by
-default only because it drives an emulator. `git commit --no-verify` skips the
-lot, which is reasonable for a documentation change and nothing else.
+default only because it drives an emulator. A documentation change goes
+through it like any other; `git commit --no-verify` is not needed for one.
 
 It **rebuilds and stages** rather than checking that the committed binary
-already matched, and that is deliberate: the Makefile stamps the program with
-`date +%Y-%m-%d` and draws it on the menu, so the same sources built on two
-different days are byte-different on purpose. A comparison would fail every
-morning for a reason that is not a defect.
+already matched. The Makefile stamps the program with its version —
+`yyyy.mm.ddHH`, from the clock — and draws it on the menu, so the same
+sources built in two different hours are byte-different on purpose.
+
+**The version moves only when the program does.** The hook first rebuilds at
+the version already committed. If the `.prg` and `.d64` come out
+byte-identical, nothing about the program changed and that version stands —
+so a README fix does not restamp the game. Only if the bytes differ does it
+rebuild with a new stamp. It asks the bytes rather than a list of files, so a
+Makefile edit that only adds a target cannot bump the version, and a real
+change cannot fail to.
 
 There is a `pre-push` hook as well, and it *does* compare — exactly. It reads
 the build stamp back out of the binary being pushed, rebuilds clean at that
