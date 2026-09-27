@@ -665,6 +665,21 @@ void music_song (unsigned char which, unsigned char loop)
     /* A written song drives voice 2 note by note from song_frame, so the
     ** bed's second arpeggio must stand down or both would write $FF0F. */
     arp2_len = 0;
+    /* VOICE 1 PLAYS STEP 0 OF THE FIGURE TABLE, AND STEP 0 MUST BE OPEN.
+    **
+    ** song_frame hands the interrupt each melody note as a one-step figure
+    ** - arp_lo[0], arp_len = 1 - and the interrupt still consults the gate
+    ** for that step.  Nothing on the song side ever wrote arp_gate[0]; only
+    ** the generated bed did, as a side effect of building its bar.  So from
+    ** a cold boot, where the gate table is zeroed BSS, voice 1 was closed on
+    ** every tick and every written song played with one part missing until
+    ** somebody pressed `m` as far as "the bed" and back.
+    **
+    ** And the sync puts the interrupt's step index back to 0, which a bed
+    ** can leave anywhere up to 15: without it the song's first note waits
+    ** up to a sixteenth while a stale step of the bed's figure sounds. */
+    arp_gate[0] = 1;
+    arp_sync    = 1;
     hold_level ();
     last_frame = music_frames;
 #endif
