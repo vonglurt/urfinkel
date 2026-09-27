@@ -75,7 +75,15 @@ PRGBEGIN='<!-- PRGSIZE:START -->'
 PRGEND='<!-- PRGSIZE:END -->'
 REPO=https://github.com/vonglurt/urfinkel
 
-FILES="build/urfinkel.prg build/urfinkel.d64 build/urfinkel.zip"
+# THE ZIP IS NOT HERE.  It used to be committed and hashed on main, and it
+# carries the play page - so every edit to the page gave it a new hash, which
+# had to be written back into the page, the README and three sidecars.  It is
+# a release artefact now: tools/release.sh builds it once, from the tagged
+# commit, hashes it once into the release's SHA256SUMS, and publishes it.
+# main describes only what main holds, and what main holds changes only when
+# the program does.
+FILES="build/urfinkel.prg build/urfinkel.d64"
+RELDL=$REPO/releases/latest/download
 ALGOS="sha256 md5"
 
 # What each artefact is, in the words the play page already used for it.  The
@@ -307,6 +315,10 @@ machine=$(field target | sed -e 's/^[^(]*(//' -e 's/)$//')
             "$(digest md5 "$f")" "$(digest sha256 "$f")"
     done
     echo
+    printf 'The offline collection, [urfinkel.zip](%s/urfinkel.zip), is published with\n' "$RELDL"
+    printf 'each stable release rather than kept here; its hashes are in that release'"'"'s\n'
+    printf '[SHA256SUMS](%s/SHA256SUMS).\n' "$RELDL"
+    echo
     printf 'Version **%s** — the build stamp the program draws on its own menu, so a\n' "$stamp"
     echo "download can be identified from the machine without unpacking it."
     echo
@@ -396,6 +408,22 @@ machine=$(field target | sed -e 's/^[^(]*(//' -e 's/)$//')
         echo '    </dl>'
         echo '  </li>'
     done
+    # The zip, from the latest stable release: no size or digest here, because
+    # it is not on main and they belong to the release that published it.
+    printf '  <li id="dl-%s">\n' "$(kind urfinkel.zip)"
+    printf '    <a class="file %s" href="%s/urfinkel.zip" download>%s<span>%s</span></a>\n' \
+        "$(kind urfinkel.zip)" "$RELDL" "$(icon urfinkel.zip)" urfinkel.zip
+    tag urfinkel.zip | while IFS= read -r t; do
+        [ -z "$t" ] || printf '    <span class="tag">%s</span>\n' "$t"
+    done
+    printf '    <span class="what">%s — from the latest stable release</span>\n' \
+        "$(what urfinkel.zip "$machine")"
+    printf '    <span class="use">%s</span>\n' "$(use urfinkel.zip)"
+    printf '    <a class="path" href="%s/urfinkel.zip">%s/urfinkel.zip</a>\n' "$RELDL" "$RELDL"
+    echo '    <dl class="sums">'
+    printf '      <dt>SHA-256</dt><dd>published with the release — <a href="%s/SHA256SUMS">SHA256SUMS</a></dd>\n' "$RELDL"
+    echo '    </dl>'
+    echo '  </li>'
     echo '</ul>'
     echo '<p class="verify">To check a download arrived intact, save'
     echo 'its <code>.sha256</code> beside it and run <code>shasum -a 256 -c'

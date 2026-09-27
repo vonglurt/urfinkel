@@ -17,7 +17,8 @@
 # loads: a stale one is a visitor's problem, not a developer's.
 #
 # Install:  git config core.hooksPath tools/hooks
-# Bypass:   git commit --no-verify        (for a docs-only commit in a hurry)
+# Bypass:   git commit --no-verify        (not needed for docs: a commit that
+#           does not change the program keeps its version)
 
 set -e
 
@@ -34,11 +35,47 @@ if ! command -v cl65 >/dev/null 2>&1; then
     exit 1
 fi
 
+# THE VERSION MOVES ONLY WHEN THE PROGRAM DOES.  The stamp is the version,
+# and it used to be taken from the clock on every commit - so a typo fixed in
+# the README restamped identical code as a new version, and the only way
+# round it was --no-verify.
+#
+# So the rebuild tries the version already committed first.  If the program
+# and disk image come out byte-identical to the committed ones, nothing about
+# the program changed and that version stands.  Only if the bytes differ is
+# it rebuilt with a new stamp from the clock.  Asking the bytes rather than
+# a list of "program inputs" means a Makefile edit that only adds a target,
+# or a comment in a header, cannot bump the version, and a real change
+# cannot fail to.
+kept=""
+if git rev-parse -q --verify HEAD >/dev/null &&
+   git cat-file -e HEAD:build/urfinkel.prg 2>/dev/null; then
+    kept=$(git show HEAD:build/urfinkel.prg | python3 -c "
+import re,sys
+m=re.search(rb'20\d\d\.\d\d\.\d{4}|20\d\d-\d\d-\d\d',sys.stdin.buffer.read())
+sys.stdout.write(m.group().decode() if m else '')
+")
+fi
+
+# The offline zip is not built here: it is a release artefact (tools/release.sh).
 echo "pre-commit: clean rebuild..."
-make clean  >/dev/null
-make        >/dev/null
-make disk   >/dev/null
-make dist   >/dev/null
+make clean >/dev/null
+if [ -n "$kept" ]; then
+    make      BUILD_DATE="$kept" >/dev/null
+    make disk BUILD_DATE="$kept" >/dev/null
+    if git show HEAD:build/urfinkel.prg | cmp -s - build/urfinkel.prg &&
+       git show HEAD:build/urfinkel.d64 | cmp -s - build/urfinkel.d64; then
+        echo "pre-commit: the program is unchanged - it stays version $kept"
+    else
+        echo "pre-commit: the program changed - new version"
+        make clean >/dev/null
+        kept=""
+    fi
+fi
+if [ -z "$kept" ]; then
+    make      >/dev/null
+    make disk >/dev/null
+fi
 
 echo "pre-commit: host tests..."
 if ! make check >/tmp/urfinkel-check.$$ 2>&1; then
@@ -94,9 +131,7 @@ tools/checksums.sh
 git add build/urfinkel.prg build/urfinkel.d64
 git add build/urfinkel.prg.sha256 build/urfinkel.prg.md5
 git add build/urfinkel.d64.sha256 build/urfinkel.d64.md5
-git add build/urfinkel.zip.sha256 build/urfinkel.zip.md5
 git add build/CHECKSUMS.txt
-git add build/urfinkel.zip
 
 for f in $GENERATED; do
     case " $clean_before " in

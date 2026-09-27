@@ -22,7 +22,11 @@ build/*
 !build/*.sha256
 !build/*.md5
 !build/CHECKSUMS.txt
-!build/urfinkel.zip
+# The offline zip is a release artefact, built and hashed once by
+# tools/release.sh and published with the release - not kept on main, where
+# every edit to the play page it carries gave it a new hash.
+build/urfinkel.zip.sha256
+build/urfinkel.zip.md5
 
 # Python bytecode, from tools/record.py being imported by a harness
 __pycache__/

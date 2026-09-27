@@ -15,10 +15,14 @@ you first.
 `build/` and `vendor/` are both generated, and a commit that edits either by
 hand will be rejected by the push gate rather than merged.
 
-- **`build/`** — the binaries, their checksum sidecars, `CHECKSUMS.txt` and the
-  two collections. `make checksums` produces every number in them, and the
+- **`build/`** — the program and disk image, their checksum sidecars and
+  `CHECKSUMS.txt`. `make checksums` produces every number in them, and the
   same script writes the generated blocks in `README.md`, `INSTALL.md` and
-  `docs/index.html`. Change a source file, not a published figure.
+  `docs/index.html`. Change a source file, not a published figure. The
+  offline zip is not kept here: `make release` builds it, hashes it once and
+  publishes it with a stable release. A commit that does not change the
+  program keeps its version - the pre-commit hook rebuilds at the committed
+  stamp first and only takes a new one if the bytes differ.
 - **`vendor/emulatorjs/`** — **somebody else's code, under a different
   licence.** EmulatorJS is GPL-3.0 and the Plus/4 core inside it is VICE,
   GPL-2.0-or-later; this project is MIT. It is copied in verbatim so the

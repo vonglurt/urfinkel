@@ -611,22 +611,42 @@ buildinfo:
 	@printf 'headers\t%s\n' '$(HDRS)'
 
 # The downloadable collection: the program, the disk image, an offline copy of
-# the play page, a script to serve it, the licence and a page of notes.  Both
-# archives are built to be byte-reproducible, because their hashes are
-# committed and pre-push checks them - see the header of tools/dist.sh.
+# the play page, a script to serve it, the licence and a page of notes.  Built
+# byte-reproducible - see the header of tools/dist.sh.  It is NOT committed:
+# it carries the play page, so it changed with every edit to the page.  It is
+# built by `make release`, once, from the tagged commit.
 dist: $(GAME) $(DISK)
 	@$(TOOLS)/dist.sh
 
-checksums: $(GAME) $(DISK) dist
+# main's published hashes: the .prg and the .d64, nothing that the page feeds.
+checksums: $(GAME) $(DISK)
 	@$(TOOLS)/checksums.sh
 
-checksums-check: $(GAME) $(DISK) dist
+checksums-check: $(GAME) $(DISK)
 	@$(TOOLS)/checksums.sh --check
+
+# --- a stable release ----------------------------------------------------
+# One pass, in one order, from a clean checkout of the commit being
+# released: rebuild and prove the .prg and .d64 are the committed ones, build
+# the zip twice and prove it reproduces, hash all three ONCE into SHA256SUMS,
+# write the notes, sign and push the tag.  Nothing it computes is written back
+# into the repository, so nothing it hashes can change after it hashed it.
+# The version is the stamp in the committed .prg.  RELNOTES is the
+# hand-written part of the notes.  See tools/release.sh.
+RELNOTES ?= docs/releases/next.md
+
+release:
+	@$(TOOLS)/release.sh "$(RELNOTES)"
+
+# Upload what `make release` built to GitHub.  Needs a token in
+# ~/.config/urfinkel-gh-token - see tools/publish-release.py.
+publish:
+	@$(PYTHON) $(TOOLS)/publish-release.py
 
 clean:
 	rm -rf $(BUILD)
 
 .PHONY: all debug debug-shot kbtest card-probe music check run run200 test \
-        anim anim-run buildinfo dist checksums checksums-check \
+        anim anim-run buildinfo dist checksums checksums-check release publish media \
         hooks hooks-off \
         conform disk card card-eject clean kbdiag kbdiag-shot
