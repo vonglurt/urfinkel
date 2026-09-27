@@ -15,6 +15,14 @@ is in **[INSTALL.md](INSTALL.md)**. Building it yourself is
 
 ## Downloads
 
+**[2026.09.2711](https://github.com/vonglurt/urfinkel/releases/tag/2026.09.2711)
+is the first release.** It came after a round of bug fixes and play testing:
+the second music voice that stayed silent until the generated bed had
+played ([#1](https://github.com/vonglurt/urfinkel/issues/1)), and the crash
+on the menu after a win or a loss
+([#2](https://github.com/vonglurt/urfinkel/issues/2)), were both found by
+players and are both fixed.
+
 Right-click → Save Link As. Either file works; the `.prg` starts faster.
 
 <!-- CHECKSUMS:START -->
