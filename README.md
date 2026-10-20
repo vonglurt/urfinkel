@@ -597,6 +597,7 @@ stopped rather than one that is merely wrong.
 
 | File | Purpose |
 |---|---|
+| [docs/FEATURE_GUIDE.md](docs/FEATURE_GUIDE.md) | the game in pictures, from boot to trophy: each feature, why it exists, and how it fits |
 | [docs/lab-report.md](docs/lab-report.md) | the migration report: baseline, why BASIC costs it, the chain, results, conformance |
 | [docs/architecture.md](docs/architecture.md) | target design: modules, memory, blitter, animation, controller, status |
 | [docs/keyboard-lab-report.md](docs/keyboard-lab-report.md) | reading a matrix with no operating system under it: the toolchain, the two faults, the hardware run |
